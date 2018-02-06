@@ -28,10 +28,13 @@ year = {2002}
   year={2014},
   publisher={IEEE}
 }
-@article{reid1972comparison,
+@incollection{reid1972comparison,
   title={A comparison of forecasting techniques on economic time series},
   author={Reid, D J},
-  journal={Forecasting in Action. Operational Research Society and the Society for Long Range Planning},
+  editors = {Bramson, M J and I. G. Helps and Watson-Gandy, J A C C},
+  booktitle={Forecasting in Action},
+  publisher = {Operational Research Society},
+  address={Birmingham, UK},
   year={1972}
 }
 @article{makridakis2000m3,
@@ -146,9 +149,12 @@ year = {2002}
   publisher={Wiley Online Library}
 }
 
-@article{widodomodel,
+@unpublished{widodomodel,
   title={Model selection using dimensionality reduction of time series characteristics},
-  author={Widodo, Agus and Budi, Indra}
+  author={Widodo, Agus and Budi, Indra},
+  year = 2013,
+  note = {Paper presented at the International Symposium on Forecasting, Seoul, South Korea. June 2013},
+  url = {https://goo.gl/ig2J57}
 }
 @article{lemke2010meta,
   title={Meta-learning for time series forecasting and forecast combination},
@@ -175,14 +181,13 @@ year = {2002}
   journal={available from http://www-personal.buseco.monash.edy.au/~hyndman/TSDL/}
 }
 @article{kalousis1999noemon,
-  title={Noemon: Design, implementation and performance results of an intelligent assistant for classifier selection},
+  title={{NOEMON}: Design, implementation and performance results of an intelligent assistant for classifier selection},
   author={Kalousis, Alexandros and Theoharis, Theoharis},
   journal={Intelligent Data Analysis},
   volume={3},
   number={5},
   pages={319--337},
   year={1999},
-  publisher={Elsevier}
 }
 @inproceedings{kuck2016meta,
   title={Meta-learning with neural networks and landmarking for forecasting model selection an empirical evaluation of different feature sets applied to industry data},
@@ -213,7 +218,7 @@ year = {2002}
   author = {Goerg, G M },
   year = {2016},
   note = {R package version 0.2.4},
-  url = {https://cran.r-project.org/web/packages/ForeCA/index.html},
+  url = {https://CRAN.R-project.org/package=ForeCA},
 }
 @inproceedings{goerg2013forecastable,
   title={Forecastable component analysis},
@@ -225,20 +230,19 @@ year = {2002}
 @Manual{forecast,
     title = {{forecast}: Forecasting functions for time series and
       linear models},
-    author = {Rob J, Hyndman},
-    year = {2017},
-    note = {R package version 8.2},
+    author = {Rob Hyndman and Christoph Bergmeir and Gabriel Caceres and Mitchell O'Hara-Wild and Slava Razbash and Earo Wang},
+    year = {2018},
+    note = {R package version 8.3},
     url = {http://pkg.robjhyndman.com/forecast},
   }
   @article{hyndman2006another,
   title={Another look at measures of forecast accuracy},
   author={Hyndman, Rob J and Koehler, Anne B},
-  journal={International journal of forecasting},
+  journal={International Journal of Forecasting},
   volume={22},
   number={4},
   pages={679--688},
   year={2006},
-  publisher={Elsevier}
 }
 @article{kalousis2002algorithm,
   title={Algorithm selection via meta-learning},
@@ -249,29 +253,34 @@ year = {2002}
 @book{hyndman2014forecasting,
   title={Forecasting: principles and practice},
   author={Hyndman, Rob J and Athanasopoulos, George},
-  year={2014},
-  publisher={OTexts}
+  year={2018},
+  publisher={OTexts},
+  address={Melbourne, Australia},
+  url = {http://OTexts.org/fpp2/}
 }
 @book{box2015time,
   title={Time series analysis: forecasting and control},
   author={Box, George E P and Jenkins, Gwilym M and Reinsel, Gregory C and Ljung, Greta M},
   year={2015},
-  publisher={John Wiley \& Sons}
+  edition = {5th ed.},
+  publisher={John Wiley \& Sons},
+  address = {Hoboken, NJ}
 }
 @article{haslett1989space,
   title={Space-time modelling with long-memory dependence: Assessing Ireland's wind power resource},
   author={Haslett, John and Raftery, Adrian E},
   journal={Applied Statistics},
+  volume = 38,
+  number = 1,
   pages={1--50},
   year={1989},
-  publisher={JSTOR}
 }
 @Manual{fracdiff,
     title = {{fracdiff}: Fractionally differenced ARIMA aka ARFIMA(p,d,q) models},
-    author = {Fraley, Chris and Seattle, U.Washington},
+    author = {Fraley, Chris},
     year = {2012},
     note = {R package version 1.4-2},
-    url = {https://cran.r-project.org/web/packages/fracdiff/index.html},
+    url = {https://CRAN.R-project.org/package=fracdiff},
   }
 @article{smith2009cross,
   title={Cross-disciplinary perspectives on meta-learning for algorithm selection},
@@ -304,14 +313,15 @@ Computer Graphics Association},
   journal={PhD dissertation, Katholieke Universiteit Leuven},
   year={2010}
 }
-@article{chen2004using,
+@techreport{chen2004using,
   title={Using random forest to learn imbalanced data},
   author={Chen, Chao and Liaw, Andy and Breiman, Leo},
-  journal={University of California, Berkeley},
-  year={2004}
+  institution={University of California, Berkeley},
+  year={2004},
+  url = {http://statistics.berkeley.edu/sites/default/files/tech-reports/666.pdf}
 }
 @article{breiman2001random,
-  title={Random forest},
+  title={Random forests},
   author={Breiman, Leo},
   journal={Machine Learning},
   volume={45},
@@ -360,9 +370,10 @@ Computer Graphics Association},
 @book{friedman2001elements,
   title={The elements of statistical learning},
   author={Friedman, Jerome and Hastie, Trevor and Tibshirani, Robert},
-  volume={1},
-  year={2001},
-  publisher={Springer series in statistics New York}
+  year={2009},
+  edition = {2nd ed},
+  publisher={Springer},
+  address={New York, USA}
 }
 @article{liaw2002randomforest,
   title={Classification and Regression by randomForest},
@@ -373,18 +384,19 @@ Computer Graphics Association},
   pages={18--22},
   year={2002}
 }
-@article{breiman2004random,
+@manual{breiman2004random,
   title={Random Forests},
   author={Breiman, Leo and Cutler, Adele},
   url={http://www.stat.berkeley.edu/users/breiman},
-  year={2004}
+  year={2004},
+  note = {Version 5.1}
 }
-@article{pfaff2016package,
-  title={Package ‘urca’},
-  author={Pfaff, Bernhard and Zivot, Eric and Stigler, Matthieu and Pfaff, Maintainer Bernhard},
-  journal={Unit root and cointegration tests for time series data. R package version},
-  pages={1--2},
-  year={2016}
+@manual{pfaff2016package,
+  title={urca: Unit root and cointegration tests for time series data},
+  author={Pfaff, Bernhard and Zivot, Eric and Stigler, Matthieu},
+  year={2016},
+  url = {https://CRAN.R-project.org/package=urca},
+  note = {R package version 1.3-0}
 }
 @manual{hyndmanmcomp,
     title = {Mcomp: Data from the M-Competitions},
