@@ -55,7 +55,14 @@ opts_chunk$set(
   fig.width = 8,
   out.width = "\\textwidth"
 )
+library(Mcomp)
 library(ggplot2)
+library(grid)
+library(gridExtra)
+library(ggrepel)
+library(png)
+library(tsfeatures)
+library(tidyverse)
 # read_chunk('src/main.R')
 ```
 
@@ -78,192 +85,32 @@ The rest of this paper is organized as follows. We review the related work in \a
 
 ## Time series features
 
-The first step in the analysis of time series is usually to plot the data against time. This is known as instance based representation of time series. @tukey1988computer argued large dimensionality of data can make the viewing of graphs unrealistic due to the limits of human patience. He pointed out computers have no such limitations and measures calculated on data using computers will be potentially useful in a high dimensional setting. He called those measures "cognostics"-  computer aided diagnostics. This concept has been re-branded in the machine learning community as *features* or *characteristics*. In this paper we use the term *features*.
-
-In the context of time series analysis any measurable characteristic of a time series is known as a *feature*. The set of features that represent a single time series are referred to as *feature vector* or *array of features*. For example, \autoref{fig:fig1} below shows the instance-based representation of six time series taken from the M3 competition database while \autoref{fig:fig2} shows the feature-based representation of the six time series. Here the features considered are the strength of seasonality and strength of trend which were calculated based on the measures introduced by @wang2009rule. Time series in the lower left quadrant of \autoref{fig:fig2} are non-seasonal but trended while there is only one series with both high trend and high seasonality. We also see how their degree of seasonality and trend varies. Measure of non-linearity, lag correlation, self-similarity and spectral-entropy are some other examples of time series features. 
-
-@fulcher2014highly introduced 9000 operations to extract features from time series. This is the most recent work devoted to the feature-based representation of time series. However, the choice of the most appropriate set of features depends on the purpose of the study. In this paper we use the time series features for the purpose of forecast model selection. 
-
-The features we consider should have the highest discriminatory power in accordance to the classification problem we have. Further, it is important to keep this set as small as possible in order to reduce the computational time.
-
+Rather than work with the time series directly in the "instance space", we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the instance-based representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower left quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and non-linearity.
 
 ```{r fig1, fig.cap="Instance-based representation of time series"}
-library(Mcomp)
-# Extract annual data
-yearly_m3 <- subset(M3, "yearly")
-
-# paper code
-library(Mcomp)
-data(M3)
-# trend series
-p1 <- autoplot(M3[["N0001"]]) +
-  theme(legend.position = "none", axis.title.x = element_blank())
-# random walk
-p2 <- autoplot(M3[["N0633"]]) +
-  theme(legend.position = "none", axis.title.x = element_blank())
-p3 <- autoplot(M3[["N0625"]]) +
-  theme(legend.position = "none", axis.title.x = element_blank())
-
-# white noise
-p4 <- autoplot(M3[["N0645"]]) +
-  theme(legend.position = "none", axis.title.x = element_blank())
-# trend+seasonality
-p5 <- autoplot(M3[["N2012"]]) +
-  theme(legend.position = "none", axis.title.x = element_blank())
-# seasonality
-p6 <- autoplot(M3[["N1912"]]) +
-  theme(legend.position = "none", axis.title.x = element_blank())
-library(gridExtra)
-grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3)
+# Extract required series
+series_id <- c("N0001", "N0633", "N0625", "N0645", "N2012", "N1912")
+six_series <- lapply(M3[series_id], function(u){u$x})
+p <- lapply(six_series,
+  function(u) {autoplot(u) + xlab("") + ylab("")}
+)
+for (i in seq_along(six_series))
+  p[[i]] <- p[[i]] + ggtitle(series_id[i])
+grid.arrange(grobs = p, ncol = 3, nrow = 2)
 ```
 
 ```{r fig2, fig.cap="Feature-based representation of time series", out.width="70%"}
-paper_time <- list(M3[["N0001"]], M3[["N0633"]], M3[["N0625"]], M3[["N0645"]], M3[["N2012"]], M3[["N1912"]])
-auto_arima_results <- lapply(
-  paper_time,
-  function(ts) as.character(auto.arima(ts$x))
-)
-auto_arima_results <- lapply(
-  paper_time,
-  function(ts) as.character(auto.arima(ts$x))
-)
-
-# calculation of strength of trend and seasonality
-
-findfrequency <- function(x) {
-  n <- length(x)
-  x <- as.ts(x)
-  # Remove trend from data
-  x <- residuals(tslm(x ~ trend))
-  # Compute spectrum by fitting ar model to largest section of x
-  n.freq <- 500
-  spec <- spec.ar(c(na.contiguous(x)), plot = FALSE, n.freq = n.freq)
-  if (max(spec[["spec"]]) > 10) # Arbitrary threshold chosen by trial and error.
-  {
-    period <- floor(1 / spec[["freq"]][which.max(spec[["spec"]])] + 0.5)
-    if (period == Inf) # Find next local maximum
-    {
-      j <- which(diff(spec[["spec"]]) > 0)
-      if (length(j) > 0) {
-        nextmax <- j[1] + which.max(spec[["spec"]][(j[1] + 1):n.freq])
-        if (nextmax < length(spec[["freq"]])) {
-          period <- floor(1 / spec[["freq"]][nextmax] + 0.5)
-        } else {
-          period <- 1L
-        }
-      }
-      else {
-        period <- 1L
-      }
-    }
-  }
-  else {
-    period <- 1L
-  }
-
-  return(as.integer(period))
-}
-
-decomp <- function(x, transform=TRUE) {
-  require(forecast)
-  # Transform series
-  if (transform & min(x, na.rm = TRUE) >= 0) {
-    lambda <- BoxCox.lambda(na.contiguous(x))
-    x <- BoxCox(x, lambda)
-  }
-  else {
-    lambda <- NULL
-    transform <- FALSE
-  }
-  # Seasonal data
-  if (frequency(x) > 1) {
-    x.stl <- stl(x, s.window = "periodic", na.action = na.contiguous)
-    trend <- x.stl[["time.series"]][, 2]
-    season <- x.stl[["time.series"]][, 1]
-    remainder <- x - trend - season
-  }
-  else # Nonseasonal data
-  {
-    require(mgcv)
-    tt <- 1:length(x)
-    trend <- rep(NA, length(x))
-    trend[!is.na(x)] <- fitted(gam(x ~ s(tt)))
-    season <- NULL
-    remainder <- x - trend
-  }
-  return(list(
-    x = x, trend = trend, season = season, remainder = remainder,
-    transform = transform, lambda = lambda
-  ))
-}
-
-measures <- function(x) {
-  require(forecast)
-
-  N <- length(x)
-  freq <- findfrequency(x)
-  fx <- c(frequency = (exp((freq - 1) / 50) - 1) / (1 + exp((freq - 1) / 50)))
-  x <- ts(x, f = freq)
-
-  # Decomposition
-  decomp.x <- decomp(x)
-
-  # Adjust data
-  if (freq > 1) {
-    fits <- decomp.x[["trend"]] + decomp.x[["season"]]
-  } else { # Nonseasonal data
-    fits <- decomp.x[["trend"]]
-  }
-  adj.x <- decomp.x[["x"]] - fits + mean(decomp.x[["trend"]], na.rm = TRUE)
-
-  # Backtransformation of adjusted data
-  if (decomp.x[["transform"]]) {
-    tadj.x <- InvBoxCox(adj.x, decomp.x[["lambda"]])
-  } else {
-    tadj.x <- adj.x
-  }
-
-  # Trend and seasonal measures
-  v.adj <- var(adj.x, na.rm = TRUE)
-  if (freq > 1) {
-    detrend <- decomp.x[["x"]] - decomp.x[["trend"]]
-    deseason <- decomp.x[["x"]] - decomp.x[["season"]]
-    trend <- ifelse(var(deseason, na.rm = TRUE) < 1e-10, 0,
-      max(0, min(1, 1 - v.adj / var(deseason, na.rm = TRUE)))
-    )
-    season <- ifelse(var(detrend, na.rm = TRUE) < 1e-10, 0,
-      max(0, min(1, 1 - v.adj / var(detrend, na.rm = TRUE)))
-    )
-  }
-  else # Nonseasonal data
-  {
-    trend <- ifelse(var(decomp.x[["x"]], na.rm = TRUE) < 1e-10, 0,
-      max(0, min(1, 1 - v.adj / var(decomp.x[["x"]], na.rm = TRUE)))
-    )
-    season <- 0
-  }
-
-  m <- c(fx, trend, season)
-
-
-  m <- c(trend, season)
-  names(m) <- c("trend", "seasonal")
-
-  return(m)
-}
-
-library(ggrepel)
-l <- lapply(paper_time, function(ts) {
-  measures(ts$x)
-})
-df <- data.frame(matrix(unlist(l), nrow = 6, byrow = T), stringsAsFactors = FALSE)
-names(df) <- c("trend", "seasonality")
-df$id <- c("N0001", "N0633", "N0625", "N0645", "N2012", "N1912")
+df <- tsfeatures(six_series, c("stl_features")) %>%
+  select(trend, seasonal_strength) %>%
+  rename(seasonality = seasonal_strength) %>%
+  replace_na(list(seasonality = 0))
+df$id <- names(six_series)
 ggplot(df, aes(x = trend, y = seasonality)) +
   geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
   coord_fixed() +
   geom_text_repel(
-    aes(label = id, fill = factor(id)),
+    aes(label = id),
     colour = "black",
     size = 3,
     box.padding = unit(0.5, "lines")
@@ -271,12 +118,15 @@ ggplot(df, aes(x = trend, y = seasonality)) +
   theme(legend.position = "none")
 ```
 
+@fulcher2014highly introduced 9000 operations to extract features from time series. The choice of the most appropriate set of features depends on the purpose of the study. In this paper we select time series features for the purpose of forecast model selection.  The features chosen should have the highest discriminatory power to select a good forecasting method, while keeping the set of features as small as possible in order to limit the computational time.
+
+
 
 ## What makes features useful for forecasting model identification?
 
-@reid1972comparison pointed out that the performance of various forecasting methods changes according to the nature of data and if the reasons for these variations are explored they may be useful in selecting the most appropriate model. In response to the results of the M3-Competition [@makridakis2000m3] similar ideas have been reported by others, who argued that the characteristics of various time series may provide useful insights about which forecasting methods are most appropriate to forecast a given time series [@hyndman2001s;@lawrence2001s;@armstrong2001s].
+@reid1972comparison pointed out that the performance of various forecasting methods changes according to the nature of data, and if the reasons for these variations are explored they may be useful in selecting the most appropriate model. In response to the results of the M3-Competition [@makridakis2000m3], similar ideas have been reported by others, who have argued that the characteristics of various time series may provide useful insights into which forecasting methods are most appropriate to forecast a given time series [@hyndman2001s;@lawrence2001s;@armstrong2001s].
 
-Many of the time series forecasting techniques are developed to capture specific feature(s) of time series in a particular discipline. For example, GARCH models have been introduced to account for time-varying volatility in financial applications. Hence, an appropriate set of features reveals the structure of the time series there by uncovering the underlying best forecasting method. This is the main advantage of using features for forecasting model selection. Further, as discussed in the introduction, the existing approaches of forecasting model selection involve estimating several models on all time series and then selecting the method which provides the accurate forecasts for the hold-out set. Feature-based model selection approaches avoid the time associated with this trial and error procedure as we do not need to try several models on each series. 
+Many time series forecasting techniques have been developed to capture specific feature(s) of time series that are common in a particular discipline. For example, GARCH models have been introduced to account for time-varying volatility in financial applications. Hence, an appropriate set of features reveals the structure of the time series there by uncovering the underlying best forecasting method. This is the main advantage of using features for forecasting model selection. Further, as discussed in the introduction, the existing approaches of forecasting model selection involve estimating several models on all time series and then selecting the method which provides the accurate forecasts for the hold-out set. Feature-based model selection approaches avoid the time associated with this trial and error procedure as we do not need to try several models on each series. 
 
 Following the idea of feature-based representation of time series several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. @kang2017visualising applied principal component analysis to project a large collection of time series into 2D feature space to visualize what makes a particular forecasting method perform well or not in a particular domain or subset of time series. The features they considered are spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and optimal Box-Cox transformation parameter. On the side, they proposed a method for generating new time series based on features. 
 
@@ -512,10 +362,6 @@ The matrices of Pearson correlation coefficients for all the features in the ref
 
 
 ```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots (A-Experiment1 yearly, B- Experiment 2 yearly, C- Experiment 1, quarterly, D- Experiment 2 quarterly, E - Experiment 1 monthly, F - Experiment 2 monthly)"}
-library(grid)
-library(gridExtra)
-library(png)
-
 img1 <- rasterGrob(
   as.raster(readPNG("figures/ggheatmapA.png")),
   interpolate = FALSE
@@ -569,9 +415,6 @@ The \autoref{YM3} to \autoref{YM1} compare the performance of our proposed frame
 
 
 ```{r pca1, fig.width=7,fig.height=5, fig.cap="Distribution of yearly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A- 2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series"}
-library(grid)
-library(gridExtra)
-library(png)
 img1 <- rasterGrob(
   as.raster(readPNG("figures/pca1M1Y.png")),
   interpolate = FALSE
@@ -648,10 +491,6 @@ The first 3 principal components  quarterly time series in the M1 competition ex
 \autoref{M3Q} to \autoref{M1Q} summarize the results for quarterly data. The results of RF-class priors outperform the the benchmark methods.  However, the average MASE of Theta method for 1-18 slightly lower than the RF-unbalanced and RF-class priors. 
 
 ```{r pca2,fig.cap="Distribution of quarterly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A-2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series"}
-library(grid)
-library(gridExtra)
-library(png)
-
 img1 <- rasterGrob(
   as.raster(readPNG("figures/pca1M1Q.png")),
   interpolate = FALSE
@@ -730,11 +569,6 @@ For monthly series of M1 competition the first three principal components captur
 
 
 ```{r pca3,fig.cap="Distribution of monthly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A- 2.C, on each graph colour scheme is green-simulated time serie, black-observed time series, orange-new time series"}
-
-library(grid)
-library(gridExtra)
-library(png)
-
 img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
 img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
 img3 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)

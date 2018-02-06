@@ -252,7 +252,10 @@ Meta-learning, Algorithm selection problem},
 \makeatletter
 \DeclareDelimFormat[cbx@textcite]{nameyeardelim}{\addspace}
 \makeatother
-
+\renewcommand*{\finalnamedelim}{%
+  %\ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}% there really should be no funny Oxford comma business here
+  \addspace\&\space}
+  
 
 \wp{??/18}
 \jel{C10,C14,C22}
@@ -262,16 +265,16 @@ Meta-learning, Algorithm selection problem},
 \author{Thiyanga S~Talagala, Rob J~Hyndman, George~Athanasopoulos}
 \addresses{\textbf{Thiyanga S Talagala}\newline
 Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3800, Australia.\newline
-{Email: \href{mailto:thiyanga.talagala@monash.edu}{\nolinkurl{thiyanga.talagala@monash.edu}}\newline}Corresponding author\\[1cm]
+University, VIC 3800, Australia.
+\newline{Email: \href{mailto:thiyanga.talagala@monash.edu}{\nolinkurl{thiyanga.talagala@monash.edu}}}\newline Corresponding author\\[1cm]
 \textbf{Rob J Hyndman}\newline
 Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3800, Australia.\newline
-{Email: \href{mailto:rob.hyndman@monash.edu}{\nolinkurl{rob.hyndman@monash.edu}}\newline}\\[1cm]
+University, VIC 3800, Australia.
+\newline{Email: \href{mailto:rob.hyndman@monash.edu}{\nolinkurl{rob.hyndman@monash.edu}}}\\[1cm]
 \textbf{George Athanasopoulos}\newline
 Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3145, Australia.\newline
-{Email: \href{mailto:george.athanasopoulos@monash.edu}{\nolinkurl{george.athanasopoulos@monash.edu}}\newline}\\[1cm]
+University, VIC 3145, Australia.
+\newline{Email: \href{mailto:george.athanasopoulos@monash.edu}{\nolinkurl{george.athanasopoulos@monash.edu}}}\\[1cm]
 }
 
 \date{\sf\Date~\Month~\Year}
@@ -307,15 +310,16 @@ University, VIC 3145, Australia.\newline
 \begin{document}
 \maketitle
 \begin{abstract}
-A crucial aspect in time series forecasting is the ability to identify
-the most suitable forecasting method. We present a general framework for
-forecast model selection using meta-learning approach. In contrast to
-the existing approaches, our method operates on features of the time
-series. A Random Forest approach is used to develop the meta-classifier.
-The proposed framework has been evaluated using the time series of the
-M1 and M3 competitions, and is shown to yield accurate forecasts
-comparable to several benchmarks and other commonly used automated
-approaches of time series forecasting.
+A crucial task in time series forecasting is the identification of the
+most suitable forecasting method. We present a general framework for
+forecast model selection using meta-learning. A Random Forest is used to
+predict the best forecasting method using only time series features. The
+proposed framework has been evaluated using time series from the M1 and
+M3 competitions, and is shown to yield accurate forecasts comparable to
+several benchmarks and other commonly used automated approaches of time
+series forecasting. A key advantage of our algorithm is that the
+time-consuming part of building the random forest can be handled in
+advance of the forecasting task. So when a time series
 \end{abstract}
 \begin{keywords}
 Time Series, Forecasting, Time Series Features, Random Forest,
@@ -403,43 +407,21 @@ followed by the conclusions and future work in \autoref{discussion}.
 
 \subsection{Time series features}\label{time-series-features}
 
-The first step in the analysis of time series is usually to plot the
-data against time. This is known as instance based representation of
-time series. \textcite{tukey1988computer} argued large dimensionality of
-data can make the viewing of graphs unrealistic due to the limits of
-human patience. He pointed out computers have no such limitations and
-measures calculated on data using computers will be potentially useful
-in a high dimensional setting. He called those measures ``cognostics''-
-computer aided diagnostics. This concept has been re-branded in the
-machine learning community as \emph{features} or \emph{characteristics}.
-In this paper we use the term \emph{features}.
-
-In the context of time series analysis any measurable characteristic of
-a time series is known as a \emph{feature}. The set of features that
-represent a single time series are referred to as \emph{feature vector}
-or \emph{array of features}. For example, \autoref{fig:fig1} below shows
-the instance-based representation of six time series taken from the M3
-competition database while \autoref{fig:fig2} shows the feature-based
-representation of the six time series. Here the features considered are
-the strength of seasonality and strength of trend which were calculated
-based on the measures introduced by \textcite{wang2009rule}. Time series
-in the lower left quadrant of \autoref{fig:fig2} are non-seasonal but
-trended while there is only one series with both high trend and high
-seasonality. We also see how their degree of seasonality and trend
-varies. Measure of non-linearity, lag correlation, self-similarity and
-spectral-entropy are some other examples of time series features.
-
-\textcite{fulcher2014highly} introduced 9000 operations to extract
-features from time series. This is the most recent work devoted to the
-feature-based representation of time series. However, the choice of the
-most appropriate set of features depends on the purpose of the study. In
-this paper we use the time series features for the purpose of forecast
-model selection.
-
-The features we consider should have the highest discriminatory power in
-accordance to the classification problem we have. Further, it is
-important to keep this set as small as possible in order to reduce the
-computational time.
+Rather than work with the time series directly in the ``instance
+space'', we propose analysing time series via an associated ``feature
+space''. A time series feature is any measurable characteristic of a
+time series. For example, \autoref{fig:fig1} shows the instance-based
+representation of six time series taken from the M3 competition
+\autocite{makridakis2000m3} while \autoref{fig:fig2} shows a
+feature-based representation of same time series. Here only two features
+are considered: the strength of seasonality and the strength of trend,
+calculated based on the measures introduced by \textcite{wang2009rule}.
+Time series in the lower left quadrant of \autoref{fig:fig2} are
+non-seasonal but trended, while there is only one series with both high
+trend and high seasonality. We also see how the degree of seasonality
+and trend varies between series. Other examples of time series features
+include autocorrelation, spectral entropy and measures of
+self-similarity and non-linearity.
 
 \begin{figure}
 
@@ -459,32 +441,40 @@ computational time.
 \caption{Feature-based representation of time series}\label{fig:fig2}
 \end{figure}
 
+\textcite{fulcher2014highly} introduced 9000 operations to extract
+features from time series. The choice of the most appropriate set of
+features depends on the purpose of the study. In this paper we select
+time series features for the purpose of forecast model selection. The
+features chosen should have the highest discriminatory power to select a
+good forecasting method, while keeping the set of features as small as
+possible in order to limit the computational time.
+
 \subsection{What makes features useful for forecasting model
 identification?}\label{what-makes-features-useful-for-forecasting-model-identification}
 
 \textcite{reid1972comparison} pointed out that the performance of
-various forecasting methods changes according to the nature of data and
+various forecasting methods changes according to the nature of data, and
 if the reasons for these variations are explored they may be useful in
 selecting the most appropriate model. In response to the results of the
-M3-Competition \autocite{makridakis2000m3} similar ideas have been
-reported by others, who argued that the characteristics of various time
-series may provide useful insights about which forecasting methods are
-most appropriate to forecast a given time series
+M3-Competition \autocite{makridakis2000m3}, similar ideas have been
+reported by others, who have argued that the characteristics of various
+time series may provide useful insights into which forecasting methods
+are most appropriate to forecast a given time series
 \autocites{hyndman2001s}{lawrence2001s}{armstrong2001s}.
 
-Many of the time series forecasting techniques are developed to capture
-specific feature(s) of time series in a particular discipline. For
-example, GARCH models have been introduced to account for time-varying
-volatility in financial applications. Hence, an appropriate set of
-features reveals the structure of the time series there by uncovering
-the underlying best forecasting method. This is the main advantage of
-using features for forecasting model selection. Further, as discussed in
-the introduction, the existing approaches of forecasting model selection
-involve estimating several models on all time series and then selecting
-the method which provides the accurate forecasts for the hold-out set.
-Feature-based model selection approaches avoid the time associated with
-this trial and error procedure as we do not need to try several models
-on each series.
+Many time series forecasting techniques have been developed to capture
+specific feature(s) of time series that are common in a particular
+discipline. For example, GARCH models have been introduced to account
+for time-varying volatility in financial applications. Hence, an
+appropriate set of features reveals the structure of the time series
+there by uncovering the underlying best forecasting method. This is the
+main advantage of using features for forecasting model selection.
+Further, as discussed in the introduction, the existing approaches of
+forecasting model selection involve estimating several models on all
+time series and then selecting the method which provides the accurate
+forecasts for the hold-out set. Feature-based model selection approaches
+avoid the time associated with this trial and error procedure as we do
+not need to try several models on each series.
 
 Following the idea of feature-based representation of time series
 several researchers have introduced rules for forecasting based on
