@@ -72,7 +72,7 @@ In this paper we present a general framework for forecast model selection using 
 
 The rest of this paper is organized as follows. We review the related work in Section 2. In Section 3 we explain the detailed components and procedures of our proposed framework for forecast model selection. In section 4 we presents the results, followed by the conclusions and future work in Section 5.
 
-\newpage
+
 # Literature Review
 
 ## Time series features
@@ -97,25 +97,33 @@ yearly_m3 <- subset(M3,"yearly")
 library(Mcomp)
 data(M3)
 # trend series
-p1 <- autoplot(M3[["N0001"]])+theme(legend.position="none", axis.title.x=element_blank())
+p1 <- autoplot(M3[["N0001"]]) +
+  theme(legend.position="none", axis.title.x=element_blank())
 # random walk
-p2 <- autoplot(M3[["N0633"]])+theme(legend.position="none", axis.title.x=element_blank())
-p3 <- autoplot(M3[["N0625"]])+theme(legend.position="none", axis.title.x=element_blank())
+p2 <- autoplot(M3[["N0633"]]) +
+  theme(legend.position="none", axis.title.x=element_blank())
+p3 <- autoplot(M3[["N0625"]]) +
+  theme(legend.position="none", axis.title.x=element_blank())
 
 # white noise
-p4 <- autoplot(M3[["N0645"]])+theme(legend.position="none", axis.title.x=element_blank())
+p4 <- autoplot(M3[["N0645"]]) +
+  theme(legend.position="none", axis.title.x=element_blank())
 #trend+seasonality
-p5 <- autoplot(M3[["N2012"]])+theme(legend.position="none", axis.title.x=element_blank())
+p5 <- autoplot(M3[["N2012"]]) + 
+  theme(legend.position="none", axis.title.x=element_blank())
 # seasonality
-p6 <- autoplot(M3[["N1912"]])+theme(legend.position="none", axis.title.x=element_blank())
+p6 <- autoplot(M3[["N1912"]]) + 
+  theme(legend.position="none", axis.title.x=element_blank())
 library(gridExtra)
-grid.arrange(p1, p2,p3, p4, p5, p6, ncol=3)
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)
 ```
 
-```{r fig2, fig.cap="Feature-based representation of time series\\label{features1}", cache=T}
+```{r fig2, fig.cap="Feature-based representation of time series\\label{features1}", out.width="70%"}
 paper_time <- list(M3[["N0001"]], M3[["N0633"]],M3[["N0625"]],M3[["N0645"]],M3[["N2012"]],M3[["N1912"]])
-auto_arima_results <- lapply(paper_time, function(ts) as.character(auto.arima(ts$x))) 
-auto_arima_results <- lapply(paper_time, function(ts) as.character(auto.arima(ts$x))) 
+auto_arima_results <- lapply(paper_time, 
+  function(ts) as.character(auto.arima(ts$x))) 
+auto_arima_results <- lapply(paper_time, 
+  function(ts) as.character(auto.arima(ts$x))) 
 
 # calculation of strength of trend and seasonality
 
@@ -244,22 +252,25 @@ l <- lapply(paper_time, function(ts){measures(ts$x)})
 df <- data.frame(matrix(unlist(l), nrow=6, byrow=T),stringsAsFactors=FALSE)
 names(df) <- c("trend", "seasonality")
 df$id <- c("N0001", "N0633", "N0625", "N0645", "N2012", "N1912")
-ggplot(df, aes(x=trend, y=seasonality)) + geom_point()+coord_fixed()+
-	geom_text_repel(
-		aes(label=id, fill=factor(id)), colour="black",size=3, box.padding = unit(0.5, "lines")
-	)+theme(legend.position="none")
-
+ggplot(df, aes(x=trend, y=seasonality)) + 
+  geom_point() + 
+  coord_fixed() +
+  geom_text_repel(
+		aes(label=id, fill=factor(id)), 
+    colour="black",
+    size=3, 
+    box.padding = unit(0.5, "lines")) + 
+  theme(legend.position="none")
 ```
 
-\newpage
+
 ## What makes features useful for forecasting model identification?
 
 @reid1972comparison pointed out that the performance of various forecasting methods changes according to the nature of data and if the reasons for these variations are explored they may be useful in selecting the most appropriate model. In response to the results of the M3-Competition [@makridakis2000m3] similar ideas have been reported by others, who argued that the characteristics of various time series may provide useful insights about which forecasting methods are most appropriate to forecast a given time series [@hyndman2001s;@lawrence2001s;@armstrong2001s].
 
 Many of the time series forecasting techniques are developed to capture specific feature(s) of time series in a particular discipline. For example, GARCH models have been introduced to account for time-varying volatility in financial applications. Hence, an appropriate set of features reveals the structure of the time series there by uncovering the underlying best forecasting method. This is the main advantage of using features for forecasting model selection. Further, as discussed in the introduction, the existing approaches of forecasting model selection involve estimating several models on all time series and then selecting the method which provides the accurate forecasts for the hold-out set. Feature-based model selection approaches avoid the time associated with this trial and error procedure as we do not need to try several models on each series. 
 
-Following the idea of feature-based representation of time series several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. 
- @kang2017visualising applied principal component analysis to project a large collection of time series into 2D feature space to visualize what makes a particular forecasting method perform well or not in a particular domain or subset of time series. The features they considered are spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and optimal Box-Cox transformation parameter. On the side, they proposed a method for generating new time series based on features. 
+Following the idea of feature-based representation of time series several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. @kang2017visualising applied principal component analysis to project a large collection of time series into 2D feature space to visualize what makes a particular forecasting method perform well or not in a particular domain or subset of time series. The features they considered are spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and optimal Box-Cox transformation parameter. On the side, they proposed a method for generating new time series based on features. 
 
 ## Algorithm Selection and Meta-learning Approach
 
@@ -291,7 +302,6 @@ In general forecasting model selection problems addressed in the literature can 
 For a given time series $x \in P$, with features $f(x) \in F$, find the selection mapping $S(f(x))$ into algorithm space $A$, such that the selected algorithm $\alpha \in A$ minimizes forecasting accuracy error metric $y(\alpha(x)) \in Y$ on the test set of the time series.
 \end{definition}
 
-
 The methods introduced in literature differ with respect to the way they define - problem space($A$), features($F$), forecasting accuracy measure($Y$) and selection mapping ($S$).
 
 @collopy1992rule introduced 99 rules based on 18 features of time series to make forecasts for economics and demographic time series. This work was further improved by @armstrong2001s reducing the human intervention.  @shah1997model used simple descriptive statistics, features related to dimentionality of time series and autocorrelation and partial autocorrelation based features to classify time series using discriminant analysis. More specifically,  the features are, number of observations, ratio of the number of turning points to the length of the series, ratio of number of step changes, skewness, kurtosis, coefficient of variation, autocorrelation at lag 1, 2, 3 and 4 and partial autocorrelation at lag 2, 3, and 4. Casting his work in Rice's framework: $P=203$ quarterly series of M-competition [@makridakis1982accuracy]; $A=3$ forecasting methods, namely simple exponential smoothing, Holt-Winters exponential smoothing with multiplicative seasonality and basic structural time series model; $Y=$ mean squared error for the hold-out sample. The mapping $S$ is learnt by using discriminant analysis. 
@@ -313,9 +323,7 @@ In order to train our classification algorithm, we need a large collection of ti
 
 ```{r framework, fig.cap="Proposed framework (blue: offline phase, red: online phase)"}
 knitr::include_graphics('figures/framework.png')
-
 ```
-
 
 \begin{algorithm}
   \caption{Identification of "best" forecast method for a new time series}
@@ -436,56 +444,55 @@ Inorder to identify the output label: "best" model, RW, RWD, Theta, STL-AR, Seas
 We use a set of 25 features for yearly data and a set of 30 features for seasonal data, spanning from simple attributes like, length of series, to slightly complex ones, like spectral entropy. Some of the features  are already established features from previous studies [@wang2009rule; @hyndman2015large; @kang2017visualising]. We have also added some new features that we believe provide some useful information. These are summarized in \autoref{feature}. For a full description of each feature please refer to Appendix 1.
 
 
-\newpage
 
 \newcommand{\boxedcheckmark}
   {{\ooalign{$\Box$\cr\hidewidth$\checkmark$\hidewidth}}}
 
-
-\begin{table}[!h]
-\centering
+\begin{table}[!p]
+\centering\small
 \caption{Feature description}
 \label{feature}
-\begin{tabular}{l|llcc}
-\hline
-\multicolumn{2}{c}{Feature} & Description & non-seasonal &  seasonal\\ \hline
-   1        &   N        & length of the time series & $\checkmark$ & $\checkmark$ \\ 
-    2     &   trend        & strength of trend & $\checkmark$ &  $\checkmark$\\ 
-    3       &    seasonal       & strength of seasonality & - & $\checkmark$  \\ 
-    4     &  linearity         &linearity  & $\checkmark$  & $\checkmark$ \\
-    5       &     curvature      & curvature & $\checkmark$ &  $\checkmark$ \\ 
-    6       &  spikines         &  spikines  & $\checkmark$ & $\checkmark$ \\ 
-  7      &   e\_acf1        & first autocorrelation coefficient of the remainder series & $\checkmark$ & $\checkmark$  \\
-        8   &  stability         & stability & $\checkmark$ & $\checkmark$ \\ 
-      9       &     lumpiness      & lumpiness & $\checkmark$ & $\checkmark$ \\ 
-      10    &       entropy    &  spectral entropy & $\checkmark$ & $\checkmark$ \\ 
-            11   &  hurst         & Hurst exponent & $\checkmark$ & $\checkmark$ \\ 
-               12        &     nonlinearity      & nonlinearity & $\checkmark$\ & $\checkmark$ \\ 
-                   13       &    alpha       &   Holt's linear trend model-$\hat\alpha$ & $\checkmark$ &  $\checkmark$ \\ 
-   14        &   beta        &   Holt's linear trend model-$\hat\beta$   & $\checkmark$ &  $\checkmark$\\ 
-       15       &    hwalpha       & Holt-Winters addtive method - $\hat\alpha$ & - &  $\checkmark$ \\ 
-    16       &    hwbeta       & Holt-Winters addtive method - $\hat\beta$ & - & $\checkmark$ \\ 
-    17       &    hwgamma       & Holt-Winters addtive method - $\hat\gamma$ & - & $\checkmark$  \\ 
-      18         &    ur\_pp       & test statistic based on Phillips-Perron test & $\checkmark$ & - \\ 
-   19     &     ur\_kpss      & test statistic based on kpss test & $\checkmark$ & - \\ 
-      20    &   x\_acf1        &  \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the original series}} & $\checkmark$ & $\checkmark$ \\ 
-       21    &  diff1x\_acf1         & \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-      22   &   diff2x\_acf1        & \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the twiced-differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-      23        &   x\_acf5        & \vtop{\hbox{\strut sum of squared of first 5  }\hbox{\strut autocorrelation coefficients of the original series}} & $\checkmark$ & $\checkmark$ \\ 
-   24     &   diff1x\_acf5        & \vtop{\hbox{\strut sum of squared of first 5 autocorrelation  }\hbox{\strut coefficients of the differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-   25        &    diff2x\_acf5         & \vtop{\hbox{\strut sum of squared of first 5  autocorrelation }\hbox{\strut coefficients of the twice-differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-    26       &    seas\_acf1       & autocorrelation coefficient at first lag & - & $\checkmark$   \\ 
-     27     &     sediff\_acf1      &   \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the seasonally-differenced series}} & - &  $\checkmark$\\ 
-   28      &   sediff\_seacf1        &  \vtop{\hbox{\strut first autocorrelation coefficient at the first seasoanl lag  }\hbox{\strut of the seasonally-differenced series}} & - & $\checkmark$ \\  
-   29 &    sediff\_acf5       & \vtop{\hbox{\strut sum of squared of first 5 autocorrelation coefficients}\hbox{\strut of the seasonally-differenced series}} & - & $\checkmark$ \\ 
-    30      &   lmres\_acf1        & \vtop{\hbox{\strut first autocorrelation coefficient  }\hbox{\strut of the residual series of linear trend model}}  &  $\checkmark$ & -  \\ 
-       31     &    x\_pacf5       & \vtop{\hbox{\strut sum of squared of first 5 partial autocorrelation }\hbox{\strut coefficients of the original series}}   & $\checkmark$ & $\checkmark$ \\ 
-32        &    diff1x\_pacf5       & \vtop{\hbox{\strut sum of squared of first 5 partial autocorrelation }\hbox{\strut coefficients of the differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-    33     &    diff2x\_pacf5       & \vtop{\hbox{\strut sum of squared of first 5 partial autocorrelation }\hbox{\strut coefficients of the twice-differenced series}} & $\checkmark$ & $\checkmark$ \\ \hline
+\begin{tabular}{llp{7.5cm}cc}
+\toprule
+\multicolumn{2}{c}{Feature} & Description & non-seasonal &  seasonal\\ 
+\midrule
+1  & N              & length of the time series                                                                        & $\checkmark$  & $\checkmark$ \\
+2  & trend          & strength of trend                                                                                & $\checkmark$  & $\checkmark$\\
+3  & seasonal       & strength of seasonality                                                                          & -             & $\checkmark$ \\
+4  & linearity      & linearity                                                                                        & $\checkmark$  & $\checkmark$ \\
+5  & curvature      & curvature                                                                                        & $\checkmark$  & $\checkmark$ \\
+6  & spikines       & spikines                                                                                         & $\checkmark$  & $\checkmark$ \\
+7  & e\_acf1        & first autocorrelation coefficient of the remainder series                                        & $\checkmark$  & $\checkmark$ \\
+8  & stability      & stability                                                                                        & $\checkmark$  & $\checkmark$ \\
+9  & lumpiness      & lumpiness                                                                                        & $\checkmark$  & $\checkmark$ \\
+10 & entropy        & spectral entropy                                                                                 & $\checkmark$  & $\checkmark$ \\
+11 & hurst          & Hurst exponent                                                                                   & $\checkmark$  & $\checkmark$ \\
+12 & nonlinearity   & nonlinearity                                                                                     & $\checkmark$\ & $\checkmark$ \\
+13 & alpha          & Holt's linear trend model-$\hat\alpha$                                                           & $\checkmark$  & $\checkmark$ \\
+14 & beta           & Holt's linear trend model-$\hat\beta$                                                            & $\checkmark$  & $\checkmark$\\
+15 & hwalpha        & Holt-Winters addtive method - $\hat\alpha$                                                       & -             & $\checkmark$ \\
+16 & hwbeta         & Holt-Winters addtive method - $\hat\beta$                                                        & -             & $\checkmark$ \\
+17 & hwgamma        & Holt-Winters addtive method - $\hat\gamma$                                                       & -             & $\checkmark$ \\
+18 & ur\_pp         & test statistic based on Phillips-Perron test                                                     & $\checkmark$  & - \\
+19 & ur\_kpss       & test statistic based on kpss test                                                                & $\checkmark$  & - \\
+20 & x\_acf1        & first autocorrelation coefficient of the original series                                        & $\checkmark$  & $\checkmark$ \\
+21 & diff1x\_acf1   & first autocorrelation coefficient of the differenced series                                      & $\checkmark$  & $\checkmark$ \\
+22 & diff2x\_acf1   & first autocorrelation coefficient of the twiced-differenced series                               & $\checkmark$  & $\checkmark$ \\
+23 & x\_acf5        & sum of squared of first 5 autocorrelation coefficients of the original series                    & $\checkmark$  & $\checkmark$ \\
+24 & diff1x\_acf5   & sum of squared of first 5 autocorrelation coefficients of the differenced series                 & $\checkmark$  & $\checkmark$ \\
+25 & diff2x\_acf5   & sum of squared of first 5 autocorrelation coefficients of the twice-differenced series           & $\checkmark$  & $\checkmark$ \\
+26 & seas\_acf1     & autocorrelation coefficient at first lag                                                         & -             & $\checkmark$ \\
+27 & sediff\_acf1   & first autocorrelation coefficient of the seasonally-differenced series                           & -             & $\checkmark$\\
+28 & sediff\_seacf1 & first autocorrelation coefficient at the first seasoanl lag of the seasonally-differenced series & -             & $\checkmark$ \\
+29 & sediff\_acf5   & sum of squared of first 5 autocorrelation coefficients of the seasonally-differenced series      & -             & $\checkmark$ \\
+30 & lmres\_acf1    & first autocorrelation coefficient of the residual series of linear trend model                   & $\checkmark$  & - \\
+31 & x\_pacf5       & sum of squared of first 5 partial autocorrelation coefficients of the original series            & $\checkmark$  & $\checkmark$ \\
+32 & diff1x\_pacf5  & sum of squared of first 5 partial autocorrelation coefficients of the differenced series         & $\checkmark$  & $\checkmark$ \\
+33 & diff2x\_pacf5  & sum of squared of first 5 partial autocorrelation coefficients of the twice-differenced series   & $\checkmark$  & $\checkmark$ \\
+\bottomrule
  \end{tabular}
 \end{table}
 
-\newpage
 
 ## Model calibration
 
@@ -520,22 +527,15 @@ We now presents the results of our experiments on yearly, quarterly and monthly 
 The accuracy of our method is compared against following benchmarks and other commonly used approaches of forecasting:
 
   1. automated ARIMA algorithm of @Hyndman2008
-  
   2. automated ETS algorithm of @Hyndman2008
-  
-  3. Random walk with drift(RWD)
-  
-  4. Random walk model(RW)
-  
-  5. White noise process(WN)
-  
+  3. Random walk with drift (RWD)
+  4. Random walk model (RW)
+  5. White noise process (WN)
   6. Theta method
-  
   7. STL-AR method
-  
-  8. seasonal naive(for seasonal data)
+  8. seasonal naive (for seasonal data)
 
-The automated ARIMA and ETS algorithms are implemented using `auto.arima` and `ets` functions available in the forecast package in R[@Hyndman2008]. Each method is implemented on the training set and forecasts are computed up to the full length of the test set. Then we compute the MASE for each forecast horizon, by averaging the MASE across all series in the the collection of new times series. Further, to assist in the evaluation of the proposed framework, for each forecast horizon we rank our method compared to the other methods listed above and and average ranking over all forecast horizons are computed. The results are given in \autoref{YM3} - \autoref{M1M}. The MASE value corresponds to the best performing method in each category is highlighted in bold.
+The automated ARIMA and ETS algorithms are implemented using `auto.arima` and `ets` functions available in the forecast package in R[@Hyndman2008]. Each method is implemented on the training set and forecasts are computed up to the full length of the test set. Then we compute the MASE for each forecast horizon, by averaging the MASE across all series in the the collection of new times series. Further, to assist in the evaluation of the proposed framework, for each forecast horizon we rank our method compared to the other methods listed above and and average ranking over all forecast horizons are computed. The results are given in \autoref{YM3} -- \autoref{M1M}. The MASE value corresponds to the best performing method in each category is highlighted in bold.
 
 **Yearly data**
 
@@ -549,12 +549,18 @@ The \autoref{YM3} to \autoref{YM1} compare the performance of our proposed frame
 library(grid)
 library(gridExtra)
 library(png)
-img1 <-  rasterGrob(as.raster(readPNG("figures/pca1M1Y.png")), interpolate = FALSE)
-img2 <-  rasterGrob(as.raster(readPNG("figures/pca2M1Y.png")), interpolate = FALSE)
-img3 <-  rasterGrob(as.raster(readPNG("figures/pca3M1Y.png")), interpolate = FALSE)
-img4 <-  rasterGrob(as.raster(readPNG("figures/pca1M3Y.png")), interpolate = FALSE)
-img5 <-  rasterGrob(as.raster(readPNG("figures/pca2M3Y.png")), interpolate = FALSE)
-img6 <-  rasterGrob(as.raster(readPNG("figures/pca3M3Y.png")), interpolate = FALSE)
+img1 <-  rasterGrob(as.raster(readPNG("figures/pca1M1Y.png")), 
+  interpolate = FALSE)
+img2 <-  rasterGrob(as.raster(readPNG("figures/pca2M1Y.png")), 
+  interpolate = FALSE)
+img3 <-  rasterGrob(as.raster(readPNG("figures/pca3M1Y.png")), 
+  interpolate = FALSE)
+img4 <-  rasterGrob(as.raster(readPNG("figures/pca1M3Y.png")), 
+  interpolate = FALSE)
+img5 <-  rasterGrob(as.raster(readPNG("figures/pca2M3Y.png")), 
+  interpolate = FALSE)
+img6 <-  rasterGrob(as.raster(readPNG("figures/pca3M3Y.png")), 
+  interpolate = FALSE)
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
 
 ```
@@ -581,7 +587,6 @@ Theta & 1.12  & 1.47  & 1.86  & 2.18 & 2.48 & 2.77 & 4.17 \\ \hline
 \end{tabular}
 \end{table}
 
-\newpage
 \begin{table}[!h]
 \centering
 \caption{Experiment 2 (Observed sample - M3): Forecast accuracy measures for 181 M1-yearly series}
@@ -608,19 +613,24 @@ The first 3 principal components  quarterly time series in the M1 competition ex
 
 \autoref{M3Q} to \autoref{M1Q} summarize the results for quarterly data. The results of RF-class priors outperform the the benchmark methods.  However, the average MASE of Theta method for 1-18 slightly lower than the RF-unbalanced and RF-class priors. 
 
-```{r pca2,fig.cap="Distribution of quarterly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A- 2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series"}
+```{r pca2,fig.cap="Distribution of quarterly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A-2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series"}
 library(grid)
 library(gridExtra)
 library(png)
 
-img1 <-  rasterGrob(as.raster(readPNG("figures/pca1M1Q.png")), interpolate = FALSE)
-img2 <-  rasterGrob(as.raster(readPNG("figures/pca2M1Q.png")), interpolate = FALSE)
-img3 <-  rasterGrob(as.raster(readPNG("figures/pca3M1Q.png")), interpolate = FALSE)
-img4 <-  rasterGrob(as.raster(readPNG("figures/pca1M3Q.png")), interpolate = FALSE)
-img5 <-  rasterGrob(as.raster(readPNG("figures/pca2M3Q.png")), interpolate = FALSE)
-img6 <-  rasterGrob(as.raster(readPNG("figures/pca3M3Q.png")), interpolate = FALSE)
+img1 <-  rasterGrob(as.raster(readPNG("figures/pca1M1Q.png")), 
+  interpolate = FALSE)
+img2 <-  rasterGrob(as.raster(readPNG("figures/pca2M1Q.png")), 
+  interpolate = FALSE)
+img3 <-  rasterGrob(as.raster(readPNG("figures/pca3M1Q.png")), 
+  interpolate = FALSE)
+img4 <-  rasterGrob(as.raster(readPNG("figures/pca1M3Q.png")), 
+  interpolate = FALSE)
+img5 <-  rasterGrob(as.raster(readPNG("figures/pca2M3Q.png")), 
+  interpolate = FALSE)
+img6 <-  rasterGrob(as.raster(readPNG("figures/pca3M3Q.png")), 
+  interpolate = FALSE)
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
-
 ```
 
 
@@ -666,7 +676,6 @@ Snaive & 1.52 & 1.53 & 1.53 & 1.56 & 1.74 & 1.86 & 1.98 & 2.08 & 8.38   \\ \hlin
 \end{tabular}
 \end{table}
 
-\newpage
 
 ### Monthly data
 
@@ -709,7 +718,7 @@ Theta & 0.63 & 0.67 & 0.72 & 0.75 & 0.77 & 0.89 & 5.67    \\
 Snaive& 0.95 & 0.97 & 0.97 & 0.98 & 0.98 &  1.14& 9.00  \\ \hline
 \end{tabular}
 \end{table}
-\newpage
+
 
 \begin{table}[!h]
 \centering
@@ -750,8 +759,7 @@ Note that we have not made a comparison of time with the benchmark methods. Howe
  
 \newpage
 
-#Appendix
-\label{sec:appendix}
+#Appendix {-}
 
 **Length of time series**
 
@@ -904,7 +912,6 @@ A linear regression model is fitted considering $Y = \{y_1, y_2, ..., y_n\}$ as 
 
 Partial-autocorrelation measures the relationship between $y_t$ and $y_{t-k}$ after removing the effects of other time lags -- 1, 2, 3, ...$k-1$. We calculate the sum of squares of first five partial autocorrelation coefficients of the original series, first-difference series and second-difference series. Hence, this gives three(3) features to our experiment. Partial-autocorrelation coefficients play an important role in Box-Jenkins[@box2015time] approach to time series modelling as it helps to determine number of AR terms to be included in both AR(P) and ARIMA(P, d, Q).
 
-
-
+\newpage
 
 #References

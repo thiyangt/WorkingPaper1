@@ -1,4 +1,4 @@
-\documentclass[11pt,]{article}
+\documentclass[11pt,a4paper,]{article}
 \usepackage[]{mathpazo}
 
 \usepackage{amssymb,amsmath}
@@ -22,9 +22,15 @@
 \usepackage[unicode=true]{hyperref}
 \hypersetup{
             pdftitle={Meta-learning classification framework for time series forecasting},
+            pdfkeywords={Time Series, Forecasting, Time Series Features, Random Forest,
+Meta-learning, Algorithm selection problem},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
+\usepackage{geometry}
+\geometry{a4paper, text={16cm,24cm}}
+\usepackage[style=authoryear-comp,]{biblatex}
+\addbibresource{FBF.bib}
 \usepackage{longtable,booktabs}
 % Fix footnotes in tables (requires footnote package)
 \IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{long table}}{}
@@ -44,6 +50,235 @@
 \def\fps@figure{htbp}
 \makeatother
 
+
+\title{Meta-learning classification framework for time series forecasting}
+
+%% MONASH STUFF
+
+%% CAPTIONS
+\RequirePackage{caption}
+\DeclareCaptionStyle{italic}[justification=centering]
+ {labelfont={bf},textfont={it},labelsep=colon}
+\captionsetup[figure]{style=italic,format=hang,singlelinecheck=true}
+\captionsetup[table]{style=italic,format=hang,singlelinecheck=true}
+
+%% FONT
+\RequirePackage{bera}
+\RequirePackage{mathpazo}
+
+%% HEADERS AND FOOTERS
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+\rfoot{\Large\sffamily\raisebox{-0.1cm}{\textbf{\thepage}}}
+\makeatletter
+\lhead{\textsf{\expandafter{\@title}}}
+\makeatother
+\rhead{}
+\cfoot{}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancypagestyle{plain}{%
+\fancyhf{} % clear all header and footer fields
+\fancyfoot[C]{\sffamily\thepage} % except the center
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+
+%% MATHS
+\RequirePackage{bm,amsmath}
+\allowdisplaybreaks
+
+%% GRAPHICS
+\RequirePackage{graphicx}
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.8}
+
+%\RequirePackage[section]{placeins}
+
+%% SECTION TITLES
+\RequirePackage[compact,sf,bf]{titlesec}
+\titleformat{\section}[block]
+  {\fontsize{15}{17}\bfseries\sffamily}
+  {\thesection}
+  {0.4em}{}
+\titleformat{\subsection}[block]
+  {\fontsize{12}{14}\bfseries\sffamily}
+  {\thesubsection}
+  {0.4em}{}
+\titlespacing{\section}{0pt}{*5}{*1}
+\titlespacing{\section}{0pt}{*2}{*0.2}
+
+
+%% TITLE PAGE
+\def\Date{\number\day}
+\def\Month{\ifcase\month\or
+ January\or February\or March\or April\or May\or June\or
+ July\or August\or September\or October\or November\or December\fi}
+\def\Year{\number\year}
+
+\makeatletter
+\def\wp#1{\gdef\@wp{#1}}\def\@wp{??/??}
+\def\jel#1{\gdef\@jel{#1}}\def\@jel{??}
+\def\showjel{{\large\textsf{\textbf{JEL classification:}}~\@jel}}
+\def\nojel{\def\showjel{}}
+\def\addresses#1{\gdef\@addresses{#1}}\def\@addresses{??}
+\def\cover{{\sffamily\setcounter{page}{0}
+        \thispagestyle{empty}%
+        \vspace*{-2cm}
+        \centerline{\raisebox{-1.8cm}{\includegraphics[width=5cm]{MBSportrait}}\hspace*{9cm} ISSN 1440-771X}\vspace{0.99cm}
+        \begin{center}\Large
+        Department of Econometrics and Business Statistics\\[.5cm]
+        \scriptsize http://business.monash.edu/econometrics-and-business-statistics/research/publications
+        \end{center}\vspace{2cm}
+        \begin{center}
+        \fbox{\parbox{14cm}{\begin{onehalfspace}\centering\Huge\vspace*{0.3cm}
+                \textsf{\textbf{\expandafter{\@title}}}\vspace{1cm}\par
+                \LARGE\@author\end{onehalfspace}
+        }}
+        \end{center}
+        \vfill
+                \begin{center}\Large
+                \Month~\Year\\[1cm]
+                Working Paper \@wp
+        \end{center}}}
+\def\pageone{{\sffamily
+        \newpage%\blankpage
+        \thispagestyle{empty}
+        \vbox to 23cm{
+        \raggedright\baselineskip=1.2cm
+     {\fontsize{24.88}{30}\sffamily\textbf{\expandafter{\@title}}}
+        \vspace{2cm}\par
+        \hspace{1cm}\parbox{14cm}{\sffamily\large\@addresses}\vspace{1cm}\vfill
+        \hspace{1cm}{\large\Date~\Month~\Year}\\[1cm]
+        \hspace{1cm}\showjel\vss}}}
+\def\blindtitle{{\sffamily
+     \thispagestyle{plain}\raggedright\baselineskip=1.2cm
+     {\fontsize{24.88}{30}\sffamily\textbf{\expandafter{\@title}}}\vspace{1cm}\par
+        }}
+\def\titlepage{{\cover\newpage\setstretch{1}\pageone\newpage\blindtitle}}
+
+\def\blind{\def\titlepage{{\blindtitle}}\let\maketitle\blindtitle}
+\def\titlepageonly{\def\titlepage{{\pageone\end{document}}}}
+\def\nocover{\def\titlepage{{\newpage\setstretch{1}\pageone\newpage\blindtitle}}\let\maketitle\titlepage}
+\let\maketitle\titlepage
+\makeatother
+
+%% SPACING
+\RequirePackage{setspace}
+\spacing{1.5}
+
+%% LINE AND PAGE BREAKING
+\sloppy
+\clubpenalty = 10000
+\widowpenalty = 10000
+\brokenpenalty = 10000
+\RequirePackage{microtype}
+
+%% PARAGRAPH BREAKS
+\setlength{\parskip}{1.4ex}
+\setlength{\parindent}{0em}
+
+%% HYPERLINKS
+\RequirePackage{xcolor} % Needed for links
+\definecolor{darkblue}{rgb}{0,0,.6}
+\RequirePackage{url}
+
+\makeatletter
+\@ifpackageloaded{hyperref}{}{\RequirePackage{hyperref}}
+\makeatother
+\hypersetup{
+     citecolor=0 0 0,
+     breaklinks=true,
+     bookmarksopen=true,
+     bookmarksnumbered=true,
+     linkcolor=darkblue,
+     urlcolor=blue,
+     citecolor=darkblue,
+     colorlinks=true}
+
+%% KEYWORDS
+\newenvironment{keywords}{\par\vspace{0.5cm}\noindent{\sffamily\textbf{Keywords:}}}{\vspace{0.25cm}\par\hrule\vspace{0.5cm}\par}
+
+%% ABSTRACT
+\renewenvironment{abstract}{\begin{minipage}{\textwidth}\parskip=1.4ex\noindent
+\hrule\vspace{0.1cm}\par{\sffamily\textbf{\abstractname}}\newline}
+  {\end{minipage}}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage[showonlyrefs]{mathtools}
+\usepackage[no-weekday]{eukdate}
+
+%% BIBLIOGRAPHY
+
+\makeatletter
+\@ifpackageloaded{biblatex}{}{\usepackage[style=authoryear-comp, backend=biber, natbib=true]{biblatex}}
+\makeatother
+\ExecuteBibliographyOptions{bibencoding=utf8,minnames=1,maxnames=3, maxbibnames=99,dashed=false,terseinits=true,giveninits=true,uniquename=false,uniquelist=false,doi=false, isbn=false,url=true,sortcites=false}
+
+\DeclareFieldFormat{url}{\texttt{\url{#1}}}
+\DeclareFieldFormat[article]{pages}{#1}
+\DeclareFieldFormat[inproceedings]{pages}{\lowercase{pp.}#1}
+\DeclareFieldFormat[incollection]{pages}{\lowercase{pp.}#1}
+\DeclareFieldFormat[article]{volume}{\mkbibbold{#1}}
+\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+\DeclareFieldFormat[article]{title}{\MakeCapital{#1}}
+\DeclareFieldFormat[article]{url}{}
+%\DeclareFieldFormat[book]{url}{}
+%\DeclareFieldFormat[inbook]{url}{}
+%\DeclareFieldFormat[incollection]{url}{}
+%\DeclareFieldFormat[inproceedings]{url}{}
+\DeclareFieldFormat[inproceedings]{title}{#1}
+\DeclareFieldFormat{shorthandwidth}{#1}
+%\DeclareFieldFormat{extrayear}{}
+% No dot before number of articles
+\usepackage{xpatch}
+\xpatchbibmacro{volume+number+eid}{\setunit*{\adddot}}{}{}{}
+% Remove In: for an article.
+\renewbibmacro{in:}{%
+  \ifentrytype{article}{}{%
+  \printtext{\bibstring{in}\intitlepunct}}}
+
+\AtEveryBibitem{\clearfield{month}}
+\AtEveryCitekey{\clearfield{month}}
+
+\makeatletter
+\DeclareDelimFormat[cbx@textcite]{nameyeardelim}{\addspace}
+\makeatother
+
+
+\wp{??/18}
+\jel{C10,C14,C22}
+
+
+
+\author{Thiyanga S Talagala, Rob J Hyndman, George Athanasopoulos}
+\addresses{\textbf{Thiyanga S Talagala}\newline
+Department of Econometrics and Business Statistics, \newline Monash
+University, VIC 3800, Australia.
+\newline{Email: \href{mailto:thiyanga.talagala@monash.edu}{\nolinkurl{thiyanga.talagala@monash.edu}}}\newline Corresponding author\\[1cm]
+\textbf{Rob J Hyndman}\newline
+Department of Econometrics and Business Statistics, \newline Monash
+University, VIC 3800, Australia.
+\newline{Email: \href{mailto:rob.hyndman@monash.edu}{\nolinkurl{rob.hyndman@monash.edu}}}\\[1cm]
+\textbf{George Athanasopoulos}\newline
+Department of Econometrics and Business Statistics, \newline Monash
+University, VIC 3145, Australia.
+\newline{Email: \href{mailto:george.athanasopoulos@monash.edu}{\nolinkurl{george.athanasopoulos@monash.edu}}}\\[1cm]
+}
+
+\date{\sf\Date~\Month~\Year}
+\makeatletter
+ \lfoot{\sf Talagala, Hyndman, Athanasopoulos: \@date}
+\makeatother
+
 %% Any special functions or other packages can be loaded here.
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -52,37 +287,6 @@
 \usepackage{rotating}
 \usepackage{ctable}
 
-\title{Meta-learning classification framework for time series forecasting}
-
-%% MONASH STUFF
-\usepackage{monashwp}
-\wp{no/yr}
-\jel{C10,C14,C22}
-
-
-
-\author{Thiyanga S. Talagala, Rob J Hyndman, George Athanasopoulos}
-\addresses{\textbf{Thiyanga S. Talagala}\newline
-Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3800 \newline Australia.\newline
-Email: \href{mailto:thiyanga.talagala@monash.edu}{\nolinkurl{thiyanga.talagala@monash.edu}}\newline
-Corresponding author\\[1cm]
-\textbf{Rob J Hyndman}\newline
-Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3800 \newline Australia.\newline
-Email: \href{mailto:rob.hyndman@monash.edu}{\nolinkurl{rob.hyndman@monash.edu}}\newline
-\\[1cm]
-\textbf{George Athanasopoulos}\newline
-Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3145 \newline Australia.\newline
-Email: \href{mailto:george.athanasopoulos@monash.edu}{\nolinkurl{george.athanasopoulos@monash.edu}}\newline
-\\[1cm]
-}
-
-\date{\sf\Date~\Month~\Year}
-\makeatletter
- \lfoot{\sf Talagala, Hyndman, Athanasopoulos: \@date}
-\makeatother
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[section]
@@ -100,17 +304,21 @@ Email: \href{mailto:george.athanasopoulos@monash.edu}{\nolinkurl{george.athanaso
 \newtheorem*{solution}{Solution}
 \begin{document}
 \maketitle
-
 \begin{abstract}
-A crucial aspect in time series forecasting is the ability to identify the most suitable forecasting method. We present a general framework for forecast model selection using meta-learning approach. In contrast to the existing approaches, our method operates on features of the time series. A Random Forest approach is used to develop the meta-classifier. The proposed framework has been evaluated using the time series of the M1 and M3 competitions, and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting.
+A crucial aspect in time series forecasting is the ability to identify
+the most suitable forecasting method. We present a general framework for
+forecast model selection using meta-learning approach. In contrast to
+the existing approaches, our method operates on features of the time
+series. A Random Forest approach is used to develop the meta-classifier.
+The proposed framework has been evaluated using the time series of the
+M1 and M3 competitions, and is shown to yield accurate forecasts
+comparable to several benchmarks and other commonly used automated
+approaches of time series forecasting.
 \end{abstract}
-
 \begin{keywords}
-Time Series, Forecasting, Time Series Features, Random Forest, Meta-learning, Algorithm selection problem
-
+Time Series, Forecasting, Time Series Features, Random Forest,
+Meta-learning, Algorithm selection problem
 \end{keywords}
-
-\newpage
 
 \section{Introduction}\label{introduction}
 
@@ -147,26 +355,26 @@ and experts' knowledge acquisition. Clearly, there is a need for
 automatic forecasting model selection method.
 
 Two of the most commonly used automatic algorithms are the automated
-Exponential Smoothing Algorithm(ETS) of Hyndman et al. (2002) and the
-automated ARIMA algorithm of Hyndman and Khandakar (2008). Both
-algorithms were implemented in the forecast package in R. In this
-paradigm, a class of models is selected in advance, and many models
-within that class are estimated for each time series. The model with the
-smallest AICc value is chosen and used to compute forecasts. This
-approach relies on the expert judgement of the forecaster in selecting
-the most appropriate class of models to use. However, it is not usually
-possible to use the AICc to compare models between classes due to
-differences in the way the likelihood is computed, and the way initial
-conditions are handled. An alternative approach which avoids selecting a
-class of models a priori is to use a time series cross-validation
-procedure. Then models from many different classes may be applied, and
-the model with the lowest cross-validated MSE selected. However, this
-increases the computation involved considerably (at least to order
-\(n^2\) where \(n\) is the number of series to be forecast). While
-either of these approaches may be implemented using parallel computing,
-they involve substantial computation which could be avoided if the
-features of the time series were used to select the class of models, or
-even the specific model, in advance.
+Exponential Smoothing Algorithm(ETS) of \textcite{Hyndman2002} and the
+automated ARIMA algorithm of \textcite{Hyndman2008}. Both algorithms
+were implemented in the forecast package in R. In this paradigm, a class
+of models is selected in advance, and many models within that class are
+estimated for each time series. The model with the smallest AICc value
+is chosen and used to compute forecasts. This approach relies on the
+expert judgement of the forecaster in selecting the most appropriate
+class of models to use. However, it is not usually possible to use the
+AICc to compare models between classes due to differences in the way the
+likelihood is computed, and the way initial conditions are handled. An
+alternative approach which avoids selecting a class of models a priori
+is to use a time series cross-validation procedure. Then models from
+many different classes may be applied, and the model with the lowest
+cross-validated MSE selected. However, this increases the computation
+involved considerably (at least to order \(n^2\) where \(n\) is the
+number of series to be forecast). While either of these approaches may
+be implemented using parallel computing, they involve substantial
+computation which could be avoided if the features of the time series
+were used to select the class of models, or even the specific model, in
+advance.
 
 In this paper we present a general framework for forecast model
 selection using a meta-learning approach. This is the basis of the
@@ -192,15 +400,13 @@ procedures of our proposed framework for forecast model selection. In
 section 4 we presents the results, followed by the conclusions and
 future work in Section 5.
 
-\newpage
-
 \section{Literature Review}\label{literature-review}
 
 \subsection{Time series features}\label{time-series-features}
 
 The first step in the analysis of time series is usually to plot the
 data against time. This is known as instance based representation of
-time series. J. W. Tukey and Tukey (1985) argued large dimensionality of
+time series. \textcite{tukey1988computer} argued large dimensionality of
 data can make the viewing of graphs unrealistic due to the limits of
 human patience. He pointed out computers have no such limitations and
 measures calculated on data using computers will be potentially useful
@@ -217,16 +423,16 @@ shows the instance-based representation of six time series taken from
 the M3 competition database while \autoref{features1} shows the
 feature-based representation of the six time series. Here the features
 considered are the strength of seasonality and strength of trend which
-were calculated based on the measures introduced by X. Wang,
-Smith-Miles, and Hyndman (2009). Time series in the lower left quadrant
-of \autoref{features1} are non-seasonal but trended while there is only
-one series with both high trend and high seasonality. We also see how
-their degree of seasonality and trend varies. Measure of non-linearity,
-lag correlation, self-similarity and spectral-entropy are some other
+were calculated based on the measures introduced by
+\textcite{wang2009rule}. Time series in the lower left quadrant of
+\autoref{features1} are non-seasonal but trended while there is only one
+series with both high trend and high seasonality. We also see how their
+degree of seasonality and trend varies. Measure of non-linearity, lag
+correlation, self-similarity and spectral-entropy are some other
 examples of time series features.
 
-Fulcher and Nick (2014) introduced 9000 operations to extract features
-from time series. This is the most recent work devoted to the
+\textcite{fulcher2014highly} introduced 9000 operations to extract
+features from time series. This is the most recent work devoted to the
 feature-based representation of time series. However, the choice of the
 most appropriate set of features depends on the purpose of the study. In
 this paper we use the time series features for the purpose of forecast
@@ -248,27 +454,25 @@ computational time.
 
 \begin{figure}
 
-{\centering \includegraphics[width=\textwidth]{figure/fig2-1} 
+{\centering \includegraphics[width=0.7\linewidth]{figure/fig2-1} 
 
 }
 
 \caption{Feature-based representation of time series\label{features1}}\label{fig:fig2}
 \end{figure}
 
-\newpage
-
 \subsection{What makes features useful for forecasting model
 identification?}\label{what-makes-features-useful-for-forecasting-model-identification}
 
-Reid (1972) pointed out that the performance of various forecasting
-methods changes according to the nature of data and if the reasons for
-these variations are explored they may be useful in selecting the most
-appropriate model. In response to the results of the M3-Competition
-(Makridakis and Hibon 2000) similar ideas have been reported by others,
-who argued that the characteristics of various time series may provide
-useful insights about which forecasting methods are most appropriate to
-forecast a given time series (Hyndman 2001; Lawrence 2001; J. S.
-Armstrong 2001).
+\textcite{reid1972comparison} pointed out that the performance of
+various forecasting methods changes according to the nature of data and
+if the reasons for these variations are explored they may be useful in
+selecting the most appropriate model. In response to the results of the
+M3-Competition \autocite{makridakis2000m3} similar ideas have been
+reported by others, who argued that the characteristics of various time
+series may provide useful insights about which forecasting methods are
+most appropriate to forecast a given time series
+\autocites{hyndman2001s}{lawrence2001s}{armstrong2001s}.
 
 Many of the time series forecasting techniques are developed to capture
 specific feature(s) of time series in a particular discipline. For
@@ -286,23 +490,22 @@ on each series.
 
 Following the idea of feature-based representation of time series
 several researchers have introduced rules for forecasting based on
-features (Collopy and Armstrong 1992; Adya et al. 2001; X. Wang,
-Smith-Miles, and Hyndman 2009). Kang, Hyndman, and Smith-Miles (2017)
-applied principal component analysis to project a large collection of
-time series into 2D feature space to visualize what makes a particular
-forecasting method perform well or not in a particular domain or subset
-of time series. The features they considered are spectral entropy,
-first-order auto-correlation coefficient, strength of trend, strength of
-seasonality, seasonal period and optimal Box-Cox transformation
-parameter. On the side, they proposed a method for generating new time
-series based on features.
+features \autocites{collopy1992rule}{adya2001automatic}{wang2009rule}.
+\textcite{kang2017visualising} applied principal component analysis to
+project a large collection of time series into 2D feature space to
+visualize what makes a particular forecasting method perform well or not
+in a particular domain or subset of time series. The features they
+considered are spectral entropy, first-order auto-correlation
+coefficient, strength of trend, strength of seasonality, seasonal period
+and optimal Box-Cox transformation parameter. On the side, they proposed
+a method for generating new time series based on features.
 
 \subsection{Algorithm Selection and Meta-learning
 Approach}\label{algorithm-selection-and-meta-learning-approach}
 
 John Rice is an early and strong proponent of the idea of meta learning
-which he called algorithm selection problem(ASP)(Rice 1976). The term
-\emph{meta-learning} started to appear with the emerge of
+which he called algorithm selection problem(ASP)\autocite{rice1976}. The
+term \emph{meta-learning} started to appear with the emerge of
 machine-learning literature. The Rice's framework for algorithm
 selection is shown in \autoref{fig:rice}.
 
@@ -322,7 +525,7 @@ space \(P\). The algorithm space \(A\) is a list of suitable candidate
 algorithms which we can use to find solutions to the problems in \(P\).
 The performance metric \(Y\) is a measure of algorithm performance such
 as accuracy, speed, etc. Rice's formal definition of algorithm selection
-problem is (Smith-Miles 2009):
+problem is \autocite{smith2009cross}:
 
 \begin{definition}
 \label{def2}
@@ -371,25 +574,25 @@ The methods introduced in literature differ with respect to the way they
 define - problem space(\(A\)), features(\(F\)), forecasting accuracy
 measure(\(Y\)) and selection mapping (\(S\)).
 
-Collopy and Armstrong (1992) introduced 99 rules based on 18 features of
+\textcite{collopy1992rule} introduced 99 rules based on 18 features of
 time series to make forecasts for economics and demographic time series.
-This work was further improved by J. S. Armstrong (2001) reducing the
-human intervention. Shah (1997) used simple descriptive statistics,
-features related to dimentionality of time series and autocorrelation
-and partial autocorrelation based features to classify time series using
-discriminant analysis. More specifically, the features are, number of
-observations, ratio of the number of turning points to the length of the
-series, ratio of number of step changes, skewness, kurtosis, coefficient
-of variation, autocorrelation at lag 1, 2, 3 and 4 and partial
-autocorrelation at lag 2, 3, and 4. Casting his work in Rice's
-framework: \(P=203\) quarterly series of M-competition (Makridakis et
-al. 1982); \(A=3\) forecasting methods, namely simple exponential
-smoothing, Holt-Winters exponential smoothing with multiplicative
-seasonality and basic structural time series model; \(Y=\) mean squared
-error for the hold-out sample. The mapping \(S\) is learnt by using
-discriminant analysis.
+This work was further improved by \textcite{armstrong2001s} reducing the
+human intervention. \textcite{shah1997model} used simple descriptive
+statistics, features related to dimentionality of time series and
+autocorrelation and partial autocorrelation based features to classify
+time series using discriminant analysis. More specifically, the features
+are, number of observations, ratio of the number of turning points to
+the length of the series, ratio of number of step changes, skewness,
+kurtosis, coefficient of variation, autocorrelation at lag 1, 2, 3 and 4
+and partial autocorrelation at lag 2, 3, and 4. Casting his work in
+Rice's framework: \(P=203\) quarterly series of M-competition
+\autocite{makridakis1982accuracy}; \(A=3\) forecasting methods, namely
+simple exponential smoothing, Holt-Winters exponential smoothing with
+multiplicative seasonality and basic structural time series model;
+\(Y=\) mean squared error for the hold-out sample. The mapping \(S\) is
+learnt by using discriminant analysis.
 
-The work done by Prudêncio and Ludermir (2004) was the first to use the
+The work done by \textcite{prudencio2004meta} was the first to use the
 term ``meta-learning'' in the context of time series model selection.
 They studied the applicability of meta-learning approaches for
 forecasting model selection based on two case studies. Using the
@@ -402,12 +605,13 @@ coefficients, coefficient of variation, skewness, kurtosis, and test of
 turning points to measure the randomness of the time series. For the
 second study, random walk, Holt's linear exponential smoothing and AR
 models were considered in to the algorithm space \(A\). The problem
-space \(P\) contained, yearly series of M3 competition (Makridakis and
-Hibon 2000), F = subset of features from the first study and Y = ranking
-based on error. Beyond the task of forecasting model selection they used
-NOEMON approach to rank the algorithms (Kalousis and Theoharis 1999).
+space \(P\) contained, yearly series of M3 competition
+\autocite{makridakis2000m3}, F = subset of features from the first study
+and Y = ranking based on error. Beyond the task of forecasting model
+selection they used NOEMON approach to rank the algorithms
+\autocite{kalousis1999noemon}.
 
-Lemke and Gabrys (2010) studied the applicability of different
+\textcite{lemke2010meta} studied the applicability of different
 meta-learning approaches for forecasting model selection. Their
 algorithm space \(A\) contained ARIMA models, exponential smoothing
 models and neural networks model. In addition to the statistical
@@ -420,42 +624,41 @@ based features. The feed forward neural network, decision tree and
 support vector machine approaches were considered to learn the mapping
 \(S\).
 
-X. Wang, Smith-Miles, and Hyndman (2009) used meta-learning framework to
-determine rules to provide recommendations as to which forecast method
-to use to generate forecasts. The rules are derived based on the
-relationship between time series features and forecasting method
-suitability. In order to evaluate the forecasting method suitability
-they introduced a new measure, namely, \emph{simple percentage
-better(SPB)} which calculate the forecasting accuracy of a method
-against the forecasting accuracy error of random walk model. They used 9
-features of time series namely, strength of trend, strength of
-seasonality, serial correlation, non linearity, skewness, kurtosis,
-self-similarity, chaos and periodicity. Later, this set of features has
-become a benchmark tool for many studies related to feature-based
-analysis of time series. According to the notation of Rice, the
-algorithm space \(A=8\) forecasting methods namely, exponential
-smoothing, ARIMA, neural networks and random walk model, and the mapping
-\(S\) between the features and performance of forecasting methods were
-learned by C4.5 algorithm for building decision trees. In addition to
-that, to understand the nature of time series in a two-dimensional
-setting they used SOM clustering on the features of the time series. The
-set of features introduced by X. Wang, Smith-Miles, and Hyndman (2009)
-was later used by Widodo and Budi (n.d.) to develop a meta learning
+\textcite{wang2009rule} used meta-learning framework to determine rules
+to provide recommendations as to which forecast method to use to
+generate forecasts. The rules are derived based on the relationship
+between time series features and forecasting method suitability. In
+order to evaluate the forecasting method suitability they introduced a
+new measure, namely, \emph{simple percentage better(SPB)} which
+calculate the forecasting accuracy of a method against the forecasting
+accuracy error of random walk model. They used 9 features of time series
+namely, strength of trend, strength of seasonality, serial correlation,
+non linearity, skewness, kurtosis, self-similarity, chaos and
+periodicity. Later, this set of features has become a benchmark tool for
+many studies related to feature-based analysis of time series. According
+to the notation of Rice, the algorithm space \(A=8\) forecasting methods
+namely, exponential smoothing, ARIMA, neural networks and random walk
+model, and the mapping \(S\) between the features and performance of
+forecasting methods were learned by C4.5 algorithm for building decision
+trees. In addition to that, to understand the nature of time series in a
+two-dimensional setting they used SOM clustering on the features of the
+time series. The set of features introduced by \textcite{wang2009rule}
+was later used by \textcite{widodomodel} to develop a meta learning
 framework for forecasting model selection. The authors further reduced
 the dimensionality of time series by performing principal component
 analysis on the features.
 
-More recently, Kück, Crone, and Freitag (2016) proposed meta-learning
-framework based on neural networks for forecasting model selection.
-Adopting the notation of Rice, \(P = 78\) time series from
-NN3-competition was used to build the meta-learner. They introduced a
-new set of features based on forecasting errors. The average symmetric
-mean absolute percentage error was used to identify the best forecasting
-method for each series. They classify their forecasting models in the
-algorithm space as \(A\), single, seasonal, seasonal-trend and trend
-exponential smoothing. The mapping \(S\) was learned by using
-feed-forward neural network. Further, they evaluated the performance of
-different set of features for forecasting model selection.
+More recently, \textcite{kuck2016meta} proposed meta-learning framework
+based on neural networks for forecasting model selection. Adopting the
+notation of Rice, \(P = 78\) time series from NN3-competition was used
+to build the meta-learner. They introduced a new set of features based
+on forecasting errors. The average symmetric mean absolute percentage
+error was used to identify the best forecasting method for each series.
+They classify their forecasting models in the algorithm space as \(A\),
+single, seasonal, seasonal-trend and trend exponential smoothing. The
+mapping \(S\) was learned by using feed-forward neural network. Further,
+they evaluated the performance of different set of features for
+forecasting model selection.
 
 \section{Methodology}\label{methodology}
 
@@ -617,9 +820,9 @@ and the computational cost associated with this is not a problem.
 
 Having described the data inputs and outputs for the supervised
 classification approach, we briefly review the random forest algorithm
-for classification (Breiman 2001). Random Forest is an ensemble learning
-method that grows a large number of decision trees using a two-step
-randomization process.
+for classification \autocite{breiman2001random}. Random Forest is an
+ensemble learning method that grows a large number of decision trees
+using a two-step randomization process.
 
 The algorithm works as follow: Let
 \(S=\{(\underline{x_1}, y_1), (\underline{x_2}, y_2), \dots, (\underline{x_N}, y_N)\}\)
@@ -634,40 +837,41 @@ split is selected among those \(f\) features. The split which results in
 most homogeneous sub-node is considered as the best split. Various
 measures have been introduced to evaluate the homogeneity of subnodes,
 such as; classification error rate, Gini index and cross entropy
-(Friedman, Hastie, and Tibshirani 2001). In this study, we use Gini
-index to evaluate the homogeneity of a particular split. The trees are
-grown to the largest extent possible without pruning. To determine the
-class label for a new instance, features are calculated and passed down
-the trees. Then each tree gives a prediction and the majority vote over
-all individual trees lead to the final decision. In this work, we used
-the randomForest package (Liaw and Wiener 2002) in R which implements
-the Fortran code for the Random Forest classification, by Breiman and
-Cutler (2004).
+\autocite{friedman2001elements}. In this study, we use Gini index to
+evaluate the homogeneity of a particular split. The trees are grown to
+the largest extent possible without pruning. To determine the class
+label for a new instance, features are calculated and passed down the
+trees. Then each tree gives a prediction and the majority vote over all
+individual trees lead to the final decision. In this work, we used the
+randomForest package \autocite{liaw2002randomforest} in R which
+implements the Fortran code for the Random Forest classification, by
+\textcite{breiman2004random}.
 
 \section{Application to M-competition
 data}\label{application-to-m-competition-data}
 
 To test how well our proposed framework can identify the suitable
 forecasting models, we use the time series of the M1-competition
-(Makridakis et al. 1982) and M3 competition (Makridakis and Hibon 2000).
-The R package Mcomp (Hyndman 2013) accompanies the data of M1 and M3
-competitions. The proposed algorithm is applied to yearly, quarterly and
-monthly series separately. We run two experiments on each case. In the
-first experiment we treat the time series of M1 competition as the
-\emph{observed sample} and the time series of M3 competition as the
-collection of \emph{new time series}. We run the second experiment by
-considering the M3 data as the \emph{observed sample} and the M1 data as
-the \emph{new time series} collection. Note that, the all phrases are
-consistent with the components in \autoref{fig:framework}. This allow us
-to compare our results with those of the literature. In both
-experiments, we fit ARIMA and ETS models to the full length of each
-series in the corresponding \emph{observed sample} based on
-\texttt{auto.arima} and \texttt{ets} functions in the forecast package
-(Hyndman and Khandakar 2008). Subsequently, from each model we further
-simulate 1000 series. For monthly time series, we further simulate 100
-series from each model to fasten the offline calculation process. The
-lengths of simulated time series are set equal to the lengths of the
-corresponding series in the M-competition.
+\autocite{makridakis1982accuracy} and M3 competition
+\autocite{makridakis2000m3}. The R package Mcomp \autocite{hyndmanmcomp}
+accompanies the data of M1 and M3 competitions. The proposed algorithm
+is applied to yearly, quarterly and monthly series separately. We run
+two experiments on each case. In the first experiment we treat the time
+series of M1 competition as the \emph{observed sample} and the time
+series of M3 competition as the collection of \emph{new time series}. We
+run the second experiment by considering the M3 data as the
+\emph{observed sample} and the M1 data as the \emph{new time series}
+collection. Note that, the all phrases are consistent with the
+components in \autoref{fig:framework}. This allow us to compare our
+results with those of the literature. In both experiments, we fit ARIMA
+and ETS models to the full length of each series in the corresponding
+\emph{observed sample} based on \texttt{auto.arima} and \texttt{ets}
+functions in the forecast package \autocite{Hyndman2008}. Subsequently,
+from each model we further simulate 1000 series. For monthly time
+series, we further simulate 100 series from each model to fasten the
+offline calculation process. The lengths of simulated time series are
+set equal to the lengths of the corresponding series in the
+M-competition.
 
 As shown in \autoref{fig:framework}, the task of constructing the
 meta-database contains two main components, (i) identification of
@@ -733,7 +937,7 @@ implemented on training set of each series and forecasts are produced
 for the whole of the test sets. In addition, we further use
 \texttt{auto.arima} and \texttt{ets} functions in the forecast package
 to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS model. The model
-model corresponds to the smallest MASE (Hyndman and Koehler 2006) for
+model corresponds to the smallest MASE \autocite{hyndman2006another} for
 the test set is selected as the \emph{output-lable}.
 
 \subsection{Feature computation
@@ -744,63 +948,59 @@ process}\label{feature-computation-process}
 We use a set of 25 features for yearly data and a set of 30 features for
 seasonal data, spanning from simple attributes like, length of series,
 to slightly complex ones, like spectral entropy. Some of the features
-are already established features from previous studies (X. Wang,
-Smith-Miles, and Hyndman 2009; Hyndman, Wang, and Laptev 2015; Kang,
-Hyndman, and Smith-Miles 2017). We have also added some new features
-that we believe provide some useful information. These are summarized in
-\autoref{feature}. For a full description of each feature please refer
-to Appendix 1.
-
-\newpage
+are already established features from previous studies
+\autocites{wang2009rule}{hyndman2015large}{kang2017visualising}. We have
+also added some new features that we believe provide some useful
+information. These are summarized in \autoref{feature}. For a full
+description of each feature please refer to Appendix 1.
 
 \newcommand{\boxedcheckmark}
   {{\ooalign{$\Box$\cr\hidewidth$\checkmark$\hidewidth}}}
 
-
-\begin{table}[!h]
-\centering
+\begin{table}[!p]
+\centering\small
 \caption{Feature description}
 \label{feature}
-\begin{tabular}{l|llcc}
-\hline
-\multicolumn{2}{c}{Feature} & Description & non-seasonal &  seasonal\\ \hline
-   1        &   N        & length of the time series & $\checkmark$ & $\checkmark$ \\ 
-    2     &   trend        & strength of trend & $\checkmark$ &  $\checkmark$\\ 
-    3       &    seasonal       & strength of seasonality & - & $\checkmark$  \\ 
-    4     &  linearity         &linearity  & $\checkmark$  & $\checkmark$ \\
-    5       &     curvature      & curvature & $\checkmark$ &  $\checkmark$ \\ 
-    6       &  spikines         &  spikines  & $\checkmark$ & $\checkmark$ \\ 
-  7      &   e\_acf1        & first autocorrelation coefficient of the remainder series & $\checkmark$ & $\checkmark$  \\
-        8   &  stability         & stability & $\checkmark$ & $\checkmark$ \\ 
-      9       &     lumpiness      & lumpiness & $\checkmark$ & $\checkmark$ \\ 
-      10    &       entropy    &  spectral entropy & $\checkmark$ & $\checkmark$ \\ 
-            11   &  hurst         & Hurst exponent & $\checkmark$ & $\checkmark$ \\ 
-               12        &     nonlinearity      & nonlinearity & $\checkmark$\ & $\checkmark$ \\ 
-                   13       &    alpha       &   Holt's linear trend model-$\hat\alpha$ & $\checkmark$ &  $\checkmark$ \\ 
-   14        &   beta        &   Holt's linear trend model-$\hat\beta$   & $\checkmark$ &  $\checkmark$\\ 
-       15       &    hwalpha       & Holt-Winters addtive method - $\hat\alpha$ & - &  $\checkmark$ \\ 
-    16       &    hwbeta       & Holt-Winters addtive method - $\hat\beta$ & - & $\checkmark$ \\ 
-    17       &    hwgamma       & Holt-Winters addtive method - $\hat\gamma$ & - & $\checkmark$  \\ 
-      18         &    ur\_pp       & test statistic based on Phillips-Perron test & $\checkmark$ & - \\ 
-   19     &     ur\_kpss      & test statistic based on kpss test & $\checkmark$ & - \\ 
-      20    &   x\_acf1        &  \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the original series}} & $\checkmark$ & $\checkmark$ \\ 
-       21    &  diff1x\_acf1         & \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-      22   &   diff2x\_acf1        & \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the twiced-differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-      23        &   x\_acf5        & \vtop{\hbox{\strut sum of squared of first 5  }\hbox{\strut autocorrelation coefficients of the original series}} & $\checkmark$ & $\checkmark$ \\ 
-   24     &   diff1x\_acf5        & \vtop{\hbox{\strut sum of squared of first 5 autocorrelation  }\hbox{\strut coefficients of the differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-   25        &    diff2x\_acf5         & \vtop{\hbox{\strut sum of squared of first 5  autocorrelation }\hbox{\strut coefficients of the twice-differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-    26       &    seas\_acf1       & autocorrelation coefficient at first lag & - & $\checkmark$   \\ 
-     27     &     sediff\_acf1      &   \vtop{\hbox{\strut first autocorrelation coefficient}\hbox{\strut of the seasonally-differenced series}} & - &  $\checkmark$\\ 
-   28      &   sediff\_seacf1        &  \vtop{\hbox{\strut first autocorrelation coefficient at the first seasoanl lag  }\hbox{\strut of the seasonally-differenced series}} & - & $\checkmark$ \\  
-   29 &    sediff\_acf5       & \vtop{\hbox{\strut sum of squared of first 5 autocorrelation coefficients}\hbox{\strut of the seasonally-differenced series}} & - & $\checkmark$ \\ 
-    30      &   lmres\_acf1        & \vtop{\hbox{\strut first autocorrelation coefficient  }\hbox{\strut of the residual series of linear trend model}}  &  $\checkmark$ & -  \\ 
-       31     &    x\_pacf5       & \vtop{\hbox{\strut sum of squared of first 5 partial autocorrelation }\hbox{\strut coefficients of the original series}}   & $\checkmark$ & $\checkmark$ \\ 
-32        &    diff1x\_pacf5       & \vtop{\hbox{\strut sum of squared of first 5 partial autocorrelation }\hbox{\strut coefficients of the differenced series}} & $\checkmark$ & $\checkmark$ \\ 
-    33     &    diff2x\_pacf5       & \vtop{\hbox{\strut sum of squared of first 5 partial autocorrelation }\hbox{\strut coefficients of the twice-differenced series}} & $\checkmark$ & $\checkmark$ \\ \hline
+\begin{tabular}{llp{7.5cm}cc}
+\toprule
+\multicolumn{2}{c}{Feature} & Description & non-seasonal &  seasonal\\ 
+\midrule
+1  & N              & length of the time series                                                                        & $\checkmark$  & $\checkmark$ \\
+2  & trend          & strength of trend                                                                                & $\checkmark$  & $\checkmark$\\
+3  & seasonal       & strength of seasonality                                                                          & -             & $\checkmark$ \\
+4  & linearity      & linearity                                                                                        & $\checkmark$  & $\checkmark$ \\
+5  & curvature      & curvature                                                                                        & $\checkmark$  & $\checkmark$ \\
+6  & spikines       & spikines                                                                                         & $\checkmark$  & $\checkmark$ \\
+7  & e\_acf1        & first autocorrelation coefficient of the remainder series                                        & $\checkmark$  & $\checkmark$ \\
+8  & stability      & stability                                                                                        & $\checkmark$  & $\checkmark$ \\
+9  & lumpiness      & lumpiness                                                                                        & $\checkmark$  & $\checkmark$ \\
+10 & entropy        & spectral entropy                                                                                 & $\checkmark$  & $\checkmark$ \\
+11 & hurst          & Hurst exponent                                                                                   & $\checkmark$  & $\checkmark$ \\
+12 & nonlinearity   & nonlinearity                                                                                     & $\checkmark$\ & $\checkmark$ \\
+13 & alpha          & Holt's linear trend model-$\hat\alpha$                                                           & $\checkmark$  & $\checkmark$ \\
+14 & beta           & Holt's linear trend model-$\hat\beta$                                                            & $\checkmark$  & $\checkmark$\\
+15 & hwalpha        & Holt-Winters addtive method - $\hat\alpha$                                                       & -             & $\checkmark$ \\
+16 & hwbeta         & Holt-Winters addtive method - $\hat\beta$                                                        & -             & $\checkmark$ \\
+17 & hwgamma        & Holt-Winters addtive method - $\hat\gamma$                                                       & -             & $\checkmark$ \\
+18 & ur\_pp         & test statistic based on Phillips-Perron test                                                     & $\checkmark$  & - \\
+19 & ur\_kpss       & test statistic based on kpss test                                                                & $\checkmark$  & - \\
+20 & x\_acf1        & first autocorrelation coefficient of the original series                                        & $\checkmark$  & $\checkmark$ \\
+21 & diff1x\_acf1   & first autocorrelation coefficient of the differenced series                                      & $\checkmark$  & $\checkmark$ \\
+22 & diff2x\_acf1   & first autocorrelation coefficient of the twiced-differenced series                               & $\checkmark$  & $\checkmark$ \\
+23 & x\_acf5        & sum of squared of first 5 autocorrelation coefficients of the original series                    & $\checkmark$  & $\checkmark$ \\
+24 & diff1x\_acf5   & sum of squared of first 5 autocorrelation coefficients of the differenced series                 & $\checkmark$  & $\checkmark$ \\
+25 & diff2x\_acf5   & sum of squared of first 5 autocorrelation coefficients of the twice-differenced series           & $\checkmark$  & $\checkmark$ \\
+26 & seas\_acf1     & autocorrelation coefficient at first lag                                                         & -             & $\checkmark$ \\
+27 & sediff\_acf1   & first autocorrelation coefficient of the seasonally-differenced series                           & -             & $\checkmark$\\
+28 & sediff\_seacf1 & first autocorrelation coefficient at the first seasoanl lag of the seasonally-differenced series & -             & $\checkmark$ \\
+29 & sediff\_acf5   & sum of squared of first 5 autocorrelation coefficients of the seasonally-differenced series      & -             & $\checkmark$ \\
+30 & lmres\_acf1    & first autocorrelation coefficient of the residual series of linear trend model                   & $\checkmark$  & - \\
+31 & x\_pacf5       & sum of squared of first 5 partial autocorrelation coefficients of the original series            & $\checkmark$  & $\checkmark$ \\
+32 & diff1x\_pacf5  & sum of squared of first 5 partial autocorrelation coefficients of the differenced series         & $\checkmark$  & $\checkmark$ \\
+33 & diff2x\_pacf5  & sum of squared of first 5 partial autocorrelation coefficients of the twice-differenced series   & $\checkmark$  & $\checkmark$ \\
+\bottomrule
  \end{tabular}
 \end{table}
-
-\newpage
 
 \subsection{Model calibration}\label{model-calibration}
 
@@ -808,24 +1008,25 @@ Our reference set is imbalanced: some classes contains significantly
 more cases than the other classes. The degree of class imbalance to some
 extent by augmenting the observed sample with simulated time series. The
 random forests algorithm is highly sensitive to the class imbalance
-(Breiman 2001). We use three approaches to address the class imbalance
-in the data: i) incorporate class priors into the random forest
-classifier, and ii) use Balanced Random Forest(BRF) algorithm introduced
-by Chen, Liaw, and Breiman (2004) and iii) re-balancing the reference
-set with down sampling. Note, that BRF algorithm is different from
-down-sampling approach. In down sampling thereference set is
+\autocite{breiman2001random}. We use three approaches to address the
+class imbalance in the data: i) incorporate class priors into the random
+forest classifier, and ii) use Balanced Random Forest(BRF) algorithm
+introduced by \textcite{chen2004using} and iii) re-balancing the
+reference set with down sampling. Note, that BRF algorithm is different
+from down-sampling approach. In down sampling thereference set is
 pre-processed by down-sampling the majority class into the size of the
 minority class which is potentially discard some useful information. We
 compare the results of above three random forests to the random forest
 classifier build on imbalanced data. The RF algorithms are implemented
-by the randomForest R package (Liaw and Wiener 2002). The class priors
-are introduced through the option \texttt{classwt}. We use reciprocal of
-class size as class priors. In each case the two parameters of the of RF
-algorithm are set as: number of trees(\emph{ntree}) - 1000, and number
-of randomly selected features(\emph{mtry}) - one third of the total
-number of features. The number of trees are limited to 1000 to fasten
-the online calculation process. The Random forest trained on unbalanced
-data (RF-unbalanced) and
+by the randomForest R package \autocite{liaw2002randomforest}. The class
+priors are introduced through the option \texttt{classwt}. We use
+reciprocal of class size as class priors. In each case the two
+parameters of the of RF algorithm are set as: number of
+trees(\emph{ntree}) - 1000, and number of randomly selected
+features(\emph{mtry}) - one third of the total number of features. The
+number of trees are limited to 1000 to fasten the online calculation
+process. The Random forest trained on unbalanced data (RF-unbalanced)
+and
 
 \subsection{Summary of the main
 results}\label{summary-of-the-main-results}
@@ -878,34 +1079,35 @@ other commonly used approaches of forecasting:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
+\tightlist
 \item
-  automated ARIMA algorithm of Hyndman and Khandakar (2008)
+  automated ARIMA algorithm of \textcite{Hyndman2008}
 \item
-  automated ETS algorithm of Hyndman and Khandakar (2008)
+  automated ETS algorithm of \textcite{Hyndman2008}
 \item
-  Random walk with drift(RWD)
+  Random walk with drift (RWD)
 \item
-  Random walk model(RW)
+  Random walk model (RW)
 \item
-  White noise process(WN)
+  White noise process (WN)
 \item
   Theta method
 \item
   STL-AR method
 \item
-  seasonal naive(for seasonal data)
+  seasonal naive (for seasonal data)
 \end{enumerate}
 
 The automated ARIMA and ETS algorithms are implemented using
 \texttt{auto.arima} and \texttt{ets} functions available in the forecast
-package in R(Hyndman and Khandakar 2008). Each method is implemented on
-the training set and forecasts are computed up to the full length of the
+package in R\autocite{Hyndman2008}. Each method is implemented on the
+training set and forecasts are computed up to the full length of the
 test set. Then we compute the MASE for each forecast horizon, by
 averaging the MASE across all series in the the collection of new times
 series. Further, to assist in the evaluation of the proposed framework,
 for each forecast horizon we rank our method compared to the other
 methods listed above and and average ranking over all forecast horizons
-are computed. The results are given in \autoref{YM3} - \autoref{M1M}.
+are computed. The results are given in \autoref{YM3} -- \autoref{M1M}.
 The MASE value corresponds to the best performing method in each
 category is highlighted in bold.
 
@@ -964,8 +1166,6 @@ Theta & 1.12  & 1.47  & 1.86  & 2.18 & 2.48 & 2.77 & 4.17 \\ \hline
 \end{tabular}
 \end{table}
 
-\newpage
-
 \begin{table}[!h]
 \centering
 \caption{Experiment 2 (Observed sample - M3): Forecast accuracy measures for 181 M1-yearly series}
@@ -1004,7 +1204,7 @@ the RF-unbalanced and RF-class priors.
 
 }
 
-\caption{Distribution of quarterly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A- 2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series}\label{fig:pca2}
+\caption{Distribution of quarterly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A-2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series}\label{fig:pca2}
 \end{figure}
 
 \begin{table}[!h]
@@ -1049,8 +1249,6 @@ Snaive & 1.52 & 1.53 & 1.53 & 1.56 & 1.74 & 1.86 & 1.98 & 2.08 & 8.38   \\ \hlin
 \end{tabular}
 \end{table}
 
-\newpage
-
 \subsubsection{Monthly data}\label{monthly-data}
 
 For monthly series of M1 competition the first three principal
@@ -1088,7 +1286,7 @@ STL-AR & 0.73 & 0.81 & 0.90 & 0.98 & 1.04 & 1.27 & 8.83  \\
 Theta & 0.63 & 0.67 & 0.72 & 0.75 & 0.77 & 0.89 & 5.67    \\ 
 Snaive& 0.95 & 0.97 & 0.97 & 0.98 & 0.98 &  1.14& 9.00  \\ \hline
 \end{tabular}
-\end{table}\newpage
+\end{table}
 
 \begin{table}[!h]
 \centering
@@ -1155,9 +1353,8 @@ series data sets.
 
 \newpage
 
-\section{Appendix}\label{appendix}
-
-\label{sec:appendix}
+\section*{Appendix}\label{appendix}
+\addcontentsline{toc}{section}{Appendix}
 
 \textbf{Length of time series}
 
@@ -1188,18 +1385,17 @@ iii) to make the data normally distributed. The transformed series is
 denoted by \(Y_{t}^*\). The basic decomposition structure of the time
 series is denoted by: \(Y_t^*=T_t+S_t+E_t\), where \(T_t\) denotes the
 trend in time series, \(S_t\) denotes the seasonal component, while
-\(E_t\) is the remainder component (R. B. Cleveland, Cleveland, and
-Terpenning 1990). Further, the detrended series \(X_t\) is
-\(X_t=Y_t^*-T_t\), the deseasonalized series is to be define as
-\(Z_t=Y_t^*-S_t\), and the remainder series, \(R_t\), is defined as
-\(R_t=Y_t^*-T_t-S_t\).
+\(E_t\) is the remainder component \autocite{cleveland1990stl}. Further,
+the detrended series \(X_t\) is \(X_t=Y_t^*-T_t\), the deseasonalized
+series is to be define as \(Z_t=Y_t^*-S_t\), and the remainder series,
+\(R_t\), is defined as \(R_t=Y_t^*-T_t-S_t\).
 
 \textbf{Strength of trend}
 
 The long-term increase or decrease in time series data is called the
-trend (Hyndman and Athanasopoulos 2014). The strength of trend is
+trend \autocite{hyndman2014forecasting}. The strength of trend is
 measured by comparing the variance of de-trended series and the original
-series as follow (X. Wang, Smith-Miles, and Hyndman 2009): \[
+series as follow \autocite{wang2009rule}: \[
     Trend =1- \frac{var(R_{t})}{var(Z_{t})}.
 \] The values of this feature range between 0 and 1.
 
@@ -1207,8 +1403,7 @@ series as follow (X. Wang, Smith-Miles, and Hyndman 2009): \[
 
 The seasonality pattern occurs when a time series shows a pattern of
 repetitive behaviour over a year within a fixed period. The strength of
-seasonality is computed as follows(X. Wang, Smith-Miles, and Hyndman
-2009): \[
+seasonality is computed as follows\autocite{wang2009rule}: \[
     Seasonality =1- \frac{var(R_{t})}{var(X_{t})}.
 \]The values of this feature range between 0 and 1.
 
@@ -1222,12 +1417,12 @@ coefficients of a quadratic regression of the form
 where, \(time=1, 2, ...N\). The estimated value of \(\beta_1\) is used
 as a measure of linearity while the estimated value of \(\beta_2\) is
 considered as a measure of curvature. The features have been used by
-Hyndman, Wang, and Laptev (2015).
+\textcite{hyndman2015large}.
 
 \textbf{Spikiness}
 
 The feature spikiness occurs when the time series is affected by sudden
-drops or rise. Hyndman, Wang, and Laptev (2015) introduced an index to
+drops or rise. \textcite{hyndman2015large} introduced an index to
 measure spikiness as follow:
 \[spikiness=var\left(\frac{var(R_t)\times N-1-d}{N-2}\right);\] where
 \(d=(R_t-mean(R_t))^2\). Note that \(R_t\) is the remainder component
@@ -1253,13 +1448,13 @@ the lumpiness is the variance of variances.
 
 Spectral entropy of a time series is an information theory based measure
 which can be used as an measure of forecastability of a time series. We
-use the measure introduced by G. Goerg (2013) to estimate the spectral
-entropy. It estimates the Shannon entropy of the spectral density of a
-univariate (or multivariate) normalized spectral density. The spectral
-density of a univariate time series \(y_t\) can be defined as,
-\[f_y(\lambda)=\frac{S_y(\lambda)}{\sigma^2_y},\] where \(S_y(\lambda)\)
-represents spectrum of a univariate stationary process which is the
-Fourier transformation of the autocovariance function,
+use the measure introduced by \textcite{goerg2013forecastable} to
+estimate the spectral entropy. It estimates the Shannon entropy of the
+spectral density of a univariate (or multivariate) normalized spectral
+density. The spectral density of a univariate time series \(y_t\) can be
+defined as, \[f_y(\lambda)=\frac{S_y(\lambda)}{\sigma^2_y},\] where
+\(S_y(\lambda)\) represents spectrum of a univariate stationary process
+which is the Fourier transformation of the autocovariance function,
 \[S_y(\lambda)=\frac{1}{2\pi}\sum_{j=-\infty}^{\infty}\gamma_{y}(j)e^{ij\lambda},\]
 and \(\lambda \in [-\pi, \pi]\), and \(i=\sqrt{-1}\).
 
@@ -1267,11 +1462,11 @@ The Shanon entropy of \(f_y(\lambda)\) is define as,
 \[ H_{s,a}(y_t):=-\int_{-\pi}^{\pi}f_y(\lambda)log_af_y({\lambda})d\lambda,\]
 where \(a>0\) is the logarithm base. Since the periodogram is not a
 consistent estimator for \(S_y(\lambda)\), weighted overlapping segment
-averaging(WOSA) introduced by Nuttall and Carter (1982) was used to
+averaging(WOSA) introduced by \textcite{nuttall1982spectral} was used to
 estimate \(S_y(\lambda)\).
 
 The R package ForeCA (Forecastable Component Analysis) available at CRAN
-accompanies this work (G. M. Goerg 2016). As the name suggests ForeCA
+accompanies this work \autocite{Foreca}. As the name suggests ForeCA
 introduces a dimension reduction technique for time series analysis
 using the frequency domain properties of time series to determine the
 forecastability. This measure is calculated on the original series.
@@ -1281,20 +1476,20 @@ measure.
 \textbf{The Hurst exponent}
 
 The Hurst exponent is used to measure long-term memory of time series.
-We use the method presented in X. Wang, Smith-Miles, and Hyndman (2009)
-to estimate the Hurst exponent. The Hurst exponent is estimated using
-the relation \(H=d+0.5\), where d, is fractal dimension of FARIMA(0, d,
-0). Parameters are estimated using the maximum likelihood estimators.
-The likelihood is approximated using the method illustrated by Haslett
-and Raftery (1989). To fit FARIMA models we the fradiff package
-available in CRAN (Fraley and Seattle 2012) which accompanies the work
-of Haslett and Raftery (1989).
+We use the method presented in \textcite{wang2009rule} to estimate the
+Hurst exponent. The Hurst exponent is estimated using the relation
+\(H=d+0.5\), where d, is fractal dimension of FARIMA(0, d, 0).
+Parameters are estimated using the maximum likelihood estimators. The
+likelihood is approximated using the method illustrated by
+\textcite{haslett1989space}. To fit FARIMA models we the fradiff package
+available in CRAN \autocite{fracdiff} which accompanies the work of
+\textcite{haslett1989space}.
 
 \textbf{Nonlinearity}
 
 To measure the degree of nonlinearity of the time series, we use
-Teräsvirts's neural network test for nonlinearity as in X. Wang,
-Smith-Miles, and Hyndman (2009).
+Teräsvirts's neural network test for nonlinearity as in
+\textcite{wang2009rule}.
 
 \textbf{Parameter estimates of Holt's linear trend model}
 
@@ -1312,9 +1507,9 @@ Trend equation: &  $b_t=\beta^*(l_t-l_{t-1})+(1-\beta^*)b_{t-1}$
 
 where \(\alpha\) is the smoothing parameter for the level, and
 \(\beta^*\) is the smoothing parameter for the trend. These parameters
-can vary between 0 and 1. The notations are as in Hyndman and
-Athanasopoulos (2014). We include the parameter estimates of both
-\(\alpha\) and \(\beta\) to our feature set.
+can vary between 0 and 1. The notations are as in
+\textcite{hyndman2014forecasting}. We include the parameter estimates of
+both \(\alpha\) and \(\beta\) to our feature set.
 
 \textbf{Parameter estimates of Holt-Winters additive method}
 
@@ -1332,7 +1527,7 @@ Seasonal equation: &  $s_t=\gamma(y_t+l_{t-1}-b_{t-1})+(1-\gamma)s_{t-m}.$
 \end{table}
 
 For mathematical background and notations, we refer the reader to
-Hyndman and Athanasopoulos (2014). We use the parameter estimates of
+\textcite{hyndman2014forecasting}. We use the parameter estimates of
 \(\alpha\), \(\beta\) and \(\gamma\) to our feature set in case of
 seasonal time series.
 
@@ -1383,7 +1578,7 @@ least squares residuals and \(\hat{\lambda}^2\) is a consistent estimate
 of the long-run variance of \(\epsilon_t\) using \(\hat{\epsilon_t}\).
 
 Unit root tests based features are calculated using the functionality in
-package \texttt{urca}(B. Pfaff et al. 2016).
+package \texttt{urca}\autocite{pfaff2016package}.
 
 \textbf{Autocorrelation coefficient based features}
 
@@ -1419,208 +1614,12 @@ Partial-autocorrelation measures the relationship between \(y_t\) and
 autocorrelation coefficients of the original series, first-difference
 series and second-difference series. Hence, this gives three(3) features
 to our experiment. Partial-autocorrelation coefficients play an
-important role in Box-Jenkins(Box et al. 2015) approach to time series
-modelling as it helps to determine number of AR terms to be included in
-both AR(P) and ARIMA(P, d, Q).
+important role in Box-Jenkins\autocite{box2015time} approach to time
+series modelling as it helps to determine number of AR terms to be
+included in both AR(P) and ARIMA(P, d, Q).
 
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
+\newpage
 
-\hypertarget{refs}{}
-\hypertarget{ref-adya2001automatic}{}
-Adya, Monica, Fred Collopy, J Scott Armstrong, and Miles Kennedy. 2001.
-``Automatic Identification of Time Series Features for Rule-Based
-Forecasting.'' \emph{International Journal of Forecasting} 17 (2):
-143--57.
-
-\hypertarget{ref-armstrong2001s}{}
-Armstrong, J S. 2001. ``Should We Redesign Forecasting Competitions?''
-\emph{International Journal of Forecasting} 17 (1): 542--43.
-
-\hypertarget{ref-box2015time}{}
-Box, George E P, Gwilym M Jenkins, Gregory C Reinsel, and Greta M Ljung.
-2015. \emph{Time Series Analysis: Forecasting and Control}. John Wiley
-\& Sons.
-
-\hypertarget{ref-breiman2001random}{}
-Breiman, Leo. 2001. ``Random Forest.'' \emph{Machine Learning} 45 (1):
-5--32.
-
-\hypertarget{ref-breiman2004random}{}
-Breiman, Leo, and Adele Cutler. 2004. ``Random Forests.''
-\url{http://www.stat.berkeley.edu/users/breiman}.
-
-\hypertarget{ref-chen2004using}{}
-Chen, Chao, Andy Liaw, and Leo Breiman. 2004. ``Using Random Forest to
-Learn Imbalanced Data.'' \emph{University of California, Berkeley}.
-
-\hypertarget{ref-cleveland1990stl}{}
-Cleveland, Robert B, William S Cleveland, and Irma Terpenning. 1990.
-``STL: A Seasonal-Trend Decomposition Procedure Based on Loess.''
-\emph{Journal of Official Statistics} 6 (1). Statistics Sweden (SCB): 3.
-
-\hypertarget{ref-collopy1992rule}{}
-Collopy, Fred, and J Scott Armstrong. 1992. ``Rule-Based Forecasting:
-Development and Validation of an Expert Systems Approach to Combining
-Time Series Extrapolations.'' \emph{Management Science} 38 (10):
-1394--1414.
-
-\hypertarget{ref-fracdiff}{}
-Fraley, Chris, and U.Washington Seattle. 2012. \emph{fracdiff:
-Fractionally Differenced Arima Aka Arfima(p,d,q) Models}.
-\url{https://cran.r-project.org/web/packages/fracdiff/index.html}.
-
-\hypertarget{ref-friedman2001elements}{}
-Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2001. \emph{The
-Elements of Statistical Learning}. Vol. 1. Springer series in statistics
-New York.
-
-\hypertarget{ref-fulcher2014highly}{}
-Fulcher, Ben D, and Jones S Nick. 2014. ``Highly Comparative
-Feature-Based Time-Series Classification.'' \emph{IEEE Transactions on
-Knowledge and Data Engineering} 26 (12). IEEE: 3026--37.
-
-\hypertarget{ref-Foreca}{}
-Goerg, G M. 2016. \emph{ForeCA: An R Package for Forecastable Component
-Analysis}.
-\url{https://cran.r-project.org/web/packages/ForeCA/index.html}.
-
-\hypertarget{ref-goerg2013forecastable}{}
-Goerg, Georg. 2013. ``Forecastable Component Analysis.'' In
-\emph{Proceedings of the 30th International Conference on Machine
-Learning (Icml-13)}, 64--72.
-
-\hypertarget{ref-haslett1989space}{}
-Haslett, John, and Adrian E Raftery. 1989. ``Space-Time Modelling with
-Long-Memory Dependence: Assessing Ireland's Wind Power Resource.''
-\emph{Applied Statistics}. JSTOR, 1--50.
-
-\hypertarget{ref-hyndman2001s}{}
-Hyndman, Rob J. 2001. ``It's Time to Move from What to Why.''
-\emph{International Journal of Forecasting} 17 (1): 567--70.
-
-\hypertarget{ref-hyndmanmcomp}{}
----------. 2013. \emph{Mcomp: Data from the M-Competitions}.
-\url{https://CRAN.R-project.org/package=Mcomp}.
-
-\hypertarget{ref-hyndman2014forecasting}{}
-Hyndman, Rob J, and George Athanasopoulos. 2014. \emph{Forecasting:
-Principles and Practice}. OTexts.
-
-\hypertarget{ref-Hyndman2008}{}
-Hyndman, Rob J, and Yeasmin Khandakar. 2008. ``Automatic Time Series
-Forecasting: The Forecast Package for R.'' \emph{Journal of Statistical
-Software} 26 (3): 1--22.
-\url{http://www.jstatsoft.org/article/view/v027i03}.
-
-\hypertarget{ref-hyndman2006another}{}
-Hyndman, Rob J, and Anne B Koehler. 2006. ``Another Look at Measures of
-Forecast Accuracy.'' \emph{International Journal of Forecasting} 22 (4).
-Elsevier: 679--88.
-
-\hypertarget{ref-Hyndman2002}{}
-Hyndman, Rob J, Anne B Koehler, Ralph D Snyder, and Simone Grose. 2002.
-``A State Space Framework for Automatic Forecasting Using Exponential
-Smoothing Methods.'' \emph{International Journal of Forecasting} 18 (3):
-439--54.
-
-\hypertarget{ref-hyndman2015large}{}
-Hyndman, Rob J, Earo Wang, and Nikolay Laptev. 2015. ``Large-Scale
-Unusual Time Series Detection.'' In \emph{Data Mining Workshop (Icdmw),
-2015 Ieee International Conference on}, 1616--9. IEEE.
-
-\hypertarget{ref-kalousis1999noemon}{}
-Kalousis, Alexandros, and Theoharis Theoharis. 1999. ``Noemon: Design,
-Implementation and Performance Results of an Intelligent Assistant for
-Classifier Selection.'' \emph{Intelligent Data Analysis} 3 (5).
-Elsevier: 319--37.
-
-\hypertarget{ref-kang2017visualising}{}
-Kang, Yanfei, Rob J Hyndman, and Kate Smith-Miles. 2017. ``Visualising
-Forecasting Algorithm Performance Using Time Series Instance Spaces.''
-\emph{International Journal of Forecasting} 33 (2): 345--58.
-
-\hypertarget{ref-kuck2016meta}{}
-Kück, Mirko, Sven F Crone, and Michael Freitag. 2016. ``Meta-Learning
-with Neural Networks and Landmarking for Forecasting Model Selection an
-Empirical Evaluation of Different Feature Sets Applied to Industry
-Data.'' In \emph{Neural Networks (Ijcnn), 2016 International Joint
-Conference on}, 1499--1506. IEEE.
-
-\hypertarget{ref-lawrence2001s}{}
-Lawrence, M. 2001. ``Why Another Study?'' \emph{International Journal of
-Forecasting} 17 (1): 574--75.
-
-\hypertarget{ref-lemke2010meta}{}
-Lemke, Christiane, and Bogdan Gabrys. 2010. ``Meta-Learning for Time
-Series Forecasting and Forecast Combination.'' \emph{Neurocomputing} 73
-(10). Elsevier: 2006--16.
-
-\hypertarget{ref-liaw2002randomforest}{}
-Liaw, Andy, and Matthew Wiener. 2002. ``Classification and Regression by
-randomForest.'' \emph{R News} 2 (3): 18--22.
-\url{http://CRAN.R-project.org/doc/Rnews/}.
-
-\hypertarget{ref-makridakis2000m3}{}
-Makridakis, Spyros, and Michele Hibon. 2000. ``The M3-Competition:
-Results, Conclusions and Implications.'' \emph{International Journal of
-Forecasting} 16 (4): 451--76.
-
-\hypertarget{ref-makridakis1982accuracy}{}
-Makridakis, Spyros, A Andersen, Robert Carbone, Robert Fildes, Michele
-Hibon, Rudolf Lewandowski, Joseph Newton, Emanuel Parzen, and Robert
-Winkler. 1982. ``The Accuracy of Extrapolation (Time Series) Methods:
-Results of a Forecasting Competition.'' \emph{Journal of Forecasting} 1
-(2). Wiley Online Library: 111--53.
-
-\hypertarget{ref-nuttall1982spectral}{}
-Nuttall, Albert H, and G Clifford Carter. 1982. ``Spectral Estimation
-Using Combined Time and Lag Weighting.'' \emph{Proceedings of the IEEE}
-70 (9). IEEE: 1115--25.
-
-\hypertarget{ref-pfaff2016package}{}
-Pfaff, Bernhard, Eric Zivot, Matthieu Stigler, and Maintainer Bernhard
-Pfaff. 2016. ``Package `Urca'.'' \emph{Unit Root and Cointegration Tests
-for Time Series Data. R Package Version}, 1--2.
-
-\hypertarget{ref-prudencio2004meta}{}
-Prudêncio, Ricardo BC, and Teresa B Ludermir. 2004. ``Meta-Learning
-Approaches to Selecting Time Series Models.'' \emph{Neurocomputing} 61.
-Elsevier: 121--37.
-
-\hypertarget{ref-reid1972comparison}{}
-Reid, D J. 1972. ``A Comparison of Forecasting Techniques on Economic
-Time Series.'' \emph{Forecasting in Action. Operational Research Society
-and the Society for Long Range Planning}.
-
-\hypertarget{ref-rice1976}{}
-Rice, J R. 1976. ``The Algorithm Selection Problem.'' \emph{Advances in
-Computers} 15: 65--118.
-
-\hypertarget{ref-shah1997model}{}
-Shah, Chandra. 1997. ``Model Selection in Univariate Time Series
-Forecasting Using Discriminant Analysis.'' \emph{International Journal
-of Forecasting} 13 (4). Elsevier: 489--500.
-
-\hypertarget{ref-smith2009cross}{}
-Smith-Miles, Kate. 2009. ``Cross-Disciplinary Perspectives on
-Meta-Learning for Algorithm Selection.'' \emph{ACM Computing Surveys
-(CSUR)} 41 (1): 6.
-
-\hypertarget{ref-tukey1988computer}{}
-Tukey, John W, and Paul A Tukey. 1985. ``Computer Graphics and
-Exploratory Data Analysis: An Introduction.'' \emph{Proceedings of the
-Sixth Annual Conference and Exposition: Computer Graphics '85, Fairfax,
-VA: National Computer Graphics Association}.
-
-\hypertarget{ref-wang2009rule}{}
-Wang, Xiaozhe, Kate Smith-Miles, and Rob J Hyndman. 2009. ``Rule
-Induction for Forecasting Method Selection: Meta-Learning the
-Characteristics of Univariate Time Series.'' \emph{Neurocomputing} 72
-(10): 2581--94.
-
-\hypertarget{ref-widodomodel}{}
-Widodo, Agus, and Indra Budi. n.d. ``Model Selection Using
-Dimensionality Reduction of Time Series Characteristics.''
+\printbibliography[title=References]
 
 \end{document}
