@@ -262,16 +262,16 @@ Meta-learning, Algorithm selection problem},
 \author{Thiyanga S Talagala, Rob J Hyndman, George Athanasopoulos}
 \addresses{\textbf{Thiyanga S Talagala}\newline
 Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3800, Australia.
-\newline{Email: \href{mailto:thiyanga.talagala@monash.edu}{\nolinkurl{thiyanga.talagala@monash.edu}}}\newline Corresponding author\\[1cm]
+University, VIC 3800, Australia.\newline
+{Email: \href{mailto:thiyanga.talagala@monash.edu}{\nolinkurl{thiyanga.talagala@monash.edu}}\newline}Corresponding author\\[1cm]
 \textbf{Rob J Hyndman}\newline
 Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3800, Australia.
-\newline{Email: \href{mailto:rob.hyndman@monash.edu}{\nolinkurl{rob.hyndman@monash.edu}}}\\[1cm]
+University, VIC 3800, Australia.\newline
+{Email: \href{mailto:rob.hyndman@monash.edu}{\nolinkurl{rob.hyndman@monash.edu}}\newline}\\[1cm]
 \textbf{George Athanasopoulos}\newline
 Department of Econometrics and Business Statistics, \newline Monash
-University, VIC 3145, Australia.
-\newline{Email: \href{mailto:george.athanasopoulos@monash.edu}{\nolinkurl{george.athanasopoulos@monash.edu}}}\\[1cm]
+University, VIC 3145, Australia.\newline
+{Email: \href{mailto:george.athanasopoulos@monash.edu}{\nolinkurl{george.athanasopoulos@monash.edu}}\newline}\\[1cm]
 }
 
 \date{\sf\Date~\Month~\Year}
@@ -286,6 +286,8 @@ University, VIC 3145, Australia.
 \usepackage{amsmath} 
 \usepackage{rotating}
 \usepackage{ctable}
+
+\def\sectionautorefname{Section}
 
 
 \usepackage{amsthm}
@@ -320,87 +322,84 @@ Time Series, Forecasting, Time Series Features, Random Forest,
 Meta-learning, Algorithm selection problem
 \end{keywords}
 
-\section{Introduction}\label{introduction}
+\section{Introduction}\label{intro}
 
-Forecasting is a key aspect for any businesses to operate efficiently.
+Forecasting is a key activity for any business to operate efficiently.
 The rapid advances in computing technologies have enabled businesses to
 keep track of large number of time series variables. Hence, it is
 becoming increasingly common to have to regularly forecast many millions
-of time series. For example, large scale businesses often are interested
-in forecasting sales, cost, demand for their thousands of products
-across different locations, warehouses, etc. Further, Google and Yahoo
-both collect many millions of daily time series such as web-click logs,
-web search counts, queries, revenue, number of users for different
-services such as YouTube, Facebook, etc. In these circumstances, it is
-essential to have a tool to provide fast and accurate automatic
-forecasts. However, the scale of these tasks have raised some
-computational challenges that we seek to address by proposing a new fast
-algorithm for model selection and time series forecasting.
+of time series. For example, large scale businesses may be interested in
+forecasting sales, cost, and demand for their thousands of products
+across different locations, warehouses, etc. Technology companies such
+as Google collect many millions of daily time series such as web-click
+logs, web search counts, queries, revenue, number of users for different
+services, etc., and require fast and accurate automatic forecasts.
+However, the scale of these tasks have raised some computational
+challenges that we seek to address by proposing a new fast algorithm for
+model selection and time series forecasting.
 
-When there are a large number of time series to be forecast, a
-forecaster may either develop a single method to provide forecasts
-across all time series or develop a framework to select the most
-appropriate forecasting model or a combination of methods for each
-individual series. It is very unlikely that a single method will
-consistently outperform its competitors across all time series. In
-accordance with this, we adopt an individual model (or a combination of
-models) selection approach. However, selecting the most appropriate
-model or a combination of models for a given time series is not straight
-forward. The most common approach of individual model selection involves
-trying several models based on experienced analyst judgement on a given
-data set and the method which performs best for the hold-out sample is
-used to forecast future values of the time series. Despite its
-simplicity, in real time this approach is costly in terms of computing
-and experts' knowledge acquisition. Clearly, there is a need for
-automatic forecasting model selection method.
+When there are a large number of time series to be forecast, there are
+at least three possible forecasting strategies: (1) a single method may
+be used to provide forecasts across all time series; (2) a framework can
+be developed to select the most appropriate forecasting method for each
+series; (3) several methods can be applied for each individual series
+and the resulting forecasts combined. It is very unlikely that a single
+method will consistently outperform its competitors across all time
+series, so we reject strategy 1. Because our focus is on fast, scalable
+forecasting, we also reject the combination approach (despite it often
+being the most accurate of the three strategies), as the computational
+requirements are much greater than for strategy 2. We adopt the approach
+of selecting an individual forecasting method for each time series to be
+forecast.
 
-Two of the most commonly used automatic algorithms are the automated
-Exponential Smoothing Algorithm(ETS) of \textcite{Hyndman2002} and the
-automated ARIMA algorithm of \textcite{Hyndman2008}. Both algorithms
-were implemented in the forecast package in R. In this paradigm, a class
-of models is selected in advance, and many models within that class are
-estimated for each time series. The model with the smallest AICc value
-is chosen and used to compute forecasts. This approach relies on the
-expert judgement of the forecaster in selecting the most appropriate
-class of models to use. However, it is not usually possible to use the
-AICc to compare models between classes due to differences in the way the
-likelihood is computed, and the way initial conditions are handled. An
-alternative approach which avoids selecting a class of models a priori
-is to use a time series cross-validation procedure. Then models from
-many different classes may be applied, and the model with the lowest
-cross-validated MSE selected. However, this increases the computation
-involved considerably (at least to order \(n^2\) where \(n\) is the
-number of series to be forecast). While either of these approaches may
-be implemented using parallel computing, they involve substantial
-computation which could be avoided if the features of the time series
-were used to select the class of models, or even the specific model, in
-advance.
+However, selecting the most appropriate model for a given time series
+can also be problematic. Two of the most commonly used automatic
+algorithms are the automated Exponential Smoothing Algorithm (ETS) of
+\textcite{Hyndman2002} and the automated ARIMA algorithm of
+\textcite{Hyndman2008}. Both algorithms are implemented in the forecast
+package in R \autocite{forecast}. In this paradigm, a class of models is
+selected in advance, and many models within that class are estimated for
+each time series. The model with the smallest AICc value is chosen and
+used to compute forecasts. This approach relies on the expert judgement
+of the forecaster in first selecting the most appropriate class of
+models to use, as it is not usually possible to compare AICc values
+\emph{between} model classes due to differences in the way the
+likelihood is computed, and the way initial conditions are handled.
 
-In this paper we present a general framework for forecast model
-selection using a meta-learning approach. This is the basis of the
-algorithm we propose. In contrast to the existing approaches our method
-operates on the features of the time series. It involves computing a
-range of features of the time series which are then used to select the
-model to be used for forecasting. The model selection process is carried
-out using a classification algorithm --- we use the time series features
-as inputs, and the best forecasting algorithm as the output. The
-classification algorithm can be built in advance of the forecasting
-exercise (so it is an ``offline'' procedure). Then, when we have a new
-time series to forecast, we can quickly compute its features, use the
-pre-trained classification algorithm to identify the best forecasting
-model, and produce the required forecasts. Thus, the ``online'' part of
-our algorithm requires only feature computation, and the application of
-a single forecasting model, with no need to estimate large numbers of
-models within a class, or to carry out a computationally-intensive
-cross-validation procedure.
+An alternative approach, which avoids selecting a class of models
+\emph{a priori}, is to use a simple ``hold-out'' test set; but then
+there is often insufficient data to draw a reliable conclusion. To
+overcome this problem, time series cross-validation can be used
+\autocite{hyndman2014forecasting}; then models from many different
+classes may be applied, and the model with the lowest cross-validated
+MSE selected. However, this increases the computation involved
+considerably (at least to order \(n^2\) where \(n\) is the number of
+series to be forecast).
+
+Clearly, there is a need for a fast, accurate algorithm to automate
+forecasting model selection. We propose a general meta-learning
+framework using features of the time series to select the class of
+models, or even the specific model, to be used for forecasting. The
+model selection process is carried out using a classification algorithm
+--- we use the time series features as inputs, and the best forecasting
+algorithm as the output. The classification algorithm can be built using
+a large historical collection of time series, in advance of the real
+forecasting exercise (so it is an ``offline'' procedure). Then, when we
+have a new time series to forecast, we can quickly compute its features,
+use the pre-trained classification algorithm to identify the best
+forecasting model, and produce the required forecasts. Thus, the
+``online'' part of our algorithm requires only feature computation, and
+the application of a single forecasting model, with no need to estimate
+large numbers of models within a class, or to carry out a
+computationally-intensive cross-validation procedure.
 
 The rest of this paper is organized as follows. We review the related
-work in Section 2. In Section 3 we explain the detailed components and
-procedures of our proposed framework for forecast model selection. In
-section 4 we presents the results, followed by the conclusions and
-future work in Section 5.
+work in \autoref{litreview}. In \autoref{methodology} we explain the
+detailed components and procedures of our proposed framework for
+forecast model selection. In \autoref{Mcomp} we presents the results,
+followed by the conclusions and future work in \autoref{discussion}.
 
-\section{Literature Review}\label{literature-review}
+\section{Literature Review}\label{litreview}
 
 \subsection{Time series features}\label{time-series-features}
 
@@ -418,18 +417,17 @@ In this paper we use the term \emph{features}.
 In the context of time series analysis any measurable characteristic of
 a time series is known as a \emph{feature}. The set of features that
 represent a single time series are referred to as \emph{feature vector}
-or \emph{array of features}. For example, \autoref{timeseries} below
-shows the instance-based representation of six time series taken from
-the M3 competition database while \autoref{features1} shows the
-feature-based representation of the six time series. Here the features
-considered are the strength of seasonality and strength of trend which
-were calculated based on the measures introduced by
-\textcite{wang2009rule}. Time series in the lower left quadrant of
-\autoref{features1} are non-seasonal but trended while there is only one
-series with both high trend and high seasonality. We also see how their
-degree of seasonality and trend varies. Measure of non-linearity, lag
-correlation, self-similarity and spectral-entropy are some other
-examples of time series features.
+or \emph{array of features}. For example, \autoref{fig:fig1} below shows
+the instance-based representation of six time series taken from the M3
+competition database while \autoref{fig:fig2} shows the feature-based
+representation of the six time series. Here the features considered are
+the strength of seasonality and strength of trend which were calculated
+based on the measures introduced by \textcite{wang2009rule}. Time series
+in the lower left quadrant of \autoref{fig:fig2} are non-seasonal but
+trended while there is only one series with both high trend and high
+seasonality. We also see how their degree of seasonality and trend
+varies. Measure of non-linearity, lag correlation, self-similarity and
+spectral-entropy are some other examples of time series features.
 
 \textcite{fulcher2014highly} introduced 9000 operations to extract
 features from time series. This is the most recent work devoted to the
@@ -449,7 +447,7 @@ computational time.
 
 }
 
-\caption{Instance-based representation of time series\label{timeseries}}\label{fig:fig1}
+\caption{Instance-based representation of time series}\label{fig:fig1}
 \end{figure}
 
 \begin{figure}
@@ -458,7 +456,7 @@ computational time.
 
 }
 
-\caption{Feature-based representation of time series\label{features1}}\label{fig:fig2}
+\caption{Feature-based representation of time series}\label{fig:fig2}
 \end{figure}
 
 \subsection{What makes features useful for forecasting model
@@ -538,17 +536,17 @@ articulate a conceptually rich framework, it is not clear the
 implementation from feature space to the algorithm space. This gives
 rise to the meta-learning approach. The main difference between the
 Rice's framework and the meta-learning approach is that the
-meta-learning framework consist of a offline(training) phase and
-online(prediction) phase. In the offline phase, the mapping \(S\) is
-learned based on a previous record of training examples. This is
-performed by using a \emph{meta-learner} which can be a any supervised
-learning algorithm. In other words, the meta-learner establishes rules
-to link the relationship between the feature space and the algorithm
-space. In the context of meta-learning, the inputs for the meta-learner
-are known as \emph{meta-features} and instances in the algorithm space
-are the \emph{output labels} of the meta learner. The database consists
-of both input-features and output-labels is called \emph{meta-data}. In
-the offline phase of the algorithm input-features are extracted from new
+meta-learning framework consist of a offline(training) phase and online
+(prediction) phase. In the offline phase, the mapping \(S\) is learned
+based on a previous record of training examples. This is performed by
+using a \emph{meta-learner} which can be a any supervised learning
+algorithm. In other words, the meta-learner establishes rules to link
+the relationship between the feature space and the algorithm space. In
+the context of meta-learning, the inputs for the meta-learner are known
+as \emph{meta-features} and instances in the algorithm space are the
+\emph{output labels} of the meta learner. The database consists of both
+input-features and output-labels is called \emph{meta-data}. In the
+offline phase of the algorithm input-features are extracted from new
 data and passed into the meta-learner constructed in the offline phase
 to predict output-labels of new data. The framework has attracted lot of
 research in recent as researchers are increasingly investigating how to
@@ -709,7 +707,7 @@ algorithm.
   \begin{algorithmic}[1]
     \Statex \textbf{Offline phase}
     \Statex \text{Given:}
-    \Statex \hspace{1cm}$O=\{t_1, t_2, ...t_n\}:$ the collection of $n$ observed time series
+    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series
       \Statex \hspace{1cm}$L:$ the set of class labels (eg: ARIMA, ETS, SNAIVE, etc.)
          \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features
          \Statex \hspace{1cm}$nsim:$ number of series to be simulated
@@ -722,7 +720,7 @@ algorithm.
     \Statex For $i=1$ to $n$
     \State Fit ARIMA and ETS models to $t_i$
     \State Simulate $nsim$ number of time series from each model in step 2
-    \State The time series in $O$ and simulated time series in step 3 create the reference set $R=\{t_1, t_2, ...t_n, t_{n+1}....t_N\}$ where $N = n + nsim$.
+    \State The time series in $O$ and simulated time series in step 3 create the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
     \Statex 
     \Statex \textit{Prepare the meta-data}
     \Statex For $j=1$ to $N$
@@ -847,8 +845,7 @@ randomForest package \autocite{liaw2002randomforest} in R which
 implements the Fortran code for the Random Forest classification, by
 \textcite{breiman2004random}.
 
-\section{Application to M-competition
-data}\label{application-to-m-competition-data}
+\section{Application to M-competition data}\label{Mcomp}
 
 To test how well our proposed framework can identify the suitable
 forecasting models, we use the time series of the M1-competition
@@ -940,10 +937,7 @@ to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS model. The model
 model corresponds to the smallest MASE \autocite{hyndman2006another} for
 the test set is selected as the \emph{output-lable}.
 
-\subsection{Feature computation
-process}\label{feature-computation-process}
-
-\label{sec:features}
+\subsection{Feature computation process}\label{sec:features}
 
 We use a set of 25 features for yearly data and a set of 30 features for
 seasonal data, spanning from simple attributes like, length of series,
@@ -1028,10 +1022,7 @@ number of trees are limited to 1000 to fasten the online calculation
 process. The Random forest trained on unbalanced data (RF-unbalanced)
 and
 
-\subsection{Summary of the main
-results}\label{summary-of-the-main-results}
-
-\label{sec:results}
+\subsection{Summary of the main results}\label{sec:results}
 
 The matrices of Pearson correlation coefficients for all the features in
 the reference sets of each experiments are presented in
@@ -1309,7 +1300,7 @@ Snaive& 1.09 & 1.11 & 1.11 & 1.13 & 1.14 &  1.31&   8.67\\ \hline
 \end{tabular}
 \end{table}
 
-\section{Discussion and Conclusions}\label{discussion-and-conclusions}
+\section{Discussion and Conclusions}\label{discussion}
 
 In this paper we propose a novel framework for forecasting model
 selection using mete-learning approach. Our proposed framework oriented
@@ -1378,7 +1369,7 @@ curvature, spikiness and first autocorrelation coefficient of the
 remainder series are calculated based on the STL-decomposition of the
 time series. In the following description, our notations are as follows:
 We represent a time series \(Y\) of length \(N\) as
-\(y_1, y_2, ...y_N\). First, the Box-Cox transformation is applied to
+\(y_1, y_2, \dots,y_N\). First, the Box-Cox transformation is applied to
 the time series. The reasons for applying Box-Cox transformation: i) to
 stabilize the variance, ii) to make the seasonal effect additive, and
 iii) to make the data normally distributed. The transformed series is
@@ -1414,9 +1405,9 @@ coefficients of a quadratic regression of the form
 
 \[T_t=\beta_0+\beta_1time_t+\beta_2time_t^2+\epsilon_t\]
 
-where, \(time=1, 2, ...N\). The estimated value of \(\beta_1\) is used
-as a measure of linearity while the estimated value of \(\beta_2\) is
-considered as a measure of curvature. The features have been used by
+where, \(time=1, 2, \dots,N\). The estimated value of \(\beta_1\) is
+used as a measure of linearity while the estimated value of \(\beta_2\)
+is considered as a measure of curvature. The features have been used by
 \textcite{hyndman2015large}.
 
 \textbf{Spikiness}
@@ -1596,8 +1587,8 @@ in the series.
 linear trend model}
 
 A linear regression model is fitted considering
-\(Y = \{y_1, y_2, ..., y_n\}\) as the dependent variable and and time
-\(1, 2,..., n\) as the independent variable. Then the first-order
+\(Y = \{y_1, y_2, \dots, y_n\}\) as the dependent variable and and time
+\(1, 2,\dots, n\) as the independent variable. Then the first-order
 autocorrelation coefficient of the residual series is calculated. The
 purpose of including this feature is to discriminate between trend
 stationary and difference-stationary processes. If \(Y\) is
@@ -1609,13 +1600,13 @@ follow a random walk model.
 \textbf{Partial-autocorrelation based features}
 
 Partial-autocorrelation measures the relationship between \(y_t\) and
-\(y_{t-k}\) after removing the effects of other time lags -- 1, 2, 3,
-\ldots{}\(k-1\). We calculate the sum of squares of first five partial
-autocorrelation coefficients of the original series, first-difference
-series and second-difference series. Hence, this gives three(3) features
-to our experiment. Partial-autocorrelation coefficients play an
-important role in Box-Jenkins\autocite{box2015time} approach to time
-series modelling as it helps to determine number of AR terms to be
+\(y_{t-k}\) after removing the effects of other time lags --
+\(1, 2, 3, \dots, k-1\). We calculate the sum of squares of first five
+partial autocorrelation coefficients of the original series,
+first-difference series and second-difference series. Hence, this gives
+three features to our experiment. Partial-autocorrelation coefficients
+play an important role in Box-Jenkins\autocite{box2015time} approach to
+time series modelling as it helps to determine number of AR terms to be
 included in both AR(P) and ARIMA(P, d, Q).
 
 \newpage
