@@ -41,22 +41,22 @@ keywords: Time Series, Forecasting, Time Series Features, Random Forest, Meta-le
 ```{r initial, echo = FALSE, cache = FALSE, include = FALSE}
 library(knitr)
 opts_chunk$set(
-  warning = FALSE, 
-  message = FALSE, 
-  echo = FALSE, 
-  fig.path = 'figure/', 
-  cache.path = 'cache/', 
-  fig.align = 'center', 
-  fig.show = 'hold', 
-  cache = TRUE, 
-  external = TRUE, 
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  fig.path = "figure/",
+  cache.path = "cache/",
+  fig.align = "center",
+  fig.show = "hold",
+  cache = TRUE,
+  external = TRUE,
   dev = "pdf",
-  fig.height = 5, 
-  fig.width = 8, 
+  fig.height = 5,
+  fig.width = 8,
   out.width = "\\textwidth"
 )
 library(ggplot2)
-#read_chunk('src/main.R')
+# read_chunk('src/main.R')
 ```
 
 
@@ -88,179 +88,186 @@ The features we consider should have the highest discriminatory power in accorda
 
 ```{r fig1, fig.cap="Instance-based representation of time series\\label{timeseries}", cache=T}
 library(Mcomp)
-# Loading M3 data
-data(M3)
 # Extract annual data
-yearly_m3 <- subset(M3,"yearly")
+yearly_m3 <- subset(M3, "yearly")
 
 # paper code
 library(Mcomp)
 data(M3)
 # trend series
 p1 <- autoplot(M3[["N0001"]]) +
-  theme(legend.position="none", axis.title.x=element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank())
 # random walk
 p2 <- autoplot(M3[["N0633"]]) +
-  theme(legend.position="none", axis.title.x=element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank())
 p3 <- autoplot(M3[["N0625"]]) +
-  theme(legend.position="none", axis.title.x=element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank())
 
 # white noise
 p4 <- autoplot(M3[["N0645"]]) +
-  theme(legend.position="none", axis.title.x=element_blank())
-#trend+seasonality
-p5 <- autoplot(M3[["N2012"]]) + 
-  theme(legend.position="none", axis.title.x=element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank())
+# trend+seasonality
+p5 <- autoplot(M3[["N2012"]]) +
+  theme(legend.position = "none", axis.title.x = element_blank())
 # seasonality
-p6 <- autoplot(M3[["N1912"]]) + 
-  theme(legend.position="none", axis.title.x=element_blank())
+p6 <- autoplot(M3[["N1912"]]) +
+  theme(legend.position = "none", axis.title.x = element_blank())
 library(gridExtra)
-grid.arrange(p1, p2, p3, p4, p5, p6, ncol=3)
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3)
 ```
 
 ```{r fig2, fig.cap="Feature-based representation of time series\\label{features1}", out.width="70%"}
-paper_time <- list(M3[["N0001"]], M3[["N0633"]],M3[["N0625"]],M3[["N0645"]],M3[["N2012"]],M3[["N1912"]])
-auto_arima_results <- lapply(paper_time, 
-  function(ts) as.character(auto.arima(ts$x))) 
-auto_arima_results <- lapply(paper_time, 
-  function(ts) as.character(auto.arima(ts$x))) 
+paper_time <- list(M3[["N0001"]], M3[["N0633"]], M3[["N0625"]], M3[["N0645"]], M3[["N2012"]], M3[["N1912"]])
+auto_arima_results <- lapply(
+  paper_time,
+  function(ts) as.character(auto.arima(ts$x))
+)
+auto_arima_results <- lapply(
+  paper_time,
+  function(ts) as.character(auto.arima(ts$x))
+)
 
 # calculation of strength of trend and seasonality
 
-findfrequency <- function(x)
-{
-	n <- length(x)
-	x <- as.ts(x)
-	# Remove trend from data
-	x <- residuals(tslm(x ~ trend))
-	# Compute spectrum by fitting ar model to largest section of x
-	n.freq <- 500
-	spec <- spec.ar(c(na.contiguous(x)), plot=FALSE, n.freq=n.freq)
-	if(max(spec[["spec"]])>10) # Arbitrary threshold chosen by trial and error.
-	{
-		period <- floor(1/spec[["freq"]][which.max(spec[["spec"]])] + 0.5)
-		if(period==Inf) # Find next local maximum
-		{
-			j <- which(diff(spec[["spec"]])>0)
-			if(length(j)>0)
-			{
-				nextmax <- j[1] + which.max(spec[["spec"]][(j[1]+1):n.freq])
-				if(nextmax < length(spec[["freq"]]))
-					period <- floor(1/spec[["freq"]][nextmax] + 0.5)
-				else
-					period <- 1L
-			}
-			else
-				period <- 1L
-		}
-	}
-	else
-		period <- 1L
-	
-	return(as.integer(period))
+findfrequency <- function(x) {
+  n <- length(x)
+  x <- as.ts(x)
+  # Remove trend from data
+  x <- residuals(tslm(x ~ trend))
+  # Compute spectrum by fitting ar model to largest section of x
+  n.freq <- 500
+  spec <- spec.ar(c(na.contiguous(x)), plot = FALSE, n.freq = n.freq)
+  if (max(spec[["spec"]]) > 10) # Arbitrary threshold chosen by trial and error.
+  {
+    period <- floor(1 / spec[["freq"]][which.max(spec[["spec"]])] + 0.5)
+    if (period == Inf) # Find next local maximum
+    {
+      j <- which(diff(spec[["spec"]]) > 0)
+      if (length(j) > 0) {
+        nextmax <- j[1] + which.max(spec[["spec"]][(j[1] + 1):n.freq])
+        if (nextmax < length(spec[["freq"]])) {
+          period <- floor(1 / spec[["freq"]][nextmax] + 0.5)
+        } else {
+          period <- 1L
+        }
+      }
+      else {
+        period <- 1L
+      }
+    }
+  }
+  else {
+    period <- 1L
+  }
+
+  return(as.integer(period))
 }
 
-decomp <- function(x,transform=TRUE)
-{
-	require(forecast)
-	# Transform series
-	if(transform & min(x,na.rm=TRUE) >= 0)
-	{
-		lambda <- BoxCox.lambda(na.contiguous(x))
-		x <- BoxCox(x,lambda)
-	}
-	else
-	{
-		lambda <- NULL
-		transform <- FALSE
-	}
-	# Seasonal data
-	if(frequency(x)>1)
-	{
-		x.stl <- stl(x,s.window="periodic",na.action=na.contiguous)
-		trend <- x.stl[["time.series"]][,2]
-		season <- x.stl[["time.series"]][,1]
-		remainder <- x - trend - season
-	}
-	else #Nonseasonal data
-	{
-		require(mgcv)
-		tt <- 1:length(x)
-		trend <- rep(NA,length(x))
-		trend[!is.na(x)] <- fitted(gam(x ~ s(tt)))
-		season <- NULL
-		remainder <- x - trend
-	}
-	return(list(x=x,trend=trend,season=season,remainder=remainder,
-							transform=transform,lambda=lambda))
+decomp <- function(x, transform=TRUE) {
+  require(forecast)
+  # Transform series
+  if (transform & min(x, na.rm = TRUE) >= 0) {
+    lambda <- BoxCox.lambda(na.contiguous(x))
+    x <- BoxCox(x, lambda)
+  }
+  else {
+    lambda <- NULL
+    transform <- FALSE
+  }
+  # Seasonal data
+  if (frequency(x) > 1) {
+    x.stl <- stl(x, s.window = "periodic", na.action = na.contiguous)
+    trend <- x.stl[["time.series"]][, 2]
+    season <- x.stl[["time.series"]][, 1]
+    remainder <- x - trend - season
+  }
+  else # Nonseasonal data
+  {
+    require(mgcv)
+    tt <- 1:length(x)
+    trend <- rep(NA, length(x))
+    trend[!is.na(x)] <- fitted(gam(x ~ s(tt)))
+    season <- NULL
+    remainder <- x - trend
+  }
+  return(list(
+    x = x, trend = trend, season = season, remainder = remainder,
+    transform = transform, lambda = lambda
+  ))
 }
 
-measures <- function(x)
-{
-	require(forecast)
-	
-	N <- length(x)
-	freq <- findfrequency(x)
-	fx <- c(frequency=(exp((freq-1)/50)-1)/(1+exp((freq-1)/50)))
-	x <- ts(x,f=freq)
-	
-	# Decomposition
-	decomp.x <- decomp(x)
-	
-	# Adjust data
-	if(freq > 1)
-		fits <- decomp.x[["trend"]] + decomp.x[["season"]]
-	else # Nonseasonal data
-		fits <- decomp.x[["trend"]]
-	adj.x <- decomp.x[["x"]] - fits + mean(decomp.x[["trend"]], na.rm=TRUE)
-	
-	# Backtransformation of adjusted data
-	if(decomp.x[["transform"]])
-		tadj.x <- InvBoxCox(adj.x,decomp.x[["lambda"]])
-	else
-		tadj.x <- adj.x
-	
-	# Trend and seasonal measures
-	v.adj <- var(adj.x, na.rm=TRUE)
-	if(freq > 1)
-	{
-		detrend <- decomp.x[["x"]] - decomp.x[["trend"]]
-		deseason <- decomp.x[["x"]] - decomp.x[["season"]]
-		trend <- ifelse(var(deseason,na.rm=TRUE) < 1e-10, 0, 
-										max(0,min(1,1-v.adj/var(deseason,na.rm=TRUE))))
-		season <- ifelse(var(detrend,na.rm=TRUE) < 1e-10, 0,
-										 max(0,min(1,1-v.adj/var(detrend,na.rm=TRUE))))
-	}
-	else #Nonseasonal data
-	{
-		trend <- ifelse(var(decomp.x[["x"]],na.rm=TRUE) < 1e-10, 0,
-										max(0,min(1,1-v.adj/var(decomp.x[["x"]],na.rm=TRUE))))
-		season <- 0
-	}
-	
-	m <- c(fx,trend,season)
-	
+measures <- function(x) {
+  require(forecast)
 
-	m <- c(trend, season)
-	names(m) <- c("trend","seasonal")
-	
-	return(m)
+  N <- length(x)
+  freq <- findfrequency(x)
+  fx <- c(frequency = (exp((freq - 1) / 50) - 1) / (1 + exp((freq - 1) / 50)))
+  x <- ts(x, f = freq)
+
+  # Decomposition
+  decomp.x <- decomp(x)
+
+  # Adjust data
+  if (freq > 1) {
+    fits <- decomp.x[["trend"]] + decomp.x[["season"]]
+  } else { # Nonseasonal data
+    fits <- decomp.x[["trend"]]
+  }
+  adj.x <- decomp.x[["x"]] - fits + mean(decomp.x[["trend"]], na.rm = TRUE)
+
+  # Backtransformation of adjusted data
+  if (decomp.x[["transform"]]) {
+    tadj.x <- InvBoxCox(adj.x, decomp.x[["lambda"]])
+  } else {
+    tadj.x <- adj.x
+  }
+
+  # Trend and seasonal measures
+  v.adj <- var(adj.x, na.rm = TRUE)
+  if (freq > 1) {
+    detrend <- decomp.x[["x"]] - decomp.x[["trend"]]
+    deseason <- decomp.x[["x"]] - decomp.x[["season"]]
+    trend <- ifelse(var(deseason, na.rm = TRUE) < 1e-10, 0,
+      max(0, min(1, 1 - v.adj / var(deseason, na.rm = TRUE)))
+    )
+    season <- ifelse(var(detrend, na.rm = TRUE) < 1e-10, 0,
+      max(0, min(1, 1 - v.adj / var(detrend, na.rm = TRUE)))
+    )
+  }
+  else # Nonseasonal data
+  {
+    trend <- ifelse(var(decomp.x[["x"]], na.rm = TRUE) < 1e-10, 0,
+      max(0, min(1, 1 - v.adj / var(decomp.x[["x"]], na.rm = TRUE)))
+    )
+    season <- 0
+  }
+
+  m <- c(fx, trend, season)
+
+
+  m <- c(trend, season)
+  names(m) <- c("trend", "seasonal")
+
+  return(m)
 }
 
 library(ggrepel)
-l <- lapply(paper_time, function(ts){measures(ts$x)})
-df <- data.frame(matrix(unlist(l), nrow=6, byrow=T),stringsAsFactors=FALSE)
+l <- lapply(paper_time, function(ts) {
+  measures(ts$x)
+})
+df <- data.frame(matrix(unlist(l), nrow = 6, byrow = T), stringsAsFactors = FALSE)
 names(df) <- c("trend", "seasonality")
 df$id <- c("N0001", "N0633", "N0625", "N0645", "N2012", "N1912")
-ggplot(df, aes(x=trend, y=seasonality)) + 
-  geom_point() + 
+ggplot(df, aes(x = trend, y = seasonality)) +
+  geom_point() +
   coord_fixed() +
   geom_text_repel(
-		aes(label=id, fill=factor(id)), 
-    colour="black",
-    size=3, 
-    box.padding = unit(0.5, "lines")) + 
-  theme(legend.position="none")
+    aes(label = id, fill = factor(id)),
+    colour = "black",
+    size = 3,
+    box.padding = unit(0.5, "lines")
+  ) +
+  theme(legend.position = "none")
 ```
 
 
@@ -277,7 +284,7 @@ Following the idea of feature-based representation of time series several resear
 John Rice is an early and strong proponent of the idea of meta learning which he called algorithm selection problem(ASP)[@rice1976]. The term *meta-learning* started to appear with the emerge of machine-learning literature. The Rice's framework for algorithm selection is shown in \autoref{fig:rice}.
 
 ```{r rice, fig.width=7,fig.height=5, fig.cap="Rice's framework for Algorithm Selection Problem (reproduced from Smith-Miles, 2009)"}
-knitr::include_graphics('figures/RiceFramework.png')
+knitr::include_graphics("figures/RiceFramework.png")
 ```
 
 
@@ -322,7 +329,7 @@ In order to train our classification algorithm, we need a large collection of ti
 
 
 ```{r framework, fig.cap="Proposed framework (blue: offline phase, red: online phase)"}
-knitr::include_graphics('figures/framework.png')
+knitr::include_graphics("figures/framework.png")
 ```
 
 \begin{algorithm}
@@ -510,14 +517,31 @@ library(grid)
 library(gridExtra)
 library(png)
 
-img1 <-  rasterGrob(as.raster(readPNG("figures/ggheatmapA.png")), interpolate = FALSE)
-img2 <-  rasterGrob(as.raster(readPNG("figures/ggheatmapB.png")), interpolate = FALSE)
-img3 <-  rasterGrob(as.raster(readPNG("figures/ggheatmapC.png")), interpolate = FALSE)
-img4 <-  rasterGrob(as.raster(readPNG("figures/ggheatmapD.png")), interpolate = FALSE)
-img5 <-  rasterGrob(as.raster(readPNG("figures/ggheatmapE.png")), interpolate = FALSE)
-img6 <-  rasterGrob(as.raster(readPNG("figures/ggheatmapF.png")), interpolate = FALSE)
+img1 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapA.png")),
+  interpolate = FALSE
+)
+img2 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapB.png")),
+  interpolate = FALSE
+)
+img3 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapC.png")),
+  interpolate = FALSE
+)
+img4 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapD.png")),
+  interpolate = FALSE
+)
+img5 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapE.png")),
+  interpolate = FALSE
+)
+img6 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapF.png")),
+  interpolate = FALSE
+)
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
-
 ```
 
 
@@ -549,20 +573,31 @@ The \autoref{YM3} to \autoref{YM1} compare the performance of our proposed frame
 library(grid)
 library(gridExtra)
 library(png)
-img1 <-  rasterGrob(as.raster(readPNG("figures/pca1M1Y.png")), 
-  interpolate = FALSE)
-img2 <-  rasterGrob(as.raster(readPNG("figures/pca2M1Y.png")), 
-  interpolate = FALSE)
-img3 <-  rasterGrob(as.raster(readPNG("figures/pca3M1Y.png")), 
-  interpolate = FALSE)
-img4 <-  rasterGrob(as.raster(readPNG("figures/pca1M3Y.png")), 
-  interpolate = FALSE)
-img5 <-  rasterGrob(as.raster(readPNG("figures/pca2M3Y.png")), 
-  interpolate = FALSE)
-img6 <-  rasterGrob(as.raster(readPNG("figures/pca3M3Y.png")), 
-  interpolate = FALSE)
+img1 <- rasterGrob(
+  as.raster(readPNG("figures/pca1M1Y.png")),
+  interpolate = FALSE
+)
+img2 <- rasterGrob(
+  as.raster(readPNG("figures/pca2M1Y.png")),
+  interpolate = FALSE
+)
+img3 <- rasterGrob(
+  as.raster(readPNG("figures/pca3M1Y.png")),
+  interpolate = FALSE
+)
+img4 <- rasterGrob(
+  as.raster(readPNG("figures/pca1M3Y.png")),
+  interpolate = FALSE
+)
+img5 <- rasterGrob(
+  as.raster(readPNG("figures/pca2M3Y.png")),
+  interpolate = FALSE
+)
+img6 <- rasterGrob(
+  as.raster(readPNG("figures/pca3M3Y.png")),
+  interpolate = FALSE
+)
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
-
 ```
 
 
@@ -618,18 +653,30 @@ library(grid)
 library(gridExtra)
 library(png)
 
-img1 <-  rasterGrob(as.raster(readPNG("figures/pca1M1Q.png")), 
-  interpolate = FALSE)
-img2 <-  rasterGrob(as.raster(readPNG("figures/pca2M1Q.png")), 
-  interpolate = FALSE)
-img3 <-  rasterGrob(as.raster(readPNG("figures/pca3M1Q.png")), 
-  interpolate = FALSE)
-img4 <-  rasterGrob(as.raster(readPNG("figures/pca1M3Q.png")), 
-  interpolate = FALSE)
-img5 <-  rasterGrob(as.raster(readPNG("figures/pca2M3Q.png")), 
-  interpolate = FALSE)
-img6 <-  rasterGrob(as.raster(readPNG("figures/pca3M3Q.png")), 
-  interpolate = FALSE)
+img1 <- rasterGrob(
+  as.raster(readPNG("figures/pca1M1Q.png")),
+  interpolate = FALSE
+)
+img2 <- rasterGrob(
+  as.raster(readPNG("figures/pca2M1Q.png")),
+  interpolate = FALSE
+)
+img3 <- rasterGrob(
+  as.raster(readPNG("figures/pca3M1Q.png")),
+  interpolate = FALSE
+)
+img4 <- rasterGrob(
+  as.raster(readPNG("figures/pca1M3Q.png")),
+  interpolate = FALSE
+)
+img5 <- rasterGrob(
+  as.raster(readPNG("figures/pca2M3Q.png")),
+  interpolate = FALSE
+)
+img6 <- rasterGrob(
+  as.raster(readPNG("figures/pca3M3Q.png")),
+  interpolate = FALSE
+)
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
 ```
 
@@ -689,14 +736,13 @@ library(grid)
 library(gridExtra)
 library(png)
 
-img1 <-  rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
-img2 <-  rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
-img3 <-  rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
-img4 <-  rasterGrob(as.raster(readPNG("figures/pca1M3M.png")), interpolate = FALSE)
-img5 <-  rasterGrob(as.raster(readPNG("figures/pca2M3M.png")), interpolate = FALSE)
-img6 <-  rasterGrob(as.raster(readPNG("figures/pca3M3M.png")), interpolate = FALSE)
+img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
+img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
+img3 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
+img4 <- rasterGrob(as.raster(readPNG("figures/pca1M3M.png")), interpolate = FALSE)
+img5 <- rasterGrob(as.raster(readPNG("figures/pca2M3M.png")), interpolate = FALSE)
+img6 <- rasterGrob(as.raster(readPNG("figures/pca3M3M.png")), interpolate = FALSE)
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
-
 ```
 
 \begin{table}[!h]
