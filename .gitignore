@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 cache/*
+*.bcf
+*.run.xml
+*.log
