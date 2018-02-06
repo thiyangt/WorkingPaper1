@@ -2,21 +2,21 @@
 title: "Meta-learning classification framework for time series forecasting"
 author:
   - familyname: Talagala
-    othernames: Thiyanga S.
-    address: Department of Econometrics and Business Statistics, \newline Monash University, VIC 3800 \newline Australia.
+    othernames: Thiyanga S
+    address: Department of Econometrics and Business Statistics, \newline Monash University, VIC 3800, Australia.
     email : thiyanga.talagala@monash.edu
     correspondingauthor: true
   - familyname: Hyndman
     othernames: Rob J
-    address: Department of Econometrics and Business Statistics, \newline Monash University, VIC 3800 \newline Australia.
+    address: Department of Econometrics and Business Statistics, \newline Monash University, VIC 3800, Australia.
     email : rob.hyndman@monash.edu
   - familyname: Athanasopoulos
     othernames: George
-    address: Department of Econometrics and Business Statistics, \newline Monash University, VIC 3145 \newline Australia.
+    address: Department of Econometrics and Business Statistics, \newline Monash University, VIC 3145, Australia.
     email : george.athanasopoulos@monash.edu
 blind: false
 cover: true
-wpnumber: no/yr
+wpnumber: ??/18
 jelcodes: C10,C14,C22
 bibliography: FBF.bib
 biblio-style: authoryear-comp
@@ -33,31 +33,33 @@ output:
       in_header: preamble.tex
     keep_tex: yes
     number_sections: yes
-citation_package: biblatex
+    citation_package: biblatex
+abstract: A crucial aspect in time series forecasting is the ability to identify the most suitable forecasting method. We present a general framework for forecast model selection using meta-learning approach. In contrast to the existing approaches, our method operates on features of the time series. A Random Forest approach is used to develop the meta-classifier. The proposed framework has been evaluated using the time series of the M1 and M3 competitions, and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting.
+keywords: Time Series, Forecasting, Time Series Features, Random Forest, Meta-learning, Algorithm selection problem
 ---
 
 ```{r initial, echo = FALSE, cache = FALSE, include = FALSE}
 library(knitr)
 opts_chunk$set(
-  warning = FALSE, message = FALSE, echo = FALSE, 
-  fig.path = 'figure/', cache.path = 'cache/', fig.align = 'center', 
-  fig.show = 'hold', cache = TRUE, external = TRUE, dev = "pdf",
-  fig.height = 5, fig.width = 8, out.width = "\\textwidth"
+  warning = FALSE, 
+  message = FALSE, 
+  echo = FALSE, 
+  fig.path = 'figure/', 
+  cache.path = 'cache/', 
+  fig.align = 'center', 
+  fig.show = 'hold', 
+  cache = TRUE, 
+  external = TRUE, 
+  dev = "pdf",
+  fig.height = 5, 
+  fig.width = 8, 
+  out.width = "\\textwidth"
 )
 library(ggplot2)
 #read_chunk('src/main.R')
 ```
 
-\begin{abstract}
-A crucial aspect in time series forecasting is the ability to identify the most suitable forecasting method. We present a general framework for forecast model selection using meta-learning approach. In contrast to the existing approaches, our method operates on features of the time series. A Random Forest approach is used to develop the meta-classifier. The proposed framework has been evaluated using the time series of the M1 and M3 competitions, and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting.
-\end{abstract}
 
-\begin{keywords}
-Time Series, Forecasting, Time Series Features, Random Forest, Meta-learning, Algorithm selection problem
-
-\end{keywords}
-
-\newpage
 # Introduction
 
 Forecasting is a key aspect for any businesses to operate efficiently. The rapid advances in computing technologies have enabled businesses to keep track of large number of time series variables. Hence, it is becoming increasingly common to have to regularly forecast many millions of time series. For example, large scale businesses often are interested in forecasting  sales, cost, demand for their thousands of products across different locations, warehouses, etc. Further, Google and Yahoo both collect many millions of daily time series such as web-click logs, web search counts, queries, revenue, number of users for different services such as YouTube, Facebook, etc.  In these circumstances, it is essential to have a tool to provide fast and accurate automatic forecasts. However, the scale of these tasks have raised some computational challenges that we seek to address by proposing a new fast algorithm for model selection and time series forecasting.
