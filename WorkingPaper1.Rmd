@@ -79,14 +79,14 @@ The rest of this paper is organized as follows. We review the related work in Se
 
 The first step in the analysis of time series is usually to plot the data against time. This is known as instance based representation of time series. @tukey1988computer argued large dimensionality of data can make the viewing of graphs unrealistic due to the limits of human patience. He pointed out computers have no such limitations and measures calculated on data using computers will be potentially useful in a high dimensional setting. He called those measures "cognostics"-  computer aided diagnostics. This concept has been re-branded in the machine learning community as *features* or *characteristics*. In this paper we use the term *features*.
 
-In the context of time series analysis any measurable characteristic of a time series is known as a *feature*. The set of features that represent a single time series are referred to as *feature vector* or *array of features*. For example, \autoref{timeseries} below shows the instance-based representation of six time series taken from the M3 competition database while \autoref{features1} shows the feature-based representation of the six time series. Here the features considered are the strength of seasonality and strength of trend which were calculated based on the measures introduced by @wang2009rule. Time series in the lower left quadrant of \autoref{features1} are non-seasonal but trended while there is only one series with both high trend and high seasonality. We also see how their degree of seasonality and trend varies. Measure of non-linearity, lag correlation, self-similarity and spectral-entropy are some other examples of time series features. 
+In the context of time series analysis any measurable characteristic of a time series is known as a *feature*. The set of features that represent a single time series are referred to as *feature vector* or *array of features*. For example, \autoref{fig:fig1} below shows the instance-based representation of six time series taken from the M3 competition database while \autoref{fig:fig2} shows the feature-based representation of the six time series. Here the features considered are the strength of seasonality and strength of trend which were calculated based on the measures introduced by @wang2009rule. Time series in the lower left quadrant of \autoref{fig:fig2} are non-seasonal but trended while there is only one series with both high trend and high seasonality. We also see how their degree of seasonality and trend varies. Measure of non-linearity, lag correlation, self-similarity and spectral-entropy are some other examples of time series features. 
 
 @fulcher2014highly introduced 9000 operations to extract features from time series. This is the most recent work devoted to the feature-based representation of time series. However, the choice of the most appropriate set of features depends on the purpose of the study. In this paper we use the time series features for the purpose of forecast model selection. 
 
 The features we consider should have the highest discriminatory power in accordance to the classification problem we have. Further, it is important to keep this set as small as possible in order to reduce the computational time.
 
 
-```{r fig1, fig.cap="Instance-based representation of time series\\label{timeseries}", cache=T}
+```{r fig1, fig.cap="Instance-based representation of time series"}
 library(Mcomp)
 # Extract annual data
 yearly_m3 <- subset(M3, "yearly")
@@ -116,7 +116,7 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3)
 ```
 
-```{r fig2, fig.cap="Feature-based representation of time series\\label{features1}", out.width="70%"}
+```{r fig2, fig.cap="Feature-based representation of time series", out.width="70%"}
 paper_time <- list(M3[["N0001"]], M3[["N0633"]], M3[["N0625"]], M3[["N0645"]], M3[["N2012"]], M3[["N1912"]])
 auto_arima_results <- lapply(
   paper_time,
@@ -445,8 +445,7 @@ Therefore, in accordance to Rice's framework, for yearly data, the algorithm spa
 Inorder to identify the output label: "best" model, RW, RWD, Theta, STL-AR, Seasonal naive (only for seasonal time series), WN are implemented on training set of each series and forecasts are produced for the whole of the test sets. In addition, we further use `auto.arima` and `ets` functions in the forecast package to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS model. The model model corresponds to the smallest MASE [@hyndman2006another] for the test set is selected as the *output-lable*. 
  
 
-## Feature computation process
-\label{sec:features}
+## Feature computation process {#sec:features}
 
 We use a set of 25 features for yearly data and a set of 30 features for seasonal data, spanning from simple attributes like, length of series, to slightly complex ones, like spectral entropy. Some of the features  are already established features from previous studies [@wang2009rule; @hyndman2015large; @kang2017visualising]. We have also added some new features that we believe provide some useful information. These are summarized in \autoref{feature}. For a full description of each feature please refer to Appendix 1.
 
@@ -506,8 +505,7 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
 Our reference set is imbalanced: some classes contains significantly more cases than the other classes. The degree of class imbalance to some extent by augmenting the observed sample with simulated time series. The random forests algorithm is highly sensitive to the class imbalance [@breiman2001random]. We use three approaches to address the class imbalance in the data: i) incorporate class priors into the random forest classifier,  and ii) use Balanced Random Forest(BRF) algorithm introduced by @chen2004using and iii) re-balancing the reference set with down sampling. Note, that BRF algorithm is different from down-sampling approach. In down sampling thereference set is pre-processed by down-sampling the majority class into the size of the minority class which is potentially discard some useful information. We compare the results of above three random forests to the random forest classifier build on imbalanced data. The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest]. The class priors are introduced through the option `classwt`. We use reciprocal of class size as class priors. In each case the two parameters of the of RF algorithm are set as: number of trees(*ntree*) - 1000, and number of randomly selected features(*mtry*) - one third of the total number of features. The number of trees are limited to 1000 to fasten the online calculation process. The Random forest trained on unbalanced data (RF-unbalanced) and 
 
 
-## Summary of the main results
-\label{sec:results}
+## Summary of the main results {#sec:results}
 
 The matrices of Pearson correlation coefficients for all the features in the reference sets of each experiments are presented in \autoref{fig:cormat}. Although the correlations among particular features are of interest the focal point of \autoref{fig:cormat} is the entire matrix of correlation coefficients. The degree of variability in the Pearson's correlation coefficients between features indicate the diversity of the selected features. In other words the features we used were able to capture the different characteristics of the time series. Further, the structure of correlation matrices are similar to each other Random forest with class priors (RF-class priors) outperform the other methods.
 
