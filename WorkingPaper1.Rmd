@@ -297,7 +297,7 @@ For a given problem instance $x \in P$, with features $f(x) \in F$, find the sel
 
 The main challenge in ASP is to identify the selection mapping $S$ from
 feature space to algorithm space. Even though, Rice's framework articulate
-a conceptually rich framework, it is not clear the implementation from feature space to the algorithm space. This gives rise to the meta-learning approach. The main difference between the Rice's framework and the meta-learning approach is that the meta-learning framework consist of a offline(training) phase and online(prediction) phase. In the offline phase, the mapping $S$ is learned based on a previous record of training examples. This is performed by using a *meta-learner* which can be a any supervised learning algorithm. In other words, the meta-learner establishes rules to link the relationship between the feature space and the algorithm space. In the context of meta-learning, the inputs for the meta-learner are known as *meta-features* and instances in the algorithm space are the *output labels* of the meta learner. The database consists of both input-features and output-labels is called *meta-data*. In the offline phase of the algorithm input-features are extracted from new data and passed into the meta-learner constructed in the offline phase to predict output-labels of new data. The framework has attracted lot of research in recent as researchers are increasingly investigating how to identify the most suitable method among the existing algorithms for solving a problem rather than developing new algorithms. 
+a conceptually rich framework, it is not clear the implementation from feature space to the algorithm space. This gives rise to the meta-learning approach. The main difference between the Rice's framework and the meta-learning approach is that the meta-learning framework consist of a offline(training) phase and online (prediction) phase. In the offline phase, the mapping $S$ is learned based on a previous record of training examples. This is performed by using a *meta-learner* which can be a any supervised learning algorithm. In other words, the meta-learner establishes rules to link the relationship between the feature space and the algorithm space. In the context of meta-learning, the inputs for the meta-learner are known as *meta-features* and instances in the algorithm space are the *output labels* of the meta learner. The database consists of both input-features and output-labels is called *meta-data*. In the offline phase of the algorithm input-features are extracted from new data and passed into the meta-learner constructed in the offline phase to predict output-labels of new data. The framework has attracted lot of research in recent as researchers are increasingly investigating how to identify the most suitable method among the existing algorithms for solving a problem rather than developing new algorithms. 
 
 ## Previous Work on Forecasting Model Selection using Meta-Learning
 
@@ -338,7 +338,7 @@ knitr::include_graphics("figures/framework.png")
   \begin{algorithmic}[1]
     \Statex \textbf{Offline phase}
     \Statex \text{Given:}
-    \Statex \hspace{1cm}$O=\{t_1, t_2, ...t_n\}:$ the collection of $n$ observed time series
+    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series
       \Statex \hspace{1cm}$L:$ the set of class labels (eg: ARIMA, ETS, SNAIVE, etc.)
          \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features
          \Statex \hspace{1cm}$nsim:$ number of series to be simulated
@@ -351,7 +351,7 @@ knitr::include_graphics("figures/framework.png")
     \Statex For $i=1$ to $n$
     \State Fit ARIMA and ETS models to $t_i$
     \State Simulate $nsim$ number of time series from each model in step 2
-    \State The time series in $O$ and simulated time series in step 3 create the reference set $R=\{t_1, t_2, ...t_n, t_{n+1}....t_N\}$ where $N = n + nsim$.
+    \State The time series in $O$ and simulated time series in step 3 create the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
     \Statex 
     \Statex \textit{Prepare the meta-data}
     \Statex For $j=1$ to $N$
@@ -813,7 +813,7 @@ The length of time series is the number of observations that constitute it. The 
 
 **STL-decomposition based features: strength of trend, strength of seasonality, linearity, curvature, spikiness and first autocorrelation coefficient of the remainder series**
 
-The features strength of trend, strength of seasonality, linearity, curvature, spikiness and first autocorrelation coefficient of the remainder series are calculated based on the STL-decomposition of the time series. In the following description, our notations are as follows: We represent a time series $Y$ of length $N$ as $y_1, y_2, ...y_N$. First, the Box-Cox transformation is applied to the time series. The reasons for applying Box-Cox transformation: i) to stabilize the variance, ii) to make the seasonal effect additive, and iii) to make the data normally distributed. The transformed series is denoted by $Y_{t}^*$. The basic decomposition structure of the time series is denoted by: $Y_t^*=T_t+S_t+E_t$, where $T_t$ denotes the trend in time series, $S_t$ denotes the seasonal component, while $E_t$ is the remainder component [@cleveland1990stl]. Further, the detrended series $X_t$ is $X_t=Y_t^*-T_t$, the deseasonalized series is to be define as $Z_t=Y_t^*-S_t$, and the remainder series, $R_t$, is defined as $R_t=Y_t^*-T_t-S_t$.
+The features strength of trend, strength of seasonality, linearity, curvature, spikiness and first autocorrelation coefficient of the remainder series are calculated based on the STL-decomposition of the time series. In the following description, our notations are as follows: We represent a time series $Y$ of length $N$ as $y_1, y_2, \dots,y_N$. First, the Box-Cox transformation is applied to the time series. The reasons for applying Box-Cox transformation: i) to stabilize the variance, ii) to make the seasonal effect additive, and iii) to make the data normally distributed. The transformed series is denoted by $Y_{t}^*$. The basic decomposition structure of the time series is denoted by: $Y_t^*=T_t+S_t+E_t$, where $T_t$ denotes the trend in time series, $S_t$ denotes the seasonal component, while $E_t$ is the remainder component [@cleveland1990stl]. Further, the detrended series $X_t$ is $X_t=Y_t^*-T_t$, the deseasonalized series is to be define as $Z_t=Y_t^*-S_t$, and the remainder series, $R_t$, is defined as $R_t=Y_t^*-T_t-S_t$.
 
 **Strength of trend**
 
@@ -835,7 +835,7 @@ The features linearity and the curvature are computed based on the coefficients 
 
 \[T_t=\beta_0+\beta_1time_t+\beta_2time_t^2+\epsilon_t\]
 
-where, $time=1, 2, ...N$. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. The features have been used by @hyndman2015large. 
+where, $time=1, 2, \dots,N$. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. The features have been used by @hyndman2015large. 
 
 **Spikiness**
 
@@ -952,11 +952,11 @@ The autocorrelation coefficients measure the strength of the linear relationship
 
 **First-order autocorrelation coefficient of the residual of linear trend model**
 
-A linear regression model is fitted considering $Y = \{y_1, y_2, ..., y_n\}$ as the dependent variable and and time $1, 2,..., n$ as the independent variable. Then the first-order autocorrelation coefficient of the residual series is calculated. The purpose of including this feature is to discriminate between trend stationary and difference-stationary processes. If $Y$ is trend-stationary and if a deterministic trend is fitted then the residuals are white noise. On the other hand if the $Y$ is difference-stationary and a deterministic trend is fitted, residuals follow a random walk model.
+A linear regression model is fitted considering $Y = \{y_1, y_2, \dots, y_n\}$ as the dependent variable and and time $1, 2,\dots, n$ as the independent variable. Then the first-order autocorrelation coefficient of the residual series is calculated. The purpose of including this feature is to discriminate between trend stationary and difference-stationary processes. If $Y$ is trend-stationary and if a deterministic trend is fitted then the residuals are white noise. On the other hand if the $Y$ is difference-stationary and a deterministic trend is fitted, residuals follow a random walk model.
 
 **Partial-autocorrelation based features**
 
-Partial-autocorrelation measures the relationship between $y_t$ and $y_{t-k}$ after removing the effects of other time lags -- 1, 2, 3, ...$k-1$. We calculate the sum of squares of first five partial autocorrelation coefficients of the original series, first-difference series and second-difference series. Hence, this gives three(3) features to our experiment. Partial-autocorrelation coefficients play an important role in Box-Jenkins[@box2015time] approach to time series modelling as it helps to determine number of AR terms to be included in both AR(P) and ARIMA(P, d, Q).
+Partial-autocorrelation measures the relationship between $y_t$ and $y_{t-k}$ after removing the effects of other time lags -- $1, 2, 3, \dots, k-1$. We calculate the sum of squares of first five partial autocorrelation coefficients of the original series, first-difference series and second-difference series. Hence, this gives three features to our experiment. Partial-autocorrelation coefficients play an important role in Box-Jenkins[@box2015time] approach to time series modelling as it helps to determine number of AR terms to be included in both AR(P) and ARIMA(P, d, Q).
 
 \newpage
 
