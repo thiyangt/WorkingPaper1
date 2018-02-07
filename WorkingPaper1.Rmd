@@ -124,7 +124,7 @@ The choice of the most appropriate set of features depends on both the nature of
 
 @reid1972comparison pointed out that the performance of forecasting methods changes according to the nature of data, and if the reasons for these variations are explored, they may be useful in selecting the most appropriate model. In response to the results of the M3 competition [@makridakis2000m3], similar ideas have been reported by others, who have argued that the characteristics of various time series may provide useful insights into which forecasting methods are most appropriate to forecast a given time series [@hyndman2001s;@lawrence2001s;@armstrong2001s].
 
-Many time series forecasting techniques have been developed to capture specific characteristcs of time series that are common in a particular discipline. For example, GARCH models were introduced to account for time-varying volatility in financial time series, and ETS models were introduced to handle the trend and seasonal patterns which are typical in quarterly and monthly sales data. An appropriate set of features should reveal the characteristics of the time series that are useful in determining the best forecasting method.
+Many time series forecasting techniques have been developed to capture specific characteristics of time series that are common in a particular discipline. For example, GARCH models were introduced to account for time-varying volatility in financial time series, and ETS models were introduced to handle the trend and seasonal patterns which are typical in quarterly and monthly sales data. An appropriate set of features should reveal the characteristics of the time series that are useful in determining the best forecasting method.
 
 Several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. @kang2017visualising applied principal component analysis to project a large collection of time series into a two dimensional feature space in order to visualize what makes a particular forecasting method perform well or not. The features they considered were spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and optimal Box-Cox transformation parameter. They also proposed a method for generating new time series based on specified features. 
 
@@ -186,7 +186,7 @@ knitr::include_graphics("figures/framework.png")
     \Statex \textbf{Offline phase}
     \Statex \text{Given:}
     \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series.
-      \Statex \hspace{1cm}$L:$ the set of class labels (eg: ARIMA, ETS, SNAIVE).
+      \Statex \hspace{1cm}$L:$ the set of class labels (e.g.\ ARIMA, ETS, SNAIVE).
          \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features.
          \Statex \hspace{1cm}$nsim:$ number of series to be simulated.
          \Statex \hspace{1cm}$B:$ number of trees in the random forest.
@@ -372,6 +372,8 @@ grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
 
 The random forest algorithm is highly sensitive to class imbalance [@breiman2001random], and our reference set is unbalanced: some classes contains significantly more cases than other classes. The degree of class imbalance is reduced to some extent by augmenting the observed sample with simulated time series.  We consider three approaches to address the class imbalance in the data: 1) we incorporate class priors into the random forest classifier; 2) we use the Balanced Random Forest (BRF) algorithm introduced by @chen2004using; and 3) we re-balance the reference set with down-sampling. In down-sampling, the size of the reference set is reduced by down-sampling the larger classes so that they match the smallest class in size; this potentially discards some useful information. We compare the results of these three approaches to the classifier built on unbalanced data. The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest]. The class priors are introduced through the option `classwt`. We use the reciprocal of class size as the class priors. The number of trees `ntree` is set to 1000, and the number of randomly selected features `mtry` is set to be one third of the total number of features available. 
 
+Our aim is different from most classification problems in that we are not interested in accurately predicting the class, but in finding a good forecasting model. It is possible that two models produce almost equally good forecasts, and then it does not matter whether the classifier picks one or the other. Consequently, we do not study the classification accuracy of our random forests, but only report the forecast accuracy obtained with using them.
+
 
 ## Summary of the main results {#sec:results}
 
@@ -474,6 +476,9 @@ Theta           & 1.15      & 1.70      & 2.38      & 3.00      & 3.59      & 4.
 \end{table}
 
 
+### Quarterly data {-}
+
+
 
 ```{r pca2,fig.cap="Distribution of quarterly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A--1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A--2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.", fig.pos="!bp"}
 img1 <- rasterGrob(
@@ -503,7 +508,6 @@ img6 <- rasterGrob(
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
 ```
 
-### Quarterly data {-}
 
 For the quarterly data, the first 3 principal components explain 62.40% of the total variance of the features for the M1 competition data, and 64.75% for the M3 competition data.
 
@@ -532,6 +536,8 @@ Snaive          & 1.11      & 1.10      & 1.08      & 1.09      & 1.21      & 1.
 \end{tabular}
 \end{table}
 
+\clearpage
+
 \begin{table}[!h]
 \centering\small
 \caption{Experiment 2 (observed sample M3): Forecast accuracy measures for 203 M1 quarterly series.}
@@ -556,14 +562,11 @@ Snaive          & 1.52      & 1.53      & 1.53      & 1.56      & 1.74      & 1.
 \end{table}
 
 
+
+
 ### Monthly data {-}
 
-For the monthly data, the first 3 principal components explain 78.07% of the total variance of the features for the M1 competition data, and 65.97% of the variance for the M3 competition data.
-
-Tables \ref{M3M}--\ref{M1M} show that our meta-learning method with RF-unbalanced and RF-class priors provides more accurate forecasts than the benchmark methods for the longest forecast horizons (1--18). However, over shorter horizons, ETS does slighly better for the M3 data, and Theta does slightly better for the M1 data.
-
-
-```{r pca3,fig.cap="Distribution of monthly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A- 2.C, on each graph colour scheme is green-simulated time serie, black-observed time series, orange-new time series"}
+```{r pca3,fig.cap="Distribution of monthly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A--1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A--2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
 img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
 img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
 img3 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
@@ -620,6 +623,11 @@ Snaive          & 1.09      & 1.11      & 1.11      & 1.13      & 1.14       & 1
 \end{table}
 
 
+For the monthly data, the first 3 principal components explain 78.07% of the total variance of the features for the M1 competition data, and 65.97% of the variance for the M3 competition data.
+
+Tables \ref{M3M}--\ref{M1M} show that our meta-learning method with RF-unbalanced and RF-class priors provides more accurate forecasts than the benchmark methods for the longest forecast horizons (1--18). However, over shorter horizons, ETS does slightly better for the M3 data, and Theta does slightly better for the M1 data.
+
+
 \todo[inline]{None of the Figures and Tables in this section are reproducible. Replace them with R code to generate the required figures and tables.}
 
 
@@ -627,19 +635,15 @@ Snaive          & 1.09      & 1.11      & 1.11      & 1.13      & 1.14       & 1
 
 # Discussion and Conclusions {#discussion}
 
-In this paper we propose a novel framework for forecasting model selection using mete-learning approach. Our proposed framework oriented towards the automatic selection of forecasting methods based on time series features. The basis of our algorithm is to use the knowledge of past performance of different forecasting methods on different time series to identify the best forecasting method for a new series.The major contributions of this work are following,
+In this paper we have proposed a novel framework for forecasting model selection using meta-learning based on time series features. Our algorithm uses the knowledge of the past performance of different forecasting methods on a collection of time series in order to identify the best forecasting method for a new series.  We have shown that the method almost always performs better than common benchmark methods, and better than the best-performing methods from the M3 competition.  Although we have illustrated the method using the M1 and M3 competition data, the framework is general and can be applied to any large collection of time series. 
 
-First, we proposed a framework for forecast model identification. Our proposed framework is not problem specific and can be applied to any large collection of time series.
+A major advantage of our method is that it is not necessary to estimate several different models for the data and undertake an empirical evaluation of their forecast accuracy on a given time series. Instead, we simply compute a small set of features that can be used to identify the best forecasting method.
 
-Second, we introduce a simple set of time series features that are useful in identifying "best" forecast method of a given time series. 
+It would be possible to obtain more accurate forecasts than those we report by combining the forecasts of many methods. However, this would not satisfy our aim of rapid automatic forecasting, because of the additional optimization that would be required to fit each model.
 
-Third, in contrast to the existing approaches we have proposed a new method to create meta-data base by simulating new time series that are similar to those from the population. 
+In addition to our new model selection framework, we have also introduced a simple set of time series features that are useful in identifying the "best" forecast method of a given time series, and can be computed rapidly. We will leave to a later study an analysis of which of these features are the most useful, and how our feature set could reduced further without loss of forecast accuracy.
 
-Finally, we have used a new set of class labels to train the classifier. When evaluating the "best" forecast method for a given time series, there could be several candidates for a given time series which satisfy the criterium of evaluating the "best" method. In such circumstances, it does not matter which model is going to be selected as long as they provide the same forecast. 
-
-Our proposed framework shown to yield accurate forecasts comparable to several benchmarks and other commonly used approaches of forecasting. The main advantage of our method is parameters need not to be estimated on several models to identify the best forecasting method. 
-
-Note that we have not made a comparison of time with the benchmark methods. However, for real-time forecasting, our framework involves only the calculation of features and to make the prediction based on the random forest classifier. These steps do not involve substantial computation and can be easily parallisable to fasten for a given computing budget. For future work, we will explore the use of other classification algorithms and test for several large scale real time series data sets.
+We have not compared the computation time between our method and the benchmark methods. However, for real-time forecasting, our framework involves only the calculation of features, the selection of a forecast method based on the random forest classifier, and the calculation of the forecasts from the chosen model. None of these steps involve substantial computation and can be easily parallelised when forecasting for a large number of new time series. For future work, we will explore the use of other classification algorithms, and test our approach on several other large collections of time series.
  
 \newpage
 

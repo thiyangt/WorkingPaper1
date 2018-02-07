@@ -972,6 +972,14 @@ class priors. The number of trees \texttt{ntree} is set to 1000, and the
 number of randomly selected features \texttt{mtry} is set to be one
 third of the total number of features available.
 
+Our aim is different from most classification problems in that we are
+not interested in accurately predicting the class, but in finding a good
+forecasting model. It is possible that two models produce almost equally
+good forecasts, and then it does not matter whether the classifier picks
+one or the other. Consequently, we do not study the classification
+accuracy of our random forests, but only report the forecast accuracy
+obtained with using them.
+
 \subsection{Summary of the main results}\label{sec:results}
 
 We build separate random forest classifiers for yearly data, quarterly
@@ -1108,6 +1116,9 @@ Theta           & 1.15      & 1.70      & 2.38      & 3.00      & 3.59      & 4.
 \end{tabular}
 \end{table}
 
+\subsubsection*{Quarterly data}\label{quarterly-data}
+\addcontentsline{toc}{subsubsection}{Quarterly data}
+
 \begin{figure}[!bp]
 
 {\centering \includegraphics[width=\textwidth]{figure/pca2-1} 
@@ -1116,9 +1127,6 @@ Theta           & 1.15      & 1.70      & 2.38      & 3.00      & 3.59      & 4.
 
 \caption{Distribution of quarterly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A--1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A--2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:pca2}
 \end{figure}
-
-\subsubsection*{Quarterly data}\label{quarterly-data}
-\addcontentsline{toc}{subsubsection}{Quarterly data}
 
 For the quarterly data, the first 3 principal components explain 62.40\%
 of the total variance of the features for the M1 competition data, and
@@ -1150,6 +1158,8 @@ Snaive          & 1.11      & 1.10      & 1.08      & 1.09      & 1.21      & 1.
 \end{tabular}
 \end{table}
 
+\clearpage
+
 \begin{table}[!h]
 \centering\small
 \caption{Experiment 2 (observed sample M3): Forecast accuracy measures for 203 M1 quarterly series.}
@@ -1175,16 +1185,6 @@ Snaive          & 1.52      & 1.53      & 1.53      & 1.56      & 1.74      & 1.
 
 \subsubsection*{Monthly data}\label{monthly-data}
 \addcontentsline{toc}{subsubsection}{Monthly data}
-
-For the monthly data, the first 3 principal components explain 78.07\%
-of the total variance of the features for the M1 competition data, and
-65.97\% of the variance for the M3 competition data.
-
-Tables \ref{M3M}--\ref{M1M} show that our meta-learning method with
-RF-unbalanced and RF-class priors provides more accurate forecasts than
-the benchmark methods for the longest forecast horizons (1--18).
-However, over shorter horizons, ETS does slighly better for the M3 data,
-and Theta does slightly better for the M1 data.
 
 \begin{figure}
 
@@ -1240,51 +1240,60 @@ Snaive          & 1.09      & 1.11      & 1.11      & 1.13      & 1.14       & 1
 \end{tabular}
 \end{table}
 
+For the monthly data, the first 3 principal components explain 78.07\%
+of the total variance of the features for the M1 competition data, and
+65.97\% of the variance for the M3 competition data.
+
+Tables \ref{M3M}--\ref{M1M} show that our meta-learning method with
+RF-unbalanced and RF-class priors provides more accurate forecasts than
+the benchmark methods for the longest forecast horizons (1--18).
+However, over shorter horizons, ETS does slighly better for the M3 data,
+and Theta does slightly better for the M1 data.
+
 \todo[inline]{None of the Figures and Tables in this section are reproducible. Replace them with R code to generate the required figures and tables.}
 
 \newpage
 
 \section{Discussion and Conclusions}\label{discussion}
 
-In this paper we propose a novel framework for forecasting model
-selection using mete-learning approach. Our proposed framework oriented
-towards the automatic selection of forecasting methods based on time
-series features. The basis of our algorithm is to use the knowledge of
-past performance of different forecasting methods on different time
-series to identify the best forecasting method for a new series.The
-major contributions of this work are following,
+In this paper we have proposed a novel framework for forecasting model
+selection using meta-learning based on time series features. Our
+algorithm uses the knowledge of the past performance of different
+forecasting methods on a collection of time series in order to identify
+the best forecasting method for a new series. We have shown that the
+method almost always performs better than common benchmark methods, and
+better than the best-performing methods from the M3 competition.
+Although we have illustrated the method using the M1 and M3 competition
+data, the framework is general and can be applied to any large
+collection of time series.
 
-First, we proposed a framework for forecast model identification. Our
-proposed framework is not problem specific and can be applied to any
-large collection of time series.
+A major advantage of our method is that it is not necessary to estimate
+several different models for the data and undertake an empirical
+evaluation of their forecast accuracy on a given time series. Instead,
+we simply compute a small set of features that can be used to identify
+the best forecasting method.
 
-Second, we introduce a simple set of time series features that are
-useful in identifying ``best'' forecast method of a given time series.
+It would be possible to obtain more accurate forecasts than those we
+report by combining the forecasts of many methods. However, this would
+not satisfy our aim of rapid automatic forecasting, because of the
+additional optimization that would be required to fit each model.
 
-Third, in contrast to the existing approaches we have proposed a new
-method to create meta-data base by simulating new time series that are
-similar to those from the population.
+In addition to our new model selection framework, we have also
+introduced a simple set of time series features that are useful in
+identifying the ``best'' forecast method of a given time series, and can
+be computed rapidly. We will leave to a later study an analysis of which
+of these features are the most useful, and how our feature set could
+reduced further without loss of forecast accuracy.
 
-Finally, we have used a new set of class labels to train the classifier.
-When evaluating the ``best'' forecast method for a given time series,
-there could be several candidates for a given time series which satisfy
-the criterium of evaluating the ``best'' method. In such circumstances,
-it does not matter which model is going to be selected as long as they
-provide the same forecast.
-
-Our proposed framework shown to yield accurate forecasts comparable to
-several benchmarks and other commonly used approaches of forecasting.
-The main advantage of our method is parameters need not to be estimated
-on several models to identify the best forecasting method.
-
-Note that we have not made a comparison of time with the benchmark
-methods. However, for real-time forecasting, our framework involves only
-the calculation of features and to make the prediction based on the
-random forest classifier. These steps do not involve substantial
-computation and can be easily parallisable to fasten for a given
-computing budget. For future work, we will explore the use of other
-classification algorithms and test for several large scale real time
-series data sets.
+We have not compared the computation time between our method and the
+benchmark methods. However, for real-time forecasting, our framework
+involves only the calculation of features, the selection of a forecast
+method based on the random forest classifier, and the calculation of the
+forecasts from the chosen model. None of these steps involve substantial
+computation and can be easily parallelised when forecasting for a large
+number of new time series. For future work, we will explore the use of
+other classification algorithms, and test our approach on several other
+large collections of time series.
 
 \newpage
 
