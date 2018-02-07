@@ -118,11 +118,11 @@ ggplot(df, aes(x = trend, y = seasonality)) +
   theme(legend.position = "none")
 ```
 
-The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M and M3 competitions [@makridakis1982accuracy;@makridakis2003m3], and we select time series features for the purpose of forecast model selection. Because the M and M3 competitions involved time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good forecasting method.
+The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2003m3], and we select time series features for the purpose of forecast model selection. Because the M1 and M3 competitions involved time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good forecasting method.
 
 ## What makes features useful for forecasting model identification?
 
-@reid1972comparison pointed out that the performance of forecasting methods changes according to the nature of data, and if the reasons for these variations are explored, they may be useful in selecting the most appropriate model. In response to the results of the M3-Competition [@makridakis2000m3], similar ideas have been reported by others, who have argued that the characteristics of various time series may provide useful insights into which forecasting methods are most appropriate to forecast a given time series [@hyndman2001s;@lawrence2001s;@armstrong2001s].
+@reid1972comparison pointed out that the performance of forecasting methods changes according to the nature of data, and if the reasons for these variations are explored, they may be useful in selecting the most appropriate model. In response to the results of the M3 competition [@makridakis2000m3], similar ideas have been reported by others, who have argued that the characteristics of various time series may provide useful insights into which forecasting methods are most appropriate to forecast a given time series [@hyndman2001s;@lawrence2001s;@armstrong2001s].
 
 Many time series forecasting techniques have been developed to capture specific characteristcs of time series that are common in a particular discipline. For example, GARCH models were introduced to account for time-varying volatility in financial time series, and ETS models were introduced to handle the trend and seasonal patterns which are typical in quarterly and monthly sales data. An appropriate set of features should reveal the characteristics of the time series that are useful in determining the best forecasting method.
 
@@ -158,7 +158,7 @@ For a given time series $x \in P$, with features $f(x) \in F$, find the selectio
 
 Existing methods differ with respect to the way they define the problem space ($A$), the features ($F$), the forecasting accuracy measure ($Y$) and the selection mapping ($S$).
 
-@collopy1992rule introduced 99 rules based on 18 features of time series, in order to make forecasts for economic and demographic time series. This work was extended by @armstrong2001s to reduce human intervention.  @shah1997model used the following features to classify time series: the number of observations, the ratio of the number of turning points to the length of the series, the ratio of number of step changes, skewness, kurtosis, the coefficient of variation, autocorrelations at lags 1--4, and partial autocorrelations at lag 2--4. Casting his work in Rice's framework, we can specify: $P=203$ quarterly series from the M-competition [@makridakis1982accuracy]; $A=3$ forecasting methods, namely simple exponential smoothing, Holt-Winters exponential smoothing with multiplicative seasonality, and a basic structural time series model; $Y=$ mean squared error for a hold-out sample. In @shah1997model, the mapping $S$ is learnt using discriminant analysis. 
+@collopy1992rule introduced 99 rules based on 18 features of time series, in order to make forecasts for economic and demographic time series. This work was extended by @armstrong2001s to reduce human intervention.  @shah1997model used the following features to classify time series: the number of observations, the ratio of the number of turning points to the length of the series, the ratio of number of step changes, skewness, kurtosis, the coefficient of variation, autocorrelations at lags 1--4, and partial autocorrelations at lag 2--4. Casting his work in Rice's framework, we can specify: $P=203$ quarterly series from the M1 competition [@makridakis1982accuracy]; $A=3$ forecasting methods, namely simple exponential smoothing, Holt-Winters exponential smoothing with multiplicative seasonality, and a basic structural time series model; $Y=$ mean squared error for a hold-out sample. In @shah1997model, the mapping $S$ is learnt using discriminant analysis. 
 
 @prudencio2004meta was the first paper to use the term "meta-learning" in the context of time series model selection. They studied the applicability of meta-learning approaches for forecasting model selection based on two case studies. Again using the notation of Definition \ref{def2}, we can describe their first case study with: $A$ contained only two forecasting methods, simple exponential smoothing and a time-delay neural network; $Y=$ mean absolute error; $F$ consisted of 14 features, namely length, autocorrelation coefficients, coefficient of variation, skewness, kurtosis, and a test of turning points to measure the randomness of the time series;  $S$ was learnt using the C4.5 decision tree algorithm. For their second study, the algorithm space included a random walk, Holt's linear exponential smoothing and AR models; the problem space $P$ contained the yearly series from the M3 competition [@makridakis2000m3]; $F$ included a subset of features from the first study; and $Y$ was a ranking based on error. Beyond the task of forecasting model selection, they used the NOEMON approach to rank the algorithms [@kalousis1999noemon].
 
@@ -168,7 +168,7 @@ Existing methods differ with respect to the way they define the problem space ($
 
 The set of features introduced by @wang2009rule was later used by @widodomodel to develop a meta-learning framework for forecasting model selection. The authors further reduced the dimensionality of time series by performing principal component analysis on the features. 
 
-More recently, @kuck2016meta proposed a meta-learning framework based on neural networks for forecasting model selection. Here, $P = 78$ time series from the NN3-competition were used to build the meta-learner. They introduced a new set of features based on forecasting errors. The average symmetric mean absolute percentage error was used to identify the best forecasting method for each series. They classify their forecasting models in the algorithm space $A$, comprising single, seasonal, seasonal-trend and trend exponential smoothing. The mapping $S$ was learned  using a feed-forward neural network. Further, they evaluated the performance of different sets of features for forecasting model selection.
+More recently, @kuck2016meta proposed a meta-learning framework based on neural networks for forecasting model selection. Here, $P = 78$ time series from the NN3 competition were used to build the meta-learner. They introduced a new set of features based on forecasting errors. The average symmetric mean absolute percentage error was used to identify the best forecasting method for each series. They classify their forecasting models in the algorithm space $A$, comprising single, seasonal, seasonal-trend and trend exponential smoothing. The mapping $S$ was learned  using a feed-forward neural network. Further, they evaluated the performance of different sets of features for forecasting model selection.
 
 # Methodology {#methodology}
 
@@ -247,116 +247,97 @@ It is not possible to train all possible classes of time series models, but at l
 
 A random forest [@breiman2001random] is an ensemble learning method that combines a large number of decision trees using a two-step randomization process. Let $Z=\{(\bm{x}_1, y_1), (\bm{x}_2, y_2), \dots, (\bm{x}_N, y_N)\}$ be the reference set, where the input $\bm{x}_i$ is an $m$-vector of features, the output, $y_i$, corresponds to the class label of the $i$th observation, $m$ is the total number of features, and $N$ is the number of training examples in the reference set. Each tree in the forest is grown based on a bootstrap sample of size $N$ from the reference set. At each node of the tree, randomly select $f<m$ features from the full set of features. The best split is selected among those $f$ features. The split which results in the most homogeneous subnodes is considered the best split. Various measures have been introduced to evaluate the homogeneity of subnodes, such as classification error rate, the Gini index and cross entropy [@friedman2001elements]. In this study, we use the Gini index to evaluate the homogeneity of a particular split. The trees are grown to the largest extent possible without pruning. To determine the class label for a new instance, features are calculated and passed down the trees. Then each tree gives a prediction and the majority vote over all individual trees leads to the final decision. In this work, we have used the randomForest package [@liaw2002randomforest] in R [@Rcore] which implements the Fortran code for Random Forest classification by @breiman2004random.
 
-# Application to M-competition Data {#Mcomp}
+# Application to M competition Data {#Mcomp}
 
-To test how well our proposed framework can identify the suitable forecasting models, we use the time series of the M1-competition [@makridakis1982accuracy] and M3 competition [@makridakis2000m3]. The R package Mcomp [@hyndmanmcomp] accompanies the data of M1 and M3 competitions. The proposed algorithm is applied to yearly, quarterly and monthly series separately.  We run two experiments on each case. In the first experiment we treat the time series of M1 competition as the *observed sample* and the time series of M3 competition as the collection of *new time series*. We run the second experiment by considering the M3 data as the *observed sample* and the M1 data as the *new time series* collection. Note that, the all phrases are consistent with the components in \autoref{fig:framework}. This allow us to compare our results with those of the literature. In both experiments, we fit ARIMA and ETS models to the full length of each series in the corresponding *observed sample* based on `auto.arima` and `ets` functions in the forecast package [@Hyndman2008]. Subsequently, from each model we further simulate 1000 series. For monthly time series, we further simulate 100 series from each model to fasten the offline calculation process. The lengths of simulated time series are set equal to the lengths of the corresponding series in the M-competition.
+To test how well our proposed framework can identify suitable forecasting models, we use the time series of the M1 competition [@makridakis1982accuracy] and M3 competition [@makridakis2000m3]. The R package Mcomp [@hyndmanmcomp] provides the data from both competitions. The proposed algorithm is applied to yearly, quarterly and monthly series separately.  We ran two experiments for each case. In the first experiment, we treat the time series of the M1 competition as the *observed sample* and the time series of the M3 competition as the collection of *new time series*. We reverse the sets in the second experiment, using the M3 data as the *observed sample* and the M1 data as the *new time series*. This allow us to compare our results with published forecast accuracy results for each competition. In both experiments, we fit ARIMA and ETS models to the full length of each series in the corresponding *observed samples* using the `auto.arima` and `ets` functions in the forecast package [@Hyndman2008]. From each model fitted to annual and quarterly data, we simulate a further 1000 series. For monthly time series, we simulate a further 100 series (to speed up the offline calculation process). The lengths of the simulated time series are set to be equal to the lengths of the series on which they were based.
 
-As shown in \autoref{fig:framework}, the task of constructing the meta-database contains two main components, (i) identification of *output-label* and (ii) feature computation process. In the forthcoming paragraph we will first discuss the process of identifying *output-labels*, followed by an overview of the features used in the experiment.
+As shown in \autoref{fig:framework}, the task of constructing the meta-database contains two main components: (i) identification of an *output-label* and (ii) computation of features. 
 
-The output-labels we consider in this experiment are,
+The output-labels we consider in this experiment are:
 
-i) White noise process (WN)
+  \begin{compactenum}[\hspace*{1cm}(a)]
+  \item White noise process (WN);
+  \item AR/ MA/ ARMA;
+  \item ARIMA;
+  \item Random walk with drift (RWD);
+  \item Random walk (RW);
+  \item Theta;
+  \item STL-AR;
+  \item Exponential Smoothing Model (ETS) without trend and seasonal components;
+  \item ETS with trend component and without seasonal component;
+  \item ETS with damped trend component and without seasonal component;
+  \end{compactenum}
 
-ii) AR/ MA/ ARMA
+Most of these are self-explanatory labels based on models implemented in the forecast package [@Hyndman2008]. STL-AR refers to a model based on an STL decomposition method applied to the time series, then an AR model is used to forecast the seasonally adjusted data, while the seasonal naive method is used to forecast the seasonal component.
 
-iii) ARIMA
+In addition to the above ten output labels, we further include the following five class labels for seasonal data:
 
-iv) Random walk with drift (RWD)
+  \begin{compactenum}[\hspace*{1cm}(a)]\setcounter{enumi}{10}
+  \item ETS with trend and seasonal components
+  \item ETS with damped trend and seasonal components
+  \item ETS with seasonal components and without trend component
+  \item SARIMA
+  \item Seasonal naive method.
+  \end{compactenum}
 
-v) Random walk (RW)
-
-vi) The Theta method 
-
-vii) STL-AR: STL decomposition method is applied to the time series and AR models is fitted to the seasonally adjusted time series while seasonal naive method is used to forecast the seasonal component.
-
-viii) Exponential Smoothing Model (ETS) without trend and seasonal components
-
-ix) ETS with trend component and without seasonal component
-
-x) ETS with damped trend component and without seasonal component
-
-In addition to the above ten(10) output labels, for seasonal data, we further include the following five class labels,
-
-xi) ETS with trend and seasonal components
-
-xii) ETS with damped trend and seasonal components
-
-xiii) ETS with seasonal components and without trend component
-ix) SARIMA
-
-x) Seasonal naive method.
-
-Therefore, in accordance to Rice's framework, for yearly data, the algorithm space($A$) contains 10 models while for seasonal data the algorithm space($A$) contains 15 models.
-
-Inorder to identify the output label: "best" model, RW, RWD, Theta, STL-AR, Seasonal naive (only for seasonal time series), WN are implemented on training set of each series and forecasts are produced for the whole of the test periods. In addition, we further use `auto.arima` and `ets` functions in the forecast package to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS model. The model model corresponds to the smallest MASE [@hyndman2006another] for the test set is selected as the *output-lable*. 
+The models are estimated using the training period for each series, and forecasts are produced for the whole of the test periods. We further use the `auto.arima` and `ets` functions in the forecast package to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS models. The model corresponding to the smallest MASE [@hyndman2006another] for the test period is selected as the *output-label*. 
  
 
 ## Feature computation process {#sec:features}
 
-We use a set of 25 features for yearly data and a set of 30 features for seasonal data, spanning from simple attributes like, length of series, to slightly complex ones, like spectral entropy. Some of the features  are already established features from previous studies [@wang2009rule; @hyndman2015large; @kang2017visualising]. We have also added some new features that we believe provide some useful information. These are summarized in \autoref{feature}. For a full description of each feature please refer to Appendix 1.
+We use a set of 25 features for yearly data and a set of 30 features for seasonal data. Some of these are taken from previous studies [@wang2009rule; @hyndman2015large; @kang2017visualising], and we have added some new features that we believe provide some useful information. Each feature can be computed rapidly, thus making the online phase of our algorithm very fast. The features are summarized in \autoref{feature}, and fully described in the Appendix.
 
-
-
-\newcommand{\boxedcheckmark}
-  {{\ooalign{$\Box$\cr\hidewidth$\checkmark$\hidewidth}}}
-
-\begin{table}[!p]
-\centering\small
-\caption{Feature description}
+\begin{table}[!htp]
+\centering\footnotesize\tabcolsep=0.12cm
+\def\yes{$\checkmark$}
+\caption{Features used for selecting a forecasting model.}
 \label{feature}
-\begin{tabular}{llp{7.5cm}cc}
+\begin{tabular}{llp{8,8cm}cc}
 \toprule
-\multicolumn{2}{c}{Feature} & Description & non-seasonal &  seasonal\\ 
+\multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\ 
 \midrule
-1  & N              & length of the time series                                                                        & $\checkmark$  & $\checkmark$ \\
-2  & trend          & strength of trend                                                                                & $\checkmark$  & $\checkmark$\\
-3  & seasonal       & strength of seasonality                                                                          & -             & $\checkmark$ \\
-4  & linearity      & linearity                                                                                        & $\checkmark$  & $\checkmark$ \\
-5  & curvature      & curvature                                                                                        & $\checkmark$  & $\checkmark$ \\
-6  & spikines       & spikines                                                                                         & $\checkmark$  & $\checkmark$ \\
-7  & e\_acf1        & first autocorrelation coefficient of the remainder series                                        & $\checkmark$  & $\checkmark$ \\
-8  & stability      & stability                                                                                        & $\checkmark$  & $\checkmark$ \\
-9  & lumpiness      & lumpiness                                                                                        & $\checkmark$  & $\checkmark$ \\
-10 & entropy        & spectral entropy                                                                                 & $\checkmark$  & $\checkmark$ \\
-11 & hurst          & Hurst exponent                                                                                   & $\checkmark$  & $\checkmark$ \\
-12 & nonlinearity   & nonlinearity                                                                                     & $\checkmark$\ & $\checkmark$ \\
-13 & alpha          & Holt's linear trend model-$\hat\alpha$                                                           & $\checkmark$  & $\checkmark$ \\
-14 & beta           & Holt's linear trend model-$\hat\beta$                                                            & $\checkmark$  & $\checkmark$\\
-15 & hwalpha        & Holt-Winters addtive method - $\hat\alpha$                                                       & -             & $\checkmark$ \\
-16 & hwbeta         & Holt-Winters addtive method - $\hat\beta$                                                        & -             & $\checkmark$ \\
-17 & hwgamma        & Holt-Winters addtive method - $\hat\gamma$                                                       & -             & $\checkmark$ \\
-18 & ur\_pp         & test statistic based on Phillips-Perron test                                                     & $\checkmark$  & - \\
-19 & ur\_kpss       & test statistic based on kpss test                                                                & $\checkmark$  & - \\
-20 & x\_acf1        & first autocorrelation coefficient of the original series                                        & $\checkmark$  & $\checkmark$ \\
-21 & diff1x\_acf1   & first autocorrelation coefficient of the differenced series                                      & $\checkmark$  & $\checkmark$ \\
-22 & diff2x\_acf1   & first autocorrelation coefficient of the twiced-differenced series                               & $\checkmark$  & $\checkmark$ \\
-23 & x\_acf5        & sum of squared of first 5 autocorrelation coefficients of the original series                    & $\checkmark$  & $\checkmark$ \\
-24 & diff1x\_acf5   & sum of squared of first 5 autocorrelation coefficients of the differenced series                 & $\checkmark$  & $\checkmark$ \\
-25 & diff2x\_acf5   & sum of squared of first 5 autocorrelation coefficients of the twice-differenced series           & $\checkmark$  & $\checkmark$ \\
-26 & seas\_acf1     & autocorrelation coefficient at first lag                                                         & -             & $\checkmark$ \\
-27 & sediff\_acf1   & first autocorrelation coefficient of the seasonally-differenced series                           & -             & $\checkmark$\\
-28 & sediff\_seacf1 & first autocorrelation coefficient at the first seasoanl lag of the seasonally-differenced series & -             & $\checkmark$ \\
-29 & sediff\_acf5   & sum of squared of first 5 autocorrelation coefficients of the seasonally-differenced series      & -             & $\checkmark$ \\
-30 & lmres\_acf1    & first autocorrelation coefficient of the residual series of linear trend model                   & $\checkmark$  & - \\
-31 & x\_pacf5       & sum of squared of first 5 partial autocorrelation coefficients of the original series            & $\checkmark$  & $\checkmark$ \\
-32 & diff1x\_pacf5  & sum of squared of first 5 partial autocorrelation coefficients of the differenced series         & $\checkmark$  & $\checkmark$ \\
-33 & diff2x\_pacf5  & sum of squared of first 5 partial autocorrelation coefficients of the twice-differenced series   & $\checkmark$  & $\checkmark$ \\
+1  & N              & length of time series                                                                   & \yes  & \yes \\
+2  & trend          & strength of trend                                                                       & \yes  & \yes\\
+3  & seasonal       & strength of seasonality                                                                 & -     & \yes \\
+4  & linearity      & linearity                                                                               & \yes  & \yes \\
+5  & curvature      & curvature                                                                               & \yes  & \yes \\
+6  & spikiness      & spikiness                                                                               & \yes  & \yes \\
+7  & e\_acf1        & first ACF value of remainder series                                                     & \yes  & \yes \\
+8  & stability      & stability                                                                               & \yes  & \yes \\
+9  & lumpiness      & lumpiness                                                                               & \yes  & \yes \\
+10 & entropy        & spectral entropy                                                                        & \yes  & \yes \\
+11 & hurst          & Hurst exponent                                                                          & \yes  & \yes \\
+12 & nonlinearity   & nonlinearity                                                                            & \yes\ & \yes \\
+13 & alpha          & ETS(A,A,N) $\hat\alpha$                                                                 & \yes  & \yes \\
+14 & beta           & ETS(A,A,N) $\hat\beta$                                                                  & \yes  & \yes\\
+15 & hwalpha        & ETS(A,A,A) $\hat\alpha$                                                                 & -     & \yes \\
+16 & hwbeta         & ETS(A,A,A) $\hat\beta$                                                                  & -     & \yes \\
+17 & hwgamma        & ETS(A,A,A) $\hat\gamma$                                                                 & -     & \yes \\
+18 & ur\_pp         & test statistic based on Phillips-Perron test                                            & \yes  & - \\
+19 & ur\_kpss       & test statistic based on KPSS test                                                       & \yes  & - \\
+20 & x\_acf1        & first ACF value of the original series                                                  & \yes  & \yes \\
+21 & diff1x\_acf1   & first ACF value of the differenced series                                               & \yes  & \yes \\
+22 & diff2x\_acf1   & first ACF value of the twice-differenced series                                         & \yes  & \yes \\
+23 & x\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
+24 & diff1x\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
+25 & diff2x\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
+26 & seas\_acf1     & autocorrelation coefficient at first lag                                                & -     & \yes \\
+27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
+28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
+29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
+30 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
+31 & x\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
+32 & diff1x\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
+33 & diff2x\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
 \bottomrule
  \end{tabular}
 \end{table}
 
 
-## Model calibration
-
-Our reference set is imbalanced: some classes contains significantly more cases than the other classes. The degree of class imbalance to some extent by augmenting the observed sample with simulated time series. The random forests algorithm is highly sensitive to the class imbalance [@breiman2001random]. We use three approaches to address the class imbalance in the data: i) incorporate class priors into the random forest classifier,  and ii) use Balanced Random Forest(BRF) algorithm introduced by @chen2004using and iii) re-balancing the reference set with down sampling. Note, that BRF algorithm is different from down-sampling approach. In down sampling thereference set is pre-processed by down-sampling the majority class into the size of the minority class which is potentially discard some useful information. We compare the results of above three random forests to the random forest classifier build on imbalanced data. The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest]. The class priors are introduced through the option `classwt`. We use reciprocal of class size as class priors. In each case the two parameters of the of RF algorithm are set as: number of trees(*ntree*) - 1000, and number of randomly selected features(*mtry*) - one third of the total number of features. The number of trees are limited to 1000 to fasten the online calculation process. The Random forest trained on unbalanced data (RF-unbalanced) and 
+The correlation matrices for all features are presented in \autoref{fig:cormat}. The variability in the correlations reflects the diversity of the selected features. In other words, the features we used were able to capture different characteristics of the time series. Further, the structure of the correlation matrices are similar to each other, showing the different collections have similar feature spaces.
 
 
-## Summary of the main results {#sec:results}
-
-The matrices of Pearson correlation coefficients for all the features in the reference sets of each experiments are presented in \autoref{fig:cormat}. Although the correlations among particular features are of interest the focal point of \autoref{fig:cormat} is the entire matrix of correlation coefficients. The degree of variability in the Pearson's correlation coefficients between features indicate the diversity of the selected features. In other words the features we used were able to capture the different characteristics of the time series. Further, the structure of correlation matrices are similar to each other Random forest with class priors (RF-class priors) outperform the other methods.
-
-
-```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots (A-Experiment1 yearly, B- Experiment 2 yearly, C- Experiment 1, quarterly, D- Experiment 2 quarterly, E - Experiment 1 monthly, F - Experiment 2 monthly)"}
+```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
 img1 <- rasterGrob(
   as.raster(readPNG("figures/ggheatmapA.png")),
   interpolate = FALSE
@@ -384,32 +365,41 @@ img6 <- rasterGrob(
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
 ```
 
-
-We now presents the results of our experiments on yearly, quarterly and monthly series separately. We build separate random forest classifiers to yearly data, quarterly data and monthly data. In each case, for the second experiment(M3-observed sample, M1-new series) we take a subset of simulated time series to train the RF-unbalanced and RF-class priors as `randomForest` package does to facilitate in handling large data sets. The subsets are selected randomly according to the proportions of output-labels in the observed samples. This ensures that our reference set shares the similar characteristics of the observed sample. The principal component analysis is use to visualize the relationship between feature-space of the different time series collections: observed time series, simulated time series, subset of simulated time series and new time series. For each experiment, principal component analysis(PCA) is performed on all the features in the observed sample. Then we project the simulated time series and the new time series into the PCA space of the observed data. The results are shown in \autoref{fig:pca1} - \autoref{fig:pca3}, for yearly, quarterly and monthly data respectively. On each experiment the first three principal components are plotted against each other. The point on each graph represents a time series.
-
-
-The accuracy of our method is compared against following benchmarks and other commonly used approaches of forecasting:
-
-  1. automated ARIMA algorithm of @Hyndman2008
-  2. automated ETS algorithm of @Hyndman2008
-  3. Random walk with drift (RWD)
-  4. Random walk model (RW)
-  5. White noise process (WN)
-  6. Theta method
-  7. STL-AR method
-  8. seasonal naive (for seasonal data)
-
-The automated ARIMA and ETS algorithms are implemented using `auto.arima` and `ets` functions available in the forecast package in R[@Hyndman2008]. Each method is implemented on the training set and forecasts are computed up to the full length of the test set. Then we compute the MASE for each forecast horizon, by averaging the MASE across all series in the the collection of new times series. Further, to assist in the evaluation of the proposed framework, for each forecast horizon we rank our method compared to the other methods listed above and and average ranking over all forecast horizons are computed. The results are given in \autoref{YM3} -- \autoref{M1M}. The MASE value corresponds to the best performing method in each category is highlighted in bold.
-
-**Yearly data**
+\todo[inline]{This is not reproducible. Replace Figure 5 with R code to generate the required figure.}
 
 
-For the yearly series in M1 competition, the first 3 principal components explain 62.47% of the variation of features. For the yearly series in M3 competition, the first three principal components explains 62.19% of the total variance.   As seen in \autoref{fig:pca1}, simulated time series are able to fill the gap appeared between the points in the observed sample. By augmenting the reference set with simulated time series we were able to increase the diversity and evenness(to some extent) of the feature space of observed time series. Further, in both experiments, all the *observed time series* falls within the space of all simulated data. This guarantees that we have not lost any feature structures of the observed sample. The remaining plots in \autoref{fig:pca2}-\autoref{fig:pca3} can be interpreted similar to \autoref{fig:pca1}.
+## Model calibration
 
-The \autoref{YM3} to \autoref{YM1} compare the performance of our proposed framework to the benchmark methods. For each method we calculate out-of-sample MASE over the forecast horizons 1-h, and average over all time series. For yearly series of M3 competition random walk with drift model seem to be inferior to the other methods. The average MASE values corresponds to the RF-class priors are slightly higher than the results of random walk with drift. For yearly series of M1 competition RF-unbalanced and RF-class priors consistently forecast more accurately than random walk with drift model. 
+The random forest algorithm is highly sensitive to class imbalance [@breiman2001random], and our reference set is unbalanced: some classes contains significantly more cases than other classes. The degree of class imbalance is reduced to some extent by augmenting the observed sample with simulated time series.  We consider three approaches to address the class imbalance in the data: 1) we incorporate class priors into the random forest classifier; 2) we use the Balanced Random Forest (BRF) algorithm introduced by @chen2004using; and 3) we re-balance the reference set with down-sampling. In down-sampling, the size of the reference set is reduced by down-sampling the larger classes so that they match the smallest class in size; this potentially discards some useful information. We compare the results of these three approaches to the classifier built on unbalanced data. The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest]. The class priors are introduced through the option `classwt`. We use the reciprocal of class size as the class priors. The number of trees `ntree` is set to 1000, and the number of randomly selected features `mtry` is set to be one third of the total number of features available. 
 
 
-```{r pca1, fig.width=7,fig.height=5, fig.cap="Distribution of yearly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A- 2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series"}
+## Summary of the main results {#sec:results}
+
+We build separate random forest classifiers for yearly data, quarterly data and monthly data. For the second experiment we take a subset of the simulated time series when training the RF-unbalanced and RF-class priors, to reduce the size of the reference set. The subsets are selected randomly according to the proportions of output-labels in the observed samples. This ensures that our reference set shares similar characteristics to the observed sample. 
+
+A principal component analysis is used to visualize the feature-spaces of the different time series collections. We compute the principal components projection using the features in the observed sample, and then project the simulated time series and the new time series using the same projection. The results are shown in Figures \ref{fig:pca1}--\ref{fig:pca3}, for yearly, quarterly and monthly data respectively, where the first three principal components are plotted against each other. The points on each graph represent individual time series.
+
+The accuracy of our method is compared against the following commonly-used forecasting methods:
+
+  1. automated ARIMA algorithm of @Hyndman2008;
+  2. automated ETS algorithm of @Hyndman2008;
+  3. Random walk with drift (RWD);
+  4. Random walk model (RW);
+  5. White noise process (WN);
+  6. Theta method;
+  7. STL-AR method;
+  8. seasonal naive (for seasonal data).
+
+The automated ARIMA and ETS algorithms are implemented using the `auto.arima` and `ets` functions available in the forecast package in R [@Hyndman2008]. Each method is implemented on the training period and forecasts are computed up to the full length of the test period. Then we compute the MASE for each forecast horizon, by averaging the MASE across all series in the collection of new time series. To assist in the evaluation of the proposed framework, for each forecast horizon we rank our method compared to the other methods listed above, and an average ranking over all forecast horizons is computed. The results are given in Tables \ref{YM3}--\ref{M1M}. The MASE value corresponding to the best performing method in each category is highlighted in bold.
+
+### Yearly data {-}
+
+For the yearly data, the first 3 principal components explain 62.5% of the total variance of the features for the M1 competition data, and 62.2% for the M3 competition data. 
+
+As seen in \autoref{fig:pca1}, simulated time series are able to fill the gaps between the points in the observed sample. By augmenting the reference set with simulated time series, we were able to increase the diversity and evenness of the feature space of the observed time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This guarantees that we have not reduced the feature diversity from the observed sample. The remaining plots in Figures \ref{fig:pca2}--\ref{fig:pca3} can be interpreted similarly.
+
+
+```{r pca1, fig.cap="Distribution of yearly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A-- 1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A- 2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
 img1 <- rasterGrob(
   as.raster(readPNG("figures/pca1M1Y.png")),
   interpolate = FALSE
@@ -437,55 +427,55 @@ img6 <- rasterGrob(
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
 ```
 
+Tables \ref{YM3}--\ref{YM1} compare the performance of our proposed framework to the benchmark methods. For each method, we calculate out-of-sample MASE over the forecast horizons, and average over all time series. For yearly series from the M3 competition, our meta-learning method beats all methods other than the random walk with drift model. For the M1 competition data, our meta-learning method using RF-unbalanced and RF-class priors consistently forecast more accurately than all benchmark methods.
 
-
-\begin{table}[!h]
-\centering
-\caption{Experiment 1 (Observed sample - M1): Forecast accuracy measures for 645 M3-yearly series}
+\begin{table}[!htbp]
+\centering\small
+\caption{Experiment 1 (observed sample M1): Forecast accuracy measures for 645 M3 yearly series.}
 \label{YM3}
 \begin{tabular}{lrrrrrrr}
-\hline
- & \multicolumn{6}{c}{Average of forecasting horizons: 1-h} \\ \hline
- & 1  & 1-2  & 1-3  & 1-4 & 1-5 & 1-6 & Average Rank \\ \hline
- RF-unbalanced & 1.06  &  1.42 & 1.83  & 2.20 & 2.54 & 2.85 & 3.50 \\ 
- RF-class priors& \bf{1.03}  & 1.37  & 1.78  & 2.14 & 2.47 & 2.77 & 1.83 \\ 
-auto.arima &  1.11 & 1.48  & 1.90  & 2.28 & 2.63 & 2.96 & 6.83 \\ 
-ets&   1.09  & 1.44  & 1.84 & 2.20 & 2.54 & 2.86 & 4.17\\ 
-WN&    6.54  & 6.91  & 7.22 & 7.48 &7.76  & 8.07 & 9.00\\ 
-RW &    1.24  & 1.68  & 2.11 & 2.48 & 2.83 & 3.17 &8.00 \\ 
-RWD&   \bf{1.03}  & \bf{1.36}  & \bf{1.74} & \bf{2.05} & \bf{2.35} & \bf{2.63} &1.17 \\ 
-STL-AR & 1.09  &  1.47 &  1.89 & 2.27 & 2.62 & 2.95 & 5.50 \\ 
-Theta & 1.12  & 1.47  & 1.86  & 2.18 & 2.48 & 2.77 & 4.17 \\ \hline
+\toprule
+                & \multicolumn{6}{c}{Average of forecasting horizons} \\ 
+                & 1         & 1--2      & 1--3      & 1--4      & 1--5      & 1--6      & Average Rank \\ 
+\midrule
+RF-unbalanced   & 1.06      & 1.42      & 1.83      & 2.20      & 2.54      & 2.85      & 3.50 \\
+RF-class priors & \bf{1.03} & 1.37      & 1.78      & 2.14      & 2.47      & 2.77      & 1.83 \\
+auto.arima      & 1.11      & 1.48      & 1.90      & 2.28      & 2.63      & 2.96      & 6.83 \\
+ets             & 1.09      & 1.44      & 1.84      & 2.20      & 2.54      & 2.86      & 4.17\\
+WN              & 6.54      & 6.91      & 7.22      & 7.48      & 7.76      & 8.07      & 9.00\\
+RW              & 1.24      & 1.68      & 2.11      & 2.48      & 2.83      & 3.17      & 8.00 \\
+RWD             & \bf{1.03} & \bf{1.36} & \bf{1.74} & \bf{2.05} & \bf{2.35} & \bf{2.63} & 1.17 \\
+STL-AR          & 1.09      & 1.47      & 1.89      & 2.27      & 2.62      & 2.95      & 5.50 \\
+Theta           & 1.12      & 1.47      & 1.86      & 2.18      & 2.48      & 2.77      & 4.17 \\ 
+\bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[!h]
-\centering
-\caption{Experiment 2 (Observed sample - M3): Forecast accuracy measures for 181 M1-yearly series}
+\begin{table}[!htbp]
+\centering\small
+\caption{Experiment 2 (observed sample M3): Forecast accuracy measures for 181 M1 yearly series.}
 \label{YM1}
 \begin{tabular}{lrrrrrrr}
-\hline
- & \multicolumn{6}{c}{Average of forecasting horizons: 1-h} \\ \hline
- & 1  & 1-2  & 1-3  & 1-4 & 1-5 & 1-6 & Average Rank \\ \hline
- RF-unbalanced & \bf{0.97}  & \bf{1.39}  & 1.93  & 2.42 & 2.90 & 3.37 & 1.67 \\ 
- RF-class priors& 1.02  & 1.40 &  \bf{1.92} & \bf{2.40} & \bf{2.87}  & \bf{3.33} &1.33  \\ 
-auto.arima &  1.06 & 1.47  & 2.01  & 2.51 & 3.00 & 3.47 & 3.50 \\ 
-ets&   1.12  & 1.59  & 2.17 & 2.72 & 3.26 &3.77  & 6.00\\ 
-WN&    6.38  & 7.08  & 7.92 & 8.59 & 9.28 & 10.01 & 9.00\\ 
-RW &    1.35  & 2.00  & 2.80 & 3.50 & 4.19 & 4.89 & 8.00\\ 
-RWD&    1.03  & 1.44  & 2.00 & 2.51 & 3.01 & 3.49 & 3.33 \\ 
-STL-AR & 1.10 &  1.51 &  2.07 & 2.55 & 3.04 & 3.52 & 5.00 \\ 
-Theta & 1.15  & 1.70  & 2.38  & 3.00 & 3.59 & 4.19 & 7.00 \\ \hline
+\toprule
+ & \multicolumn{6}{c}{Average of forecasting horizons} \\ 
+                & 1         & 1--2      & 1--3      & 1--4      & 1--5      & 1--6      & Average Rank \\
+\midrule
+RF-unbalanced   & \bf{0.97} & \bf{1.39} & 1.93      & 2.42      & 2.90      & 3.37      & 1.67 \\
+RF-class priors & 1.02      & 1.40      & \bf{1.92} & \bf{2.40} & \bf{2.87} & \bf{3.33} & 1.33  \\
+auto.arima      & 1.06      & 1.47      & 2.01      & 2.51      & 3.00      & 3.47      & 3.50 \\
+ets             & 1.12      & 1.59      & 2.17      & 2.72      & 3.26      & 3.77      & 6.00\\
+WN              & 6.38      & 7.08      & 7.92      & 8.59      & 9.28      & 10.01     & 9.00\\
+RW              & 1.35      & 2.00      & 2.80      & 3.50      & 4.19      & 4.89      & 8.00\\
+RWD             & 1.03      & 1.44      & 2.00      & 2.51      & 3.01      & 3.49      & 3.33 \\
+STL-AR          & 1.10      & 1.51      & 2.07      & 2.55      & 3.04      & 3.52      & 5.00 \\
+Theta           & 1.15      & 1.70      & 2.38      & 3.00      & 3.59      & 4.19      & 7.00 \\
+\bottomrule
 \end{tabular}
 \end{table}
 
-### Quarterly data
 
-The first 3 principal components  quarterly time series in the M1 competition explain 62.40% of the total variance of the features while for the quarterly series in the M3-competition data, the amount of variation explained by the first 3 principal components is 64.75%. 
 
-\autoref{M3Q} to \autoref{M1Q} summarize the results for quarterly data. The results of RF-class priors outperform the the benchmark methods.  However, the average MASE of Theta method for 1-18 slightly lower than the RF-unbalanced and RF-class priors. 
-
-```{r pca2,fig.cap="Distribution of quarterly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A-2.C, on each graph colour scheme is green-simulated time serie, yellow-subset of simulated time series, black-observed time series, orange-new time series"}
+```{r pca2,fig.cap="Distribution of quarterly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A--1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A--2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.", fig.pos="!bp"}
 img1 <- rasterGrob(
   as.raster(readPNG("figures/pca1M1Q.png")),
   interpolate = FALSE
@@ -513,54 +503,64 @@ img6 <- rasterGrob(
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
 ```
 
+### Quarterly data {-}
+
+For the quarterly data, the first 3 principal components explain 62.40% of the total variance of the features for the M1 competition data, and 64.75% for the M3 competition data.
+
+Tables \ref{M3Q}--\ref{M1Q} summarize the results for quarterly data. Our method using RF-class priors outperforms all the benchmark methods.   
 
 \begin{table}[!h]
-\centering
-\caption{Experiment 1 (Observed sample - M1): Forecast accuracy measures for 756 M3 - quarterly series}
+\centering\small
+\caption{Experiment 1 (observed sample M1): Forecast accuracy measures for 756 M3 quarterly series.}
 \label{M3Q}
 \begin{tabular}{lrrrrrrrrrl}
-\hline
- & \multicolumn{8}{c|}{Average of forecasting horizons: 1-h}    &  \\ \hline
- &  1& 1-2 & 1-3 & 1-4 & 1-5 & 1-6 & 1-7 & 1-8  & Average rank  \\ \hline
-RF-unbalanced& 0.58 & \bf{0.65} & \bf{0.73} & \bf{0.81} & \bf{0.88} & \bf{0.96} & \bf{1.04} & 1.12 & 1.25  \\ 
-RF-class priors & 0.58&  0.66& 0.74 & 0.81 & 0.89 & 0.97 & 1.05 & 1.13   & 2.38   \\ 
-auto.arima & 0.58 & 0.66  & 0.75 & 0.85 & 0.93 & 1.01 & 1.10 & 1.19 & 4.25 \\ 
-ets & \bf{0.56} & \bf{0.65}  & \bf{0.73} & 0.82 & 0.91 & 0.99 & 1.08 & 1.17 & 2.75   \\ 
-WN & 3.25 & 3.35 & 3.46 & 3.59 & 3.63 & 3.70 & 3.78 & 3.87 & 10.00   \\ 
-RW & 1.14 & 1.12 & 1.17 & 1.16 & 1.25 & 1.32 & 1.41 & 1.46 &  7.38  \\ 
-RWD & 1.20 & 1.18 & 1.23 & 1.17 & 1.29 & 1.36 & 1.44 & 1.47 & 8.38   \\ 
-STL-AR & 0.70 & 0.90 & 1.08 & 1.27 & 1.44 & 1.60 & 1.75 &  1.91 & 7.88   \\ 
-Theta & 0.62 & 0.68 & 0.76 & 0.83 & 0.90 & 0.97 & 1.04 &  \bf{1.11} & 3.25  \\ 
-Snaive & 1.11 & 1.10 & 1.08 & 1.09 & 1.21 & 1.30 & 1.36 & 1.43 &  6.25  \\ \hline
+\toprule
+ & \multicolumn{8}{c|}{Average of forecasting horizons}    &  \\ 
+                & 1         & 1--2      & 1--3      & 1--4      & 1--5      & 1--6      & 1--7      & 1--8      & Average rank  \\
+\midrule
+RF-unbalanced   & 0.58      & \bf{0.65} & \bf{0.73} & \bf{0.81} & \bf{0.88} & \bf{0.96} & \bf{1.04} & 1.12      & 1.25  \\
+RF-class priors & 0.58      & 0.66      & 0.74      & 0.81      & 0.89      & 0.97      & 1.05      & 1.13      & 2.38   \\
+auto.arima      & 0.58      & 0.66      & 0.75      & 0.85      & 0.93      & 1.01      & 1.10      & 1.19      & 4.25 \\
+ets             & \bf{0.56} & \bf{0.65} & \bf{0.73} & 0.82      & 0.91      & 0.99      & 1.08      & 1.17      & 2.75   \\
+WN              & 3.25      & 3.35      & 3.46      & 3.59      & 3.63      & 3.70      & 3.78      & 3.87      & 10.00   \\
+RW              & 1.14      & 1.12      & 1.17      & 1.16      & 1.25      & 1.32      & 1.41      & 1.46      & 7.38  \\
+RWD             & 1.20      & 1.18      & 1.23      & 1.17      & 1.29      & 1.36      & 1.44      & 1.47      & 8.38   \\
+STL-AR          & 0.70      & 0.90      & 1.08      & 1.27      & 1.44      & 1.60      & 1.75      & 1.91      & 7.88   \\
+Theta           & 0.62      & 0.68      & 0.76      & 0.83      & 0.90      & 0.97      & 1.04      & \bf{1.11} & 3.25  \\
+Snaive          & 1.11      & 1.10      & 1.08      & 1.09      & 1.21      & 1.30      & 1.36      & 1.43      & 6.25  \\
+\bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[!h]
-\centering
-\caption{Experiment 2 (Observed sample - M3): Forecast accuracy measures for 203 M1 - quarterly series}
+\centering\small
+\caption{Experiment 2 (observed sample M3): Forecast accuracy measures for 203 M1 quarterly series.}
 \label{M1Q}
 \begin{tabular}{lrrrrrrrrrl}
-\hline
- & \multicolumn{8}{c}{Average of forecasting horizons: 1-h}    &  \\ \hline
- &  1& 1-2 & 1-3 & 1-4 & 1-5 & 1-6 & 1-7 & 1-8  & Average rank  \\ \hline
- RF-unbalanced& \bf{0.77} & \bf{0.85} & \bf{0.95} & \bf{1.08} & \bf{1.22} & \bf{1.36} & \bf{1.48} & \bf{1.59} & 1.00  \\ 
-RF-class priors & 0.79 &0.88  & 0.99 & 1.12 & 1.28 & 1.41 &  1.53& 1.65 &2.25    \\ 
-auto.arima & 0.85 & 0.94 & 1.05 & 1.19 & 1.37 & 1.53& 1.67 & 1.80 & 5.00  \\ 
-ets & 0.78 & 0.89  & 0.98 & 1.11 & 1.28 & 1.42 & 1.54 & 1.66 &  2.50  \\
-WN & 3.97 & 4.14 & 4.16 & 4.27 & 4.35 & 4.45 & 4.52 & 4.64 & 10.00   \\ 
-RW & 0.97 & 1.10 & 1.25 & 1.35 & 1.52 & 1.67 & 1.83 & 1.95 & 7.13  \\ 
-RWD & 0.95 & 1.04 & 1.19 & 1.26 & 1.42 & 1.56 & 1.71 & 1.81 &  6.00  \\ 
-STL-AR & 0.96 & 1.20 & 1.41 & 1.63 & 1.85 & 2.05 & 2.23 &  2.43 & 8.50   \\ 
-Theta & 0.79 & 0.90 & 1.00 & 1.13& 1.29 & 1.42 & 1.55 &  1.67 &  3.75 \\ 
-Snaive & 1.52 & 1.53 & 1.53 & 1.56 & 1.74 & 1.86 & 1.98 & 2.08 & 8.38   \\ \hline
+\toprule
+ & \multicolumn{8}{c}{Average of forecasting horizons}    &  \\ 
+                & 1         & 1-2       & 1--3      & 1--4      & 1--5      & 1--6      & 1--7      & 1--8      & Average rank  \\
+\midrule
+RF-unbalanced   & \bf{0.77} & \bf{0.85} & \bf{0.95} & \bf{1.08} & \bf{1.22} & \bf{1.36} & \bf{1.48} & \bf{1.59} & 1.00  \\
+RF-class priors & 0.79      & 0.88      & 0.99      & 1.12      & 1.28      & 1.41      & 1.53      & 1.65      & 2.25    \\
+auto.arima      & 0.85      & 0.94      & 1.05      & 1.19      & 1.37      & 1.53      & 1.67      & 1.80      & 5.00  \\
+ets             & 0.78      & 0.89      & 0.98      & 1.11      & 1.28      & 1.42      & 1.54      & 1.66      & 2.50  \\
+WN              & 3.97      & 4.14      & 4.16      & 4.27      & 4.35      & 4.45      & 4.52      & 4.64      & 10.00   \\
+RW              & 0.97      & 1.10      & 1.25      & 1.35      & 1.52      & 1.67      & 1.83      & 1.95      & 7.13  \\
+RWD             & 0.95      & 1.04      & 1.19      & 1.26      & 1.42      & 1.56      & 1.71      & 1.81      & 6.00  \\
+STL-AR          & 0.96      & 1.20      & 1.41      & 1.63      & 1.85      & 2.05      & 2.23      & 2.43      & 8.50   \\
+Theta           & 0.79      & 0.90      & 1.00      & 1.13      & 1.29      & 1.42      & 1.55      & 1.67      & 3.75 \\
+Snaive          & 1.52      & 1.53      & 1.53      & 1.56      & 1.74      & 1.86      & 1.98      & 2.08      & 8.38   \\
+\bottomrule
 \end{tabular}
 \end{table}
 
 
-### Monthly data
+### Monthly data {-}
 
-For monthly series of M1 competition the first three principal components capture 78.07% of the variability in the 30 features, while for the monthly series of M3 competition the amount of variation captured by the first three principal components is 65.97%. According to the results of \autoref{M3M} and \autoref{M1M}, RF-unbalanced and RF-class priors seem to be inferior to other methods for long-term forecast horizons (h=1 to 18).
+For the monthly data, the first 3 principal components explain 78.07% of the total variance of the features for the M1 competition data, and 65.97% of the variance for the M3 competition data.
 
+Tables \ref{M3M}--\ref{M1M} show that our meta-learning method with RF-unbalanced and RF-class priors provides more accurate forecasts than the benchmark methods for the longest forecast horizons (1--18). However, over shorter horizons, ETS does slighly better for the M3 data, and Theta does slightly better for the M1 data.
 
 
 ```{r pca3,fig.cap="Distribution of monthly time series in the PCA space; results of experiment 1 (observed sample-M1, new time series - M3) are shown in panels 1.A- 1.C and results of experiment 2 (observed sample-M3, new time series - M1) are shown in panels 2.A- 2.C, on each graph colour scheme is green-simulated time serie, black-observed time series, orange-new time series"}
@@ -574,46 +574,56 @@ grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 3)
 ```
 
 \begin{table}[!h]
-\centering
-\caption{Experiment 1 (Observed sample - M1): Forecast accuracy measures for 1428 M3 - monthly series}
+\centering\small
+\caption{Experiment 1 (observed sample M1): Forecast accuracy measures for 1428 M3 monthly series.}
 \label{M3M}
 \begin{tabular}{lrrrrrrrr}
-\hline
- & \multicolumn{6}{c}{Average of forecasting horizons: 1-h}    &  \\ \hline
- &  1-4& 1-6 & 1-8 & 1-10 & 1-12 & 1-18  & Average rank  \\ \hline
-RF-unbalanced&  0.66& 0.69 & 0.72 & 0.75 & 0.75 & 0.78 & 5.17  \\ 
-RF-class priors &  0.65& 0.68 & 0.71 & 0.74 & \bf{0.74} & \bf{0.77}  & 4.00  \\ auto.arima & 0.61 & 0.65 & 0.69 & 0.72 & 0.75 & 0.88 &  2.67   \\  
-ets & \bf{0.59}  & \bf{0.64} & \bf{0.68} & \bf{0.72} & \bf{0.74} & 0.86 & 1.67   \\  
-WN & 2.06 & 2.08 & 2.10 & 2.13 & 2.15 & 2.27 & 12.00   \\  
-RW &0.91  &0.97  & 1.01 & 1.04 & 1.04 & 1.17 & 10.33  \\ 
-RWD &0.90  & 0.96 &1.00  &1.03  & 1.02 & 1.14 & 9.17  \\ 
-STL-AR & 0.73 & 0.81 & 0.90 & 0.98 & 1.04 & 1.27 & 8.83  \\ 
-Theta & 0.63 & 0.67 & 0.72 & 0.75 & 0.77 & 0.89 & 5.67    \\ 
-Snaive& 0.95 & 0.97 & 0.97 & 0.98 & 0.98 &  1.14& 9.00  \\ \hline
+\toprule
+ & \multicolumn{6}{c}{Average of forecasting horizons}    &  \\ 
+                & 1--4      & 1--6      & 1--8      & 1--10     & 1--12     & 1--18     & Average rank  \\
+\midrule
+RF-unbalanced   & 0.66      & 0.69      & 0.72      & 0.75      & 0.75      & 0.78      & 5.17  \\
+RF-class priors & 0.65      & 0.68      & 0.71      & 0.74      & \bf{0.74} & \bf{0.77} & 4.00  \\ auto.arima & 0.61 & 0.65 & 0.69 & 0.72 & 0.75 & 0.88 & 2.67   \\
+ets             & \bf{0.59} & \bf{0.64} & \bf{0.68} & \bf{0.72} & \bf{0.74} & 0.86      & 1.67   \\
+WN              & 2.06      & 2.08      & 2.10      & 2.13      & 2.15      & 2.27      & 12.00   \\
+RW              & 0.91      & 0.97      & 1.01      & 1.04      & 1.04      & 1.17      & 10.33  \\
+RWD             & 0.90      & 0.96      & 1.00      & 1.03      & 1.02      & 1.14      & 9.17  \\
+STL-AR          & 0.73      & 0.81      & 0.90      & 0.98      & 1.04      & 1.27      & 8.83  \\
+Theta           & 0.63      & 0.67      & 0.72      & 0.75      & 0.77      & 0.89      & 5.67    \\
+Snaive          & 0.95      & 0.97      & 0.97      & 0.98      & 0.98      & 1.14      & 9.00  \\
+\bottomrule
 \end{tabular}
 \end{table}
 
 
 \begin{table}[!h]
-\centering
-\caption{Experiment 2 (Observed sample - M3): Forecast accuracy measures for 617 M1 - monthly series}
+\centering\small
+\caption{Experiment 2 (observed sample M3): Forecast accuracy measures for 617 M1 monthly series.}
 \label{M1M}
 \begin{tabular}{lrrrrrrrl}
-\hline
- & \multicolumn{6}{c}{Average of forecasting horizons: 1-h}    &  \\ \hline
- &  1-4& 1-6 & 1-8 & 1-10 & 1-12 & 1-18  & Average rank  \\ \hline
-RF-unbalanced&  0.72& 0.78 & 0.83 & 0.88 &\bf{ 0.89} & \bf{0.97} & 2.50  \\ 
-RF-class priors &  0.71& 0.78 & 0.83 & 0.89 & 0.91 & 0.99  & 2.83  \\ 
-auto.arima & 0.73 &0.81  & 0.87 & 0.94 & 0.99 & 1.16 &  6.83   \\  
-ets &0.68  & 0.76 & 0.82 & 0.88 & 0.93 & 1.07 & 2.50   \\  
-WN & 2.06 & 2.09 & 2.12 & 2.14 & 2.18 & 2.28 & 12.00   \\  
-RW &1.18  &1.24 & 1.31 & 1.34 & 1.33 & 1.47 &  10.00 \\ 
-RWD &1.19  & 1.27 &1.37  &1.40  & 1.39 & 1.55 & 11.00  \\ 
-STL-AR & 0.79 & 0.91 & 0.99 & 1.09 & 1.17 & 1.39 & 8.33  \\ 
-Theta & \bf{0.68} & \bf{0.75} & \bf{0.81} & \bf{0.87} & 0.91 & 1.04 & 1.67    \\ 
-Snaive& 1.09 & 1.11 & 1.11 & 1.13 & 1.14 &  1.31&   8.67\\ \hline
+\toprule
+ & \multicolumn{6}{c}{Average of forecasting horizons}    &  \\ 
+                & 1--4      & 1--6      & 1--8      & 1--10     & 1--12      & 1--18     & Average rank  \\
+\midrule
+RF-unbalanced   & 0.72      & 0.78      & 0.83      & 0.88      & \bf{ 0.89} & \bf{0.97} & 2.50  \\
+RF-class priors & 0.71      & 0.78      & 0.83      & 0.89      & 0.91       & 0.99      & 2.83  \\
+auto.arima      & 0.73      & 0.81      & 0.87      & 0.94      & 0.99       & 1.16      & 6.83   \\
+ets             & 0.68      & 0.76      & 0.82      & 0.88      & 0.93       & 1.07      & 2.50   \\
+WN              & 2.06      & 2.09      & 2.12      & 2.14      & 2.18       & 2.28      & 12.00   \\
+RW              & 1.18      & 1.24      & 1.31      & 1.34      & 1.33       & 1.47      & 10.00 \\
+RWD             & 1.19      & 1.27      & 1.37      & 1.40      & 1.39       & 1.55      & 11.00  \\
+STL-AR          & 0.79      & 0.91      & 0.99      & 1.09      & 1.17       & 1.39      & 8.33  \\
+Theta           & \bf{0.68} & \bf{0.75} & \bf{0.81} & \bf{0.87} & 0.91       & 1.04      & 1.67    \\
+Snaive          & 1.09      & 1.11      & 1.11      & 1.13      & 1.14       & 1.31      & 8.67\\
+\bottomrule
 \end{tabular}
 \end{table}
+
+
+\todo[inline]{None of the Figures and Tables in this section are reproducible. Replace them with R code to generate the required figures and tables.}
+
+
+\newpage
 
 # Discussion and Conclusions {#discussion}
 
