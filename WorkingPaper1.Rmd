@@ -1,5 +1,5 @@
 ---
-title: "Meta-learning how to forecast&nbsp;time series"
+title: "Meta-learning how to forecast time series"
 author:
   - familyname: Talagala
     othernames: Thiyanga S
@@ -78,14 +78,14 @@ An alternative approach, which avoids selecting a class of models *a priori*, is
 
 Clearly, there is a need for a fast, accurate algorithm to automate forecasting model selection. We propose a general meta-learning framework using features of the time series to select the class of models, or even the specific model, to be used for forecasting.  The model selection process is carried out using a classification algorithm --- we use the time series features as inputs, and the best forecasting algorithm as the output. The classification algorithm can be built using a large historical collection of time series, in advance of the real forecasting exercise (so it is an "offline" procedure). Then, when we have a new time series to forecast, we can quickly compute its features, use the pre-trained classification algorithm to identify the best forecasting model, and produce the required forecasts. Thus, the "online" part of our algorithm requires only feature computation, and the application of a single forecasting model, with no need to estimate large numbers of models within a class, or to carry out a computationally-intensive cross-validation procedure.
 
-The rest of this paper is organized as follows. We review the related work in \autoref{litreview}. In \autoref{methodology} we explain the detailed components and procedures of our proposed framework for forecast model selection. In \autoref{Mcomp} we presents the results, followed by the conclusions and future work in \autoref{discussion}.
+The rest of this paper is organized as follows. We review the related work in \autoref{litreview}. In \autoref{methodology} we explain the detailed components and procedures of our proposed framework for forecast model selection. In \autoref{Mcomp} we present the results, followed by the conclusions and future work in \autoref{discussion}.
 
 
 # Literature Review {#litreview}
 
 ## Time series features
 
-Rather than work with the time series directly in the "instance space", we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the instance-based representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower left quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and non-linearity.
+Rather than work with the time series directly in the "instance space", we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the instance-based representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower left quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and non-linearity. @fulcher2014highly introduced 9000 operations to extract features from time series.  
 
 ```{r fig1, fig.cap="Instance-based representation of time series"}
 # Extract required series
@@ -118,9 +118,7 @@ ggplot(df, aes(x = trend, y = seasonality)) +
   theme(legend.position = "none")
 ```
 
-@fulcher2014highly introduced 9000 operations to extract features from time series. The choice of the most appropriate set of features depends on the purpose of the study. In this paper we select time series features for the purpose of forecast model selection.  The features chosen should have the highest discriminatory power to select a good forecasting method, while keeping the set of features as small as possible in order to limit the computational time.
-
-
+The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M and M3 competitions [@makridakis1982accuracy;@makridakis2003m3], and we select time series features for the purpose of forecast model selection. Because the M and M3 competitions involved time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good forecasting method.
 
 ## What makes features useful for forecasting model identification?
 
@@ -174,83 +172,80 @@ More recently, @kuck2016meta proposed a meta-learning framework based on neural 
 
 # Methodology {#methodology}
 
-The overview of the proposed framework is presented in \autoref{fig:framework}. The offline and the online part of the framework are shown in blue and red colours respectively. A classification algorithm (meta-learner) is trained under the offline phase and then is used to select appropriate forecasting models for new series (online phase). 
-
-In order to train our classification algorithm, we need a large collection of time series which are similar to those that we will be forecasting. We assume that we have an essentially infinite population of time series, and we take a observed sample of them in order to train our classification algorithm. The new time series we aim to be forecasting are thought of as additional draws from the same population.  Hence, any conclusions made from the classification framework refer only to the population from which the sample has been selected. We may call this the target population. It is important to have a well defined target population to which the classification framework is applied in advance to avoid miss-applying the classification rules generated based on the available sample. We denote the collection of time series used for training the classifier as the "reference set". We split each time series within the reference set into a training set and a test set. From each training set we compute a range of time series features and also fit a selection of potential models. The calculated features form the input vector to the classification algorithm. Using the fitted models we generate forecasts and identify the "best" model for each training set based on forecast error measure (eg: MASE) calculated over the test set. The models deemed "best" form the output labels for the classification algorithm. The pseudo code for the algorithm implemented in this paper is given in Algorithm \autoref{alg:algo-lab}. In the following sections, we briefly introduce components associated with the offline part of the algorithm.
+Our proposed framework is presented in \autoref{fig:framework}. The offline and online parts of the framework are shown in blue and red respectively. A classification algorithm (the meta-learner) is trained during the offline phase and then is used to select appropriate forecasting models for new series in the online phase. 
 
 
 ```{r framework, fig.cap="Proposed framework (blue: offline phase, red: online phase)"}
 knitr::include_graphics("figures/framework.png")
 ```
 
-\begin{algorithm}
-  \caption{Identification of "best" forecast method for a new time series}
+\begin{algorithm}[!hb]
+  \caption{Identification of the "best" forecast method for a new time series.}
   \label{alg:algo-lab}
   \begin{algorithmic}[1]
     \Statex \textbf{Offline phase}
     \Statex \text{Given:}
-    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series
-      \Statex \hspace{1cm}$L:$ the set of class labels (eg: ARIMA, ETS, SNAIVE, etc.)
-         \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features
-         \Statex \hspace{1cm}$nsim:$ number of series to be simulated
-         \Statex \hspace{1cm}$B:$ number of trees in the random forest
-         \Statex \hspace{1cm}$mtry:$ number of features to be selected at each node
+    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series.
+      \Statex \hspace{1cm}$L:$ the set of class labels (eg: ARIMA, ETS, SNAIVE).
+         \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features.
+         \Statex \hspace{1cm}$nsim:$ number of series to be simulated.
+         \Statex \hspace{1cm}$B:$ number of trees in the random forest.
+         \Statex \hspace{1cm}$mtry:$ number of features to be selected at each node.
      \Statex \text{Output:}
       \Statex \hspace{1cm}\text{a random forest classifier} 
       \Statex
      \Statex \textit{Prepare the reference set}
-    \Statex For $i=1$ to $n$
-    \State Fit ARIMA and ETS models to $t_i$
-    \State Simulate $nsim$ number of time series from each model in step 2
-    \State The time series in $O$ and simulated time series in step 3 create the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
+    \Statex For $i=1$ to $n$:
+            \State Fit ARIMA and ETS models to $t_i$.
+            \State Simulate $nsim$ time series from each model in step 2.
+            \State The time series in $O$ and simulated time series in step 3 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
     \Statex 
     \Statex \textit{Prepare the meta-data}
-    \Statex For $j=1$ to $N$
-    \State Split $t_i$ into training set and test set
-    \State Calculate features $F$ based on the training set 
-    \State Fit $L$ models to the training set
-    \State Calculate forecasts for the test set from each model
-    \State Calculate forecast error measure over the test set for all models in $L$
-    \State Select the model with the minimum forecast error
-    \State Meta-data: input features - step 7, output labels - step 11
+    \Statex For $j=1$ to $N$:
+            \State Split $t_j$ into a training period and test period.
+            \State Calculate features $F$ based on the training period. 
+            \State Fit $L$ models to the training period.
+            \State Calculate forecasts for the test period from each model.
+            \State Calculate forecast error measure over the test period for all models in $L$.
+            \State Select the model with the minimum forecast error.
+            \State Meta-data: input features (step 7), output labels (step 11).
      \Statex
     \Statex \textit{Train a random forest classifier}
-    \State Train a random forest classifier based on the meta-data
-    \State {Random forest: the ensemble of trees $\{T_b\}_1^B$} 
+            \State Train a random forest classifier based on the meta-data.
+            \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
     \Statex
      \Statex \textbf{Online phase}
     \Statex \text{Given:}
-    \Statex \hspace{1cm}\text{the random forest classifier in step 14} 
+    \Statex \hspace{1cm}\text{the random forest classifier from step 14} .
      \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$} 
-  \State For $t_{new}$ calculate features $F$
-  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote{\hat{C_b}(t_{new})}$
+      \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
+  \State For $t_{new}$ calculate features $F$.
+  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote{\hat{C_b}(t_{new})}$.
    \end{algorithmic}
 \end{algorithm}
 
 
+In order to train our classification algorithm, we need a large collection of time series which are similar to those that we will be forecasting. We assume that we have an essentially infinite population of time series, and we take a sample of them in order to train the classification algorithm. The new time series we wish to forecast can be thought of as additional draws from the same population.  Hence, any conclusions made from the classification framework refer only to the population from which the sample has been selected. We may call this the "target population" of time series. It is important to have a well-defined target population to avoid misapplying the classification rules. We denote the collection of time series used for training the classifier as the "reference set". We split each time series within the reference set into a training period and a test period. From each training period we compute a range of time series features, and fit a selection of potential models. The calculated features form the input vector to the classification algorithm. Using the fitted models, we generate forecasts and identify the "best" model for each time series based on a forecast error measure (e.g., MASE) calculated over the test period. The models deemed "best" form the output labels for the classification algorithm. The pseudo code for this algorithm is given in Algorithm \autoref{alg:algo-lab}. In the following sections, we briefly discuss aspects of the offline part of the algorithm.
+
 ## Augmenting the observed sample with simulated series
 
-In practice, we may wish to augment our reference set by simulating new time series that are similar to those from the population. This process may be useful when our observed sample of time series is too small to build a reliable classifier. Alternatively, we may wish to add more of some types of time series to the reference set in order to get a more balanced sample for the classification.
-In order to produce simulated series that are similar to our population, we use several standard automatic forecasting algorithms such as ETS or automated ARIMA models, and then simulate multiple time series from the selected model within each model class. Assuming the models used are appropriate to the data, this ensures that the simulated series are similar to those in the population. Note that, this is done in the off-line phase of the algorithm, the computational time in producing these simulated series is of no real consequence.
+In practice, we may wish to augment our set of training time series by simulating new time series that are similar to those from the population. This process may be useful when our observed sample of time series is too small to build a reliable classifier. Alternatively, we may wish to add more of some types of time series to the reference set in order to get a more balanced sample for the classification. In order to produce simulated series that are similar to our population, we use several standard automatic forecasting algorithms such as ETS or automated ARIMA models, and then simulate multiple time series from the selected model within each model class. Assuming the models produce data that are similar to the observed time series, this ensures that the simulated series are similar to those in the population. Note that this is done in the offline phase of the algorithm, so the computational time in producing these simulated series is of no real consequence.
 
 ## Input: features
 
-Our proposed algorithm depends crucially on finding features that enable identification of a suitable model for the given time series. Therefore, the features used should capture the dynamic structure of the time series which is important for identifying models for forecasting. Such features are measures related to the auto-correlation structure of the time series, the trend, the seasonality (if the data is seasonal) and nonlinearlity.
+Our proposed algorithm requires features that enable identification of a suitable forecasting model for a given time series. Therefore, the features used should capture the dynamic structure of the time series, such as autocorrelation, trend, seasonality, nonlinearity, heterogeneity, and so on.
 
-The purpose of this feature-based framework is to lessen the workload associated with the trial and error procedure of model selection and thereby reduce this time. Therefore, we must be conscious that the time taken to calculate the input features should be significantly less than the time taken to estimate parameters of all of the candidate models required in a model selection procedure. Furthermore, interpretability, robustness to outliars, scale and length independence are some other factors that should be taken into consideration when selecting features for this classification problem. A comprehensive description of the features used in the experiment is specified in \autoref{sec:features}.
+The purpose of this feature-based framework is to reduce the time required for model selection.  Therefore, time needed to calculate the input features should be significantly less than the time required to estimate the parameters of all candidate models in a model selection procedure. Furthermore, interpretability, robustness to outliers, scale and length independence need to be considered when selecting features for this classification problem. A comprehensive description of the features used in the experiment is specified in \autoref{feature}.
 
 ## Output: labels
 
-The task of our classification framework is to identify the best forecasting method for a given time series. In this study we define the best forecast method for a given time series as the model which performs well for the out of sample according to some accuracy measure (for example, MAPE, MASE etc). The measure we use to select the best forecasting model could vary according to the purpose of forecasting and it could be either multiple or single criteria.
+The task of our classification framework is to identify the best forecasting method for a given time series. We define the best forecast method as the model with the lowest accuracy measure (e.g., MAPE or MASE) in the test period.
 
-In real life it is not possible to train time series among all possible classes of time series models to identify the best forecasting method, but at least we have to consider enough possibilities so that the algorithm can be used for out of sample classification with high confidence. However, the models to be considered will depend on the specific population of time series models we need to forecast. For example, if we have only non-seasonal time series, and no chaotic features, we may wish to restrict our models to random walks, white noise, ARIMA processes and ETS processes. Even in this scenario, the number of possible models can be quite large. In order to identify the best forecasting method for each series, all the methods considered are run on all time series in the reference set and generate forecasts. It is important to note that the model estimation is done on the training part of each series and forecasts are compared with the values in the test set. It is apparent that this step is computationally intensive and time consuming, as all methods have to be tried on each and every series in the reference set.  Since, this is done in the offline phase the time and the computational cost associated with this is not a problem.
+It is not possible to train all possible classes of time series models, but at least we should consider enough possibilities so that the algorithm can be used for model selection with high confidence. The models to be considered will depend on the specific population of time series models we need to forecast. For example, if we have only non-seasonal time series, and no chaotic features, we may wish to restrict our models to random walks, white noise, ARIMA processes and ETS processes. Even in this scenario, the number of possible models can be quite large. In order to identify the best forecasting method for each series, all the methods considered are run on all time series in the reference set, and forecasts are generated from each of them. Model estimation is done on the training period of each series and forecasts are compared with the values in the test period.This step is computationally intensive and time-consuming, as all methods have to be tried on each series in the reference set.  But since this is done only in the offline phase, the time involved and the computational cost associated with this task is not a problem.
 
 ## Random forest algorithm
 
-Having described the data inputs and outputs for the supervised classification approach, we briefly review the random forest algorithm for classification [@breiman2001random]. Random Forest is an ensemble learning method that grows a large number of decision trees using a two-step randomization process.
-
-The algorithm works as follow: Let $S=\{(\underline{x_1}, y_1), (\underline{x_2}, y_2), \dots, (\underline{x_N}, y_N)\}$ be the reference set, where the input $\underline{x_i}$, is a $1\times F$ vector of features, the output, $y_i$ corresponds to the class label of the $i^{th}$ observation, and $F$ is the total number of features. $N$ is the number of training examples in the reference set. Each tree in the forest is grown based on a bootstrap sample of size $N$ from the reference set. At each node of the tree, randomly select $f$ features from the full set of features $F$. The best split is selected  among those $f$ features. The split which results in most homogeneous sub-node is considered as the best split. Various measures have been introduced to evaluate the homogeneity of subnodes, such as; classification error rate, Gini index and cross entropy [@friedman2001elements]. In this study, we use Gini index to evaluate the homogeneity of a particular split. The trees are grown to the largest extent possible without pruning. To determine the class label for a new instance, features are calculated and passed down the trees. Then each tree gives a prediction and the majority vote over all individual trees lead to the final decision. In this work, we used the randomForest package [@liaw2002randomforest] in R which implements the Fortran code for the Random Forest classification, by @breiman2004random.
+A random forest [@breiman2001random] is an ensemble learning method that combines a large number of decision trees using a two-step randomization process. Let $Z=\{(\bm{x}_1, y_1), (\bm{x}_2, y_2), \dots, (\bm{x}_N, y_N)\}$ be the reference set, where the input $\bm{x}_i$ is an $m$-vector of features, the output, $y_i$, corresponds to the class label of the $i$th observation, $m$ is the total number of features, and $N$ is the number of training examples in the reference set. Each tree in the forest is grown based on a bootstrap sample of size $N$ from the reference set. At each node of the tree, randomly select $f<m$ features from the full set of features. The best split is selected among those $f$ features. The split which results in the most homogeneous subnodes is considered the best split. Various measures have been introduced to evaluate the homogeneity of subnodes, such as classification error rate, the Gini index and cross entropy [@friedman2001elements]. In this study, we use the Gini index to evaluate the homogeneity of a particular split. The trees are grown to the largest extent possible without pruning. To determine the class label for a new instance, features are calculated and passed down the trees. Then each tree gives a prediction and the majority vote over all individual trees leads to the final decision. In this work, we have used the randomForest package [@liaw2002randomforest] in R [@Rcore] which implements the Fortran code for Random Forest classification by @breiman2004random.
 
 # Application to M-competition Data {#Mcomp}
 
@@ -293,7 +288,7 @@ x) Seasonal naive method.
 
 Therefore, in accordance to Rice's framework, for yearly data, the algorithm space($A$) contains 10 models while for seasonal data the algorithm space($A$) contains 15 models.
 
-Inorder to identify the output label: "best" model, RW, RWD, Theta, STL-AR, Seasonal naive (only for seasonal time series), WN are implemented on training set of each series and forecasts are produced for the whole of the test sets. In addition, we further use `auto.arima` and `ets` functions in the forecast package to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS model. The model model corresponds to the smallest MASE [@hyndman2006another] for the test set is selected as the *output-lable*. 
+Inorder to identify the output label: "best" model, RW, RWD, Theta, STL-AR, Seasonal naive (only for seasonal time series), WN are implemented on training set of each series and forecasts are produced for the whole of the test periods. In addition, we further use `auto.arima` and `ets` functions in the forecast package to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS model. The model model corresponds to the smallest MASE [@hyndman2006another] for the test set is selected as the *output-lable*. 
  
 
 ## Feature computation process {#sec:features}
