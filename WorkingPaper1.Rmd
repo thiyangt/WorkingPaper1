@@ -33,8 +33,10 @@ output:
       in_header: preamble.tex
     keep_tex: yes
     number_sections: yes
-    citation_package: biblatex
-abstract: A crucial task in time series forecasting is the identification of the most suitable forecasting method. We present a general framework for forecast model selection using meta-learning. A Random Forest is used to predict the best forecasting method using only time series features. The proposed framework has been evaluated using time series from the M1 and M3 competitions, and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting. A key advantage of our algorithm is that the time-consuming part of building the random forest can be handled in advance of the forecasting task. So when a time series 
+#    citation_package: biblatex
+header-includes:
+- \usepackage[backend=biber]{biblatex}
+abstract: A crucial task in time series forecasting is the identification of the most suitable forecasting method. We present a general framework for forecast model selection using meta-learning. A Random Forest is used to predict the best forecasting method using only time series features. The proposed framework has been evaluated using time series from the M1 and M3 competitions, and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting. A key advantage of our algorithm is that the time-consuming part of building the random forest can be handled in advance of the forecasting task. 
 keywords: Time Series, Forecasting, Time Series Features, Random Forest, Meta-learning, Algorithm selection problem
 ---
 
@@ -124,7 +126,7 @@ ggplot(df, aes(x = trend, y = seasonality)) +
   theme(legend.position = "none")
 ```
 
-The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2003m3], and we select time series features for the purpose of forecast model selection. Because the M1 and M3 competitions involved time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good forecasting method.
+The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select time series features for the purpose of forecast model selection. Because the M1 and M3 competitions involved time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good forecasting method.
 
 ## What makes features useful for forecasting model identification?
 
@@ -344,6 +346,7 @@ The correlation matrices for all features are presented in \autoref{fig:cormat}.
 
 
 ```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(
   as.raster(readPNG("figures/ggheatmapA.png")),
   interpolate = FALSE
@@ -370,9 +373,6 @@ img6 <- rasterGrob(
 )
 grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
 ```
-
-\todo[inline]{This is not reproducible. Replace Figure 5 with R code to generate the required figure.}
-
 
 ## Model calibration
 
@@ -408,6 +408,7 @@ As seen in \autoref{fig:pca1}, simulated time series are able to fill the gaps b
 
 
 ```{r pca1, fig.cap="Distribution of yearly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A-- 1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A- 2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(
   as.raster(readPNG("figures/pca1M1Y.png")),
   interpolate = FALSE
@@ -487,6 +488,7 @@ Theta           & 1.15      & 1.70      & 2.38      & 3.00      & 3.59      & 4.
 
 
 ```{r pca2,fig.cap="Distribution of quarterly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A--1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A--2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.", fig.pos="!bp"}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(
   as.raster(readPNG("figures/pca1M1Q.png")),
   interpolate = FALSE
@@ -573,6 +575,7 @@ Snaive          & 1.52      & 1.53      & 1.53      & 1.56      & 1.74      & 1.
 ### Monthly data {-}
 
 ```{r pca3,fig.cap="Distribution of monthly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A--1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A--2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
 img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
 img3 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
@@ -632,10 +635,6 @@ Snaive          & 1.09      & 1.11      & 1.11      & 1.13      & 1.14       & 1
 For the monthly data, the first 3 principal components explain 78.07% of the total variance of the features for the M1 competition data, and 65.97% of the variance for the M3 competition data.
 
 Tables \ref{M3M}--\ref{M1M} show that our meta-learning method with RF-unbalanced and RF-class priors provides more accurate forecasts than the benchmark methods for the longest forecast horizons (1--18). However, over shorter horizons, ETS does slightly better for the M3 data, and Theta does slightly better for the M1 data.
-
-
-\todo[inline]{None of the Figures and Tables in this section are reproducible. Replace them with R code to generate the required figures and tables.}
-
 
 \newpage
 
@@ -726,13 +725,12 @@ where $\gamma$ is the smoothing parameter for the seasonal component, and the ot
 
 ### Unit root test statistics {-}
 
-The Phillips-Perron test is based on the regression $y_t=\alpha+(\phi -1)y_{t-1}+ \epsilon_t$. The test statistic we use as a feature is
+The Phillips-Perron test is based on the regression $y_t=\alpha+(\phi)y_{t-1}+ \epsilon_t$. The test statistic we use as a feature is
 \[
-  Z = T(\hat{\phi}-1)- T^2\text{se}(\hat{\pi})(\hat{\lambda}^2-\hat{\sigma^2})/2\hat\sigma^2,
+  Z = T(\hat{\phi}-1)- T^2\text{se}(\hat{\phi})(\hat{\lambda}^2-\hat{\sigma^2})/2\hat\sigma^2,
 \]
 where $\hat\sigma^2= T^{-1}\sum_{t=1}^{T} \hat\epsilon_t^2$, $\hat\lambda^2=T^{-1} \sum_{t=1}^{T} S_T^2$, and $S_T = \sum_{t=1}^{T}\hat\epsilon_t$. 
 
-\todo[inline]{What is $\hat\pi$?}
 
 The KPSS test is based on the regression $y_t=c+\delta t+\phi y_{t-1}+\epsilon_t$. The test statistic we use as a feature is
 \[
