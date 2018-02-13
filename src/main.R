@@ -25,10 +25,10 @@ monthly_exp1 <- rename(monthly_exp1, spikiness = spike)
 monthly_exp2 <- rename(monthly_exp2, spikiness = spike)
 
 
-quarterly_exp1 <- rename(quarterly_exp1, seasonal = seasonal_strength)
-quarterly_exp2 <- rename(quarterly_exp2, seasonal = seasonal_strength)
-monthly_exp1 <- rename(monthly_exp1, seasonal = seasonal_strength)
-monthly_exp2 <- rename(monthly_exp2, seasonal = seasonal_strength)
+quarterly_exp1 <- rename(quarterly_exp1, seasonality = seasonal_strength)
+quarterly_exp2 <- rename(quarterly_exp2, seasonality = seasonal_strength)
+monthly_exp1 <- rename(monthly_exp1, seasonality = seasonal_strength)
+monthly_exp2 <- rename(monthly_exp2, seasonality = seasonal_strength)
 
 ## --- figure 5
 
