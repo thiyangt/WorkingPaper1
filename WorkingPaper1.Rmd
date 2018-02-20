@@ -321,20 +321,20 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
 17 & hwgamma        & ETS(A,A,A) $\hat\gamma$                                                                 & -     & \yes \\
 18 & ur\_pp         & test statistic based on Phillips-Perron test                                            & \yes  & - \\
 19 & ur\_kpss       & test statistic based on KPSS test                                                       & \yes  & - \\
-20 & x\_acf1        & first ACF value of the original series                                                  & \yes  & \yes \\
-21 & diff1x\_acf1   & first ACF value of the differenced series                                               & \yes  & \yes \\
-22 & diff2x\_acf1   & first ACF value of the twice-differenced series                                         & \yes  & \yes \\
-23 & x\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
-24 & diff1x\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
-25 & diff2x\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
+20 & y\_acf1        & first ACF value of the original series                                                  & \yes  & \yes \\
+21 & diff1y\_acf1   & first ACF value of the differenced series                                               & \yes  & \yes \\
+22 & diff2y\_acf1   & first ACF value of the twice-differenced series                                         & \yes  & \yes \\
+23 & y\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
+24 & diff1y\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
+25 & diff2y\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
 26 & seas\_acf1     & autocorrelation coefficient at first lag                                                & -     & \yes \\
 27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
 28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
 29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
 30 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
-31 & x\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
-32 & diff1x\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
-33 & diff2x\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
+31 & y\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
+32 & diff1y\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
+33 & diff2y\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
 \bottomrule
  \end{tabular}
 \end{table}
