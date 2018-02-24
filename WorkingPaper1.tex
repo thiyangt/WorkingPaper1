@@ -671,8 +671,8 @@ forecasting models for new series in the online phase.
      \Statex \textit{Prepare the reference set}
     \Statex For $i=1$ to $n$:
             \State Fit ARIMA and ETS models to $t_i$.
-            \State Simulate $nsim$ time series from each model in step 2.
-            \State The time series in $O$ and simulated time series in step 3 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
+            \State Simulate $nsim$ time series from each model in step 1.
+            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
     \Statex 
     \Statex \textit{Prepare the meta-data}
     \Statex For $j=1$ to $N$:
@@ -682,7 +682,7 @@ forecasting models for new series in the online phase.
             \State Calculate forecasts for the test period from each model.
             \State Calculate forecast error measure over the test period for all models in $L$.
             \State Select the model with the minimum forecast error.
-            \State Meta-data: input features (step 7), output labels (step 11).
+            \State Meta-data: input features (step 5), output labels (step 9).
      \Statex
     \Statex \textit{Train a random forest classifier}
             \State Train a random forest classifier based on the meta-data.
@@ -690,7 +690,7 @@ forecasting models for new series in the online phase.
     \Statex
      \Statex \textbf{Online phase}
     \Statex \text{Given:}
-    \Statex \hspace{1cm}\text{the random forest classifier from step 14} .
+    \Statex \hspace{1cm}\text{the random forest classifier from step 12} .
      \Statex \text{Output:}
       \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
   \State For $t_{new}$ calculate features $F$.
