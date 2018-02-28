@@ -630,7 +630,7 @@ Snaive          & 1.09      & 1.11      & 1.11      & 1.13      & 1.14       & 1
 \end{table}
 
 
-For the monthly data, the first 3 principal components explain 78.07% of the total variance of the features for the M1 competition data, and 65.97% of the variance for the M3 competition data.
+For the monthly data, the first 3 principal components explain 58.93% of the total variance of the features for the M1 competition data, and 65.97% of the variance for the M3 competition data.
 
 Tables \ref{M3M}--\ref{M1M} show that our meta-learning method with RF-unbalanced and RF-class priors provides more accurate forecasts than the benchmark methods for the longest forecast horizons (1--18). However, over shorter horizons, ETS does slightly better for the M3 data, and Theta does slightly better for the M1 data.
 
