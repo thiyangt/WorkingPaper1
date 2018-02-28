@@ -301,13 +301,13 @@ PC1m1q = pcaM1Q$x[,1]
 PC2m1q = pcaM1Q$x[,2]
 PC3m1q = pcaM1Q$x[,3]
 m1qPCAresults = data.frame(PC1m1q, PC2m1q, PC3m1q,pcaM1QDFvariables)
-M1Qsimulated <- filter(M1QRFdata, datasource!="M1")
+M1Qsimulated <- filter(quarterly_exp1, datasource!="M1")
 projectM1Qsimulated <- M1Qsimulated[, 1:30]
 simulatedPCAM1Q <- scale(projectM1Qsimulated,pcaM1Q$center, pcaM1Q$scale) %*% pcaM1Q$rotation
 M1Qpca <- data.frame(PC1=PC1m1q, PC2=PC2m1q, PC3=PC3m1q)
 rownames(M1Qpca) <- NULL
 SimulatedPCAM1Q <- data.frame(PC1=simulatedPCAM1Q[,1], PC2=simulatedPCAM1Q[,2], PC3=simulatedPCAM1Q[,3])
-M3Q <- filter(quarterly_m3, datasource=="M3")
+M3Q <- filter(quarterly_exp2, datasource=="M3")
 projectM3Q <- M3Q[,1:30]
 simM3QPCA <- scale(projectM3Q, pcaM1Q$center,pcaM1Q$scale) %*% pcaM1Q$rotation
 M3QPCA <- data.frame(PC1=simM3QPCA[,1], PC2=simM3QPCA[,2], PC3=simM3QPCA[,3])
@@ -323,24 +323,25 @@ pca3M1Q <- ggplot(pcaALLM1Q, aes(x=PC2, y=PC3, color=source)) + geom_point()+ th
 ggsave("figures/pca3M1Q.png")
 
 
-pcaM3QDF <- filter(quarterly_exp2, datasource=="M3")
+pcaM3QDF <- filter(quarterly_exp2, datasource=="M3") #QE-2
 pcaM3QDFvariables <- pcaM3QDF[, 1:30]
 pcaM3Q <- prcomp(pcaM3QDFvariables, center=TRUE, scale=TRUE)
+summary(pcaM3Q)
 PC1m3q = pcaM3Q$x[,1]
 PC2m3q = pcaM3Q$x[,2]
 PC3m3q = pcaM3Q$x[,3]
 m3qPCAresults = data.frame(PC1m3q, PC2m3q, PC3m3q,pcaM3QDFvariables)
-M3Qsimulated <- filter(quarterly_m3, datasource!="M3")
+M3Qsimulated <- filter(quarterly_exp2, datasource!="M3")
 projectM3Qsimulated <- M3Qsimulated[,1:30]
 simulatedPCAM3Q <- scale(projectM3Qsimulated,pcaM3Q$center, pcaM3Q$scale) %*% pcaM3Q$rotation
 M3Qpca <- data.frame(PC1=PC1m3q, PC2=PC2m3q, PC3=PC3m3q)
 rownames(M3Qpca) <- NULL
 SimulatedPCAM3Q <- data.frame(PC1=simulatedPCAM3Q[,1], PC2=simulatedPCAM3Q[,2], PC3=simulatedPCAM3Q[,3])
 M1Q <- filter(quarterly_exp1, datasource=="M1")
-projectM1Q <- quarterly_exp1[,1:30]
+projectM1Q <- M1Q[,1:30]
 simM1QPCA <- scale(projectM1Q, pcaM3Q$center,pcaM3Q$scale) %*% pcaM3Q$rotation
 M1QPCA <- data.frame(PC1=simM1QPCA[,1], PC2=simM1QPCA[,2], PC3=simM1QPCA[,3])
-projectM3QRFdataSub <- quarterly_exp2_sub
+projectM3QRFdataSub <- quarterly_exp2_sub[,1:30]
 M3QRFdataSubPCA <- scale(projectM3QRFdataSub, pcaM3Q$center,pcaM3Q$scale) %*% pcaM3Q$rotation
 subsamplePCAQ <- data.frame(PC1=M3QRFdataSubPCA[,1], PC2=M3QRFdataSubPCA[,2], PC3=M3QRFdataSubPCA[,3])
 pcaALLM3Q <- bind_rows(SimulatedPCAM3Q, subsamplePCAQ, M3Qpca, M1QPCA, .id="source")
@@ -355,7 +356,7 @@ pca3M3Q <- ggplot(pcaALLM3Q, aes(x=PC2, y=PC3, color=source)) + geom_point()+ th
 ggsave("figures/pca3M3Q.png")
 
 ## ---- figure 8
-pcaM1MDF <- filter(monthly_exp1, datasource=="M1")
+pcaM1MDF <- filter(monthly_exp1, datasource=="M1") # M-E1
 pcaM1MDFvariables <- pcaM1MDF[,1:30]
 pcaM1M <- prcomp(pcaM1MDFvariables, center=TRUE, scale=TRUE)
 summary(pcaM1M)
@@ -369,7 +370,7 @@ simulatedPCAM1M <- scale(projectM1Msimulated,pcaM1M$center, pcaM1M$scale) %*% pc
 M1Mpca <- data.frame(PC1=PC1m1m, PC2=PC2m1m, PC3=PC3m1m)
 rownames(M1Mpca) <- NULL
 SimulatedPCAM1M <- data.frame(PC1=simulatedPCAM1M[,1], PC2=simulatedPCAM1M[,2], PC3=simulatedPCAM1M[,3])
-M3M <- filter(monthly_exp2, database=="M3")
+M3M <- filter(monthly_exp2, datasource=="M3")
 projectM3M <- M3M[, 1:30]
 simM3MPCA <- scale(projectM3M, pcaM1M$center,pcaM1M$scale) %*% pcaM1M$rotation
 M3MPCA <- data.frame(PC1=simM3MPCA[,1], PC2=simM3MPCA[,2], PC3=simM3MPCA[,3])
@@ -384,7 +385,7 @@ pca3M1M <- ggplot(pcaALLM1M, aes(x=PC2, y=PC3, color=source)) + geom_point()+ th
 	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("1.B")
 ggsave("figures/pca3M1M.png")
 
-pcaM3MDF <- filter(monthly_exp2, datasource=="M3")
+pcaM3MDF <- filter(monthly_exp2, datasource=="M3") #ME-2
 pcaM3MDFvariables <- pcaM3MDF[,1:30]
 pcaM3M <- prcomp(pcaM3MDFvariables, center=TRUE, scale=TRUE)
 summary(pcaM3M)
