@@ -642,7 +642,7 @@ Our proposed framework is presented in \autoref{fig:framework}. The
 offline and online parts of the framework are shown in blue and red
 respectively. A classification algorithm (the meta-learner) is trained
 during the offline phase and then is used to select appropriate
-forecasting models for new series in the online phase.
+forecasting models for new time series in the online phase.
 
 \begin{figure}
 
@@ -699,7 +699,7 @@ forecasting models for new series in the online phase.
 \end{algorithm}
 
 In order to train our classification algorithm, we need a large
-collection of time series which are similar to those that we will be
+collection of time series which are similar to those we will be
 forecasting. We assume that we have an essentially infinite population
 of time series, and we take a sample of them in order to train the
 classification algorithm. The new time series we wish to forecast can be
