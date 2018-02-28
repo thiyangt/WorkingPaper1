@@ -245,7 +245,7 @@ The purpose of this feature-based framework is to reduce the time required for m
 
 ## Output: labels
 
-The task of our classification framework is to identify the best forecasting method for a given time series. We define the best forecast method as the model with the lowest accuracy measure (e.g., MAPE or MASE) in the test period.
+The task of our classification framework is to identify the best forecasting method for a given time series. We define the best forecast method as the model with the lowest forecast accuracy measure (e.g., MAPE or MASE) over the test period.
 
 It is not possible to train all possible classes of time series models, but at least we should consider enough possibilities so that the algorithm can be used for model selection with high confidence. The models to be considered will depend on the specific population of time series models we need to forecast. For example, if we have only non-seasonal time series, and no chaotic features, we may wish to restrict our models to random walks, white noise, ARIMA processes and ETS processes. Even in this scenario, the number of possible models can be quite large. In order to identify the best forecasting method for each series, all the methods considered are run on all time series in the reference set, and forecasts are generated from each of them. Model estimation is done on the training period of each series and forecasts are compared with the values in the test period.This step is computationally intensive and time-consuming, as all methods have to be tried on each series in the reference set.  But since this is done only in the offline phase, the time involved and the computational cost associated with this task is not a problem.
 
