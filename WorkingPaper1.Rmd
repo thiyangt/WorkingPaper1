@@ -343,7 +343,7 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
 The correlation matrices for all features are presented in \autoref{fig:cormat}. The variability in the correlations reflects the diversity of the selected features. In other words, the features we used were able to capture different characteristics of the time series. Further, the structure of the correlation matrices are similar to each other, showing the different collections have similar feature spaces.
 
 
-```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
+```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots for the reference sets. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
 # the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(
   as.raster(readPNG("figures/ggheatmapA.png")),
