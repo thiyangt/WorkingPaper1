@@ -153,7 +153,7 @@ The main challenge in ASP is to identify the selection mapping $S$ from the feat
 
 The meta-learning framework consists of an offline (training) phase and an online (prediction) phase. In the offline phase, the mapping $S$ is learnt based on a collection of training examples. This is performed using a *meta-learner* which can be any supervised learning algorithm designed to estimate $S$. The inputs for the meta-learner are known as *meta-features*, and instances in the algorithm space are the *output labels*. The database comprising both input-features and output-labels is called *meta-data*. In the online phase of the algorithm, input-features are extracted from new data and passed into the meta-learner that was constructed in the offline phase, in order to predict the output-labels of the new data.
 
-## Forecasting model selection using meta-learning
+## Forecast model selection using meta-learning
 
 Forecasting model selection problems can be framed according to Rice's ASP framework.
 
