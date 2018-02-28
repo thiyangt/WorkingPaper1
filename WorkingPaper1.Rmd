@@ -95,7 +95,7 @@ Rather than work with the time series directly in the "instance space", we propo
 
 ```{r fig1, fig.cap="Instance-based representation of time series"}
 # Extract required series
-series_id <- c("N0001", "N0633", "N0625", "N0645", "N2012", "N1912")
+series_id <- c("N0001", "N0633", "N0625", "N0645","N1912", "N2012")
 six_series <- lapply(M3[series_id], function(u){u$x})
 p <- lapply(six_series,
   function(u) {autoplot(u) + xlab("") + ylab("")}
