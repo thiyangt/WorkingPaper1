@@ -786,12 +786,12 @@ associated with this task is not a problem.
 A random forest \autocite{breiman2001random} is an ensemble learning
 method that combines a large number of decision trees using a two-step
 randomization process. Let
-\(Z=\{(\bm{x}_1, y_1), (\bm{x}_2, y_2), \dots, (\bm{x}_N, y_N)\}\) be
+\(Z=\{(\bm{x}_1, y_1), (\bm{x}_2, y_2), \dots, (\bm{x}_M, y_M)\}\) be
 the reference set, where the input \(\bm{x}_i\) is an \(m\)-vector of
 features, the output, \(y_i\), corresponds to the class label of the
-\(i\)th observation, \(m\) is the total number of features, and \(N\) is
-the number of training examples in the reference set. Each tree in the
-forest is grown based on a bootstrap sample of size \(N\) from the
+\(i\)th observation, \(m\) is the total number of features, and \(M\) is
+the number of training samples in the reference set. Each tree in the
+forest is grown based on a bootstrap sample of size \(M\) from the
 reference set. At each node of the tree, randomly select \(f<m\)
 features from the full set of features. The best split is selected among
 those \(f\) features. The split which results in the most homogeneous
@@ -815,7 +815,7 @@ forecasting models, we use the time series of the M1 competition
 \autocite{makridakis1982accuracy} and M3 competition
 \autocite{makridakis2000m3}. The R package Mcomp \autocite{hyndmanmcomp}
 provides the data from both competitions. The proposed algorithm is
-applied to yearly, quarterly and monthly series separately. We ran two
+applied to yearly, quarterly and monthly series separately. We run two
 experiments for each case. In the first experiment, we treat the time
 series of the M1 competition as the \emph{observed sample} and the time
 series of the M3 competition as the collection of \emph{new time
@@ -920,7 +920,7 @@ online phase of our algorithm very fast. The features are summarized in
 23 & y\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
 24 & diff1y\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
 25 & diff2y\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
-26 & seas\_acf1     & autocorrelation coefficient at first lag                                                & -     & \yes \\
+26 & seas\_acf1     & autocorrelation coefficient at first seasonal lag                                                & -     & \yes \\
 27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
 28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
 29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
