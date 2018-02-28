@@ -204,10 +204,10 @@ knitr::include_graphics("figures/framework.png")
     \Statex For $i=1$ to $n$:
             \State Fit ARIMA and ETS models to $t_i$.
             \State Simulate $nsim$ time series from each model in step 1.
-            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
+            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_M\}$ where $M = n + nsim$.
     \Statex 
     \Statex \textit{Prepare the meta-data}
-    \Statex For $j=1$ to $N$:
+    \Statex For $j=1$ to $M$:
             \State Split $t_j$ into a training period and test period.
             \State Calculate features $F$ based on the training period. 
             \State Fit $L$ models to the training period.
@@ -226,7 +226,7 @@ knitr::include_graphics("figures/framework.png")
      \Statex \text{Output:}
       \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
   \State For $t_{new}$ calculate features $F$.
-  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote{\hat{C_b}(t_{new})}$.
+  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote\{\hat{C_b}(t_{new})\}_1^B$.
    \end{algorithmic}
 \end{algorithm}
 
