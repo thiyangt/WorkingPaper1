@@ -772,13 +772,13 @@ non-seasonal time series, and no chaotic features, we may wish to
 restrict our models to random walks, white noise, ARIMA processes and
 ETS processes. Even in this scenario, the number of possible models can
 be quite large. In order to identify the best forecasting method for
-each series, all the methods considered are run on all time series in
-the reference set, and forecasts are generated from each of them. Model
-estimation is done on the training period of each series and forecasts
-are compared with the values in the test period.This step is
+each series, all the models considered are run on all time series in the
+reference set, and forecasts are generated from each of them. Model
+estimation is strictly done on the training period of each series and
+forecasts are compared with the values in the test period.This step is
 computationally intensive and time-consuming, as all methods have to be
-tried on each series in the reference set. But since this is done only
-in the offline phase, the time involved and the computational cost
+applied on each series in the reference set. However, since this is done
+only in the offline phase, the time involved and the computational cost
 associated with this task is not a problem.
 
 \subsection{Random forest algorithm}\label{random-forest-algorithm}
