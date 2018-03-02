@@ -204,10 +204,10 @@ knitr::include_graphics("figures/framework.png")
     \Statex For $i=1$ to $n$:
             \State Fit ARIMA and ETS models to $t_i$.
             \State Simulate $nsim$ time series from each model in step 1.
-            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_M\}$ where $M = n + nsim$.
+            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
     \Statex 
     \Statex \textit{Prepare the meta-data}
-    \Statex For $j=1$ to $M$:
+    \Statex For $j=1$ to $N$:
             \State Split $t_j$ into a training period and test period.
             \State Calculate features $F$ based on the training period. 
             \State Fit $L$ models to the training period.
