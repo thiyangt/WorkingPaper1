@@ -302,7 +302,7 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
 \toprule
 \multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\ 
 \midrule
-1  & N              & length of time series                                                                   & \yes  & \yes \\
+1  & T              & length of time series                                                                   & \yes  & \yes \\
 2  & trend          & strength of trend                                                                       & \yes  & \yes\\
 3  & seasonality       & strength of seasonality                                                                 & -     & \yes \\
 4  & linearity      & linearity                                                                               & \yes  & \yes \\
@@ -345,6 +345,7 @@ The correlation matrices for all features are presented in \autoref{fig:cormat}.
 
 ```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots for the reference sets. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
 # the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
+
 img1 <- rasterGrob(
   as.raster(readPNG("figures/ggheatmapA.png")),
   interpolate = FALSE
