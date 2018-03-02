@@ -828,12 +828,12 @@ series}. This allow us to compare our results with published forecast
 accuracy results for each competition. In both experiments, we fit ARIMA
 and ETS models to the full length of each series in the corresponding
 \emph{observed samples} using the \texttt{auto.arima} and \texttt{ets}
-functions in the forecast package \autocite{Hyndman2008}. From each
-model fitted to annual and quarterly data, we simulate a further 1000
-series. For monthly time series, we simulate a further 100 series (to
-speed up the offline calculation process). The lengths of the simulated
-time series are set to be equal to the lengths of the series on which
-they were based.
+functions in the forecast package \autocite{forecast}. From each model
+fitted to annual and quarterly data, we simulate a further 1000 series.
+For monthly time series, we simulate a further 100 series (to speed up
+the offline calculation process). The lengths of the simulated time
+series are set to be equal to the lengths of the series on which they
+were based.
 
 As shown in \autoref{fig:framework}, the task of constructing the
 meta-database contains two main components: (i) identification of an
@@ -855,9 +855,9 @@ The output-labels we consider in this experiment are:
   \end{compactenum}
 
 Most of these are self-explanatory labels based on models implemented in
-the forecast package \autocite{Hyndman2008}. STL-AR refers to a model
-based on an STL decomposition method applied to the time series, then an
-AR model is used to forecast the seasonally adjusted data, while the
+the forecast package \autocite{forecast}. STL-AR refers to a model based
+on an STL decomposition method applied to the time series, then an AR
+model is used to forecast the seasonally adjusted data, while the
 seasonal naive method is used to forecast the seasonal component.
 
 In addition to the above ten output labels, we further include the
