@@ -384,21 +384,21 @@ considerably (at least to order \(n^2\) where \(n\) is the number of
 series to be forecast).
 
 Clearly, there is a need for a fast, accurate algorithm to automate
-forecasting model selection. We propose a general meta-learning
-framework using features of the time series to select the class of
-models, or even the specific model, to be used for forecasting. The
-model selection process is carried out using a classification algorithm
---- we use the time series features as inputs, and the best forecasting
-algorithm as the output. The classification algorithm can be built using
-a large historical collection of time series, in advance of the real
-forecasting exercise (so it is an ``offline'' procedure). Then, when we
-have a new time series to forecast, we can quickly compute its features,
-use the pre-trained classification algorithm to identify the best
-forecasting model, and produce the required forecasts. Thus, the
-``online'' part of our algorithm requires only feature computation, and
-the application of a single forecasting model, with no need to estimate
-large numbers of models within a class, or to carry out a
-computationally-intensive cross-validation procedure.
+forecast-model selection. We propose a general meta-learning framework
+using features of the time series to select the class of models, or even
+the specific model, to be used for forecasting. The model selection
+process is carried out using a classification algorithm --- we use the
+time series features as inputs, and the best forecasting algorithm as
+the output. The classification algorithm can be built using a large
+historical collection of time series, in advance of the real forecasting
+exercise (so it is an ``offline'' procedure). Then, when we have a new
+time series to forecast, we can quickly compute its features, use the
+pre-trained classification algorithm to identify the best forecasting
+model, and produce the required forecasts. Thus, the ``online'' part of
+our algorithm requires only feature computation, and the application of
+a single forecasting model, with no need to estimate large numbers of
+models within a class, or to carry out a computationally-intensive
+cross-validation procedure.
 
 The rest of this paper is organized as follows. We review the related
 work in \autoref{litreview}. In \autoref{methodology} we explain the
