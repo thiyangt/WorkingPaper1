@@ -565,7 +565,7 @@ of number of step changes, skewness, kurtosis, the coefficient of
 variation, autocorrelations at lags 1--4, and partial autocorrelations
 at lag 2--4. Casting Shah's work in Rice's framework, we can specify:
 \(P=203\) quarterly series from the M1 competition
-\autocite{makridakis1982accuracy}; \(A=3\) forecasting methods, namely
+\autocite{makridakis1982accuracy}; \(A=3\) forecast-models, namely
 simple exponential smoothing, Holt-Winters exponential smoothing with
 multiplicative seasonality, and a basic structural time series model;
 \(Y=\) mean squared error for a hold-out sample. The mapping \(S\) is
@@ -573,35 +573,35 @@ learnt using discriminant analysis.
 
 \textcite{prudencio2004meta} was the first paper to use the term
 ``meta-learning'' in the context of time series model selection. They
-studied the applicability of meta-learning approaches for forecasting
-model selection based on two case studies. Again using the notation of
+studied the applicability of meta-learning approaches for forecas-model
+selection based on two case studies. Again using the notation of
 Definition \ref{def2}, we can describe their first case study with:
-\(A\) contained only two forecasting methods, simple exponential
-smoothing and a time-delay neural network; \(Y=\) mean absolute error;
-\(F\) consisted of 14 features, namely length, autocorrelation
-coefficients, coefficient of variation, skewness, kurtosis, and a test
-of turning points to measure the randomness of the time series; \(S\)
-was learnt using the C4.5 decision tree algorithm. For their second
-study, the algorithm space included a random walk, Holt's linear
-exponential smoothing and AR models; the problem space \(P\) contained
-the yearly series from the M3 competition \autocite{makridakis2000m3};
-\(F\) included a subset of features from the first study; and \(Y\) was
-a ranking based on error. Beyond the task of forecasting model
-selection, they used the NOEMON approach to rank the algorithms
+\(A\) contained only two forecast-models, simple exponential smoothing
+and a time-delay neural network; \(Y=\) mean absolute error; \(F\)
+consisted of 14 features, namely length, autocorrelation coefficients,
+coefficient of variation, skewness, kurtosis, and a test of turning
+points to measure the randomness of the time series; \(S\) was learnt
+using the C4.5 decision tree algorithm. For their second study, the
+algorithm space included a random walk, Holt's linear exponential
+smoothing and AR models; the problem space \(P\) contained the yearly
+series from the M3 competition \autocite{makridakis2000m3}; \(F\)
+included a subset of features from the first study; and \(Y\) was a
+ranking based on error. Beyond the task of forecast-model selection,
+they used the NOEMON approach to rank the algorithms
 \autocite{kalousis1999noemon}.
 
 \textcite{lemke2010meta} studied the applicability of different
-meta-learning approaches for forecasting model selection. Their
-algorithm space \(A\) contained ARIMA models, exponential smoothing
-models and a neural network model. In addition to statistical measures
-such as the standard deviation of the detrended series, skewness,
-kurtosis, length, strength of trend, Durbin-Watson statistics of
-regression residuals, the number of turning points, step changes, a
-predictability measure, non-linearity, the largest Lyapunov exponent,
-and auto-correlation and partial-autocorrelation coefficients, he also
-used frequency domain based features. The feed forward neural network,
-decision tree and support vector machine approaches were considered to
-learn the mapping \(S\).
+meta-learning approaches for forecast-model selection. Their algorithm
+space \(A\) contained ARIMA models, exponential smoothing models and a
+neural network model. In addition to statistical measures such as the
+standard deviation of the detrended series, skewness, kurtosis, length,
+strength of trend, Durbin-Watson statistics of regression residuals, the
+number of turning points, step changes, a predictability measure,
+non-linearity, the largest Lyapunov exponent, and auto-correlation and
+partial-autocorrelation coefficients, he also used frequency domain
+based features. The feed forward neural network, decision tree and
+support vector machine approaches were considered to learn the mapping
+\(S\).
 
 \textcite{wang2009rule} used a meta-learning framework to provide
 recommendations as to which forecast method to use to generate
@@ -611,30 +611,30 @@ the forecasting accuracy of a method against the forecasting accuracy
 error of random walk model. They used a feature set \(F\) comprising
 nine features: strength of trend, strength of seasonality, serial
 correlation, non linearity, skewness, kurtosis, self-similarity, chaos
-and periodicity. The algorithm space \(A\) included eight forecasting
-methods, namely, exponential smoothing, ARIMA, neural networks and
-random walk model; while the mapping \(S\) was learned using the C4.5
-algorithm for building decision trees. In addition, they used SOM
+and periodicity. The algorithm space \(A\) included eight
+forecast-models, namely, exponential smoothing, ARIMA, neural networks
+and random walk model; while the mapping \(S\) was learned using the
+C4.5 algorithm for building decision trees. In addition, they used SOM
 clustering on the features of the time series in order to understand the
 nature of time series in a two-dimensional setting.
 
 The set of features introduced by \textcite{wang2009rule} was later used
 by \textcite{widodomodel} to develop a meta-learning framework for
-forecasting model selection. The authors further reduced the
-dimensionality of time series by performing principal component analysis
-on the features.
+forecast-model selection. The authors further reduced the dimensionality
+of time series by performing principal component analysis on the
+features.
 
 More recently, \textcite{kuck2016meta} proposed a meta-learning
-framework based on neural networks for forecasting model selection.
-Here, \(P = 78\) time series from the NN3 competition were used to build
-the meta-learner. They introduced a new set of features based on
-forecasting errors. The average symmetric mean absolute percentage error
-was used to identify the best forecasting method for each series. They
-classify their forecasting models in the algorithm space \(A\),
-comprising single, seasonal, seasonal-trend and trend exponential
-smoothing. The mapping \(S\) was learned using a feed-forward neural
-network. Further, they evaluated the performance of different sets of
-features for forecasting model selection.
+framework based on neural networks for forecast-model selection. Here,
+\(P = 78\) time series from the NN3 competition were used to build the
+meta-learner. They introduced a new set of features based on forecasting
+errors. The average symmetric mean absolute percentage error was used to
+identify the best forecast-models for each series. They classify their
+forecast-models in the algorithm space \(A\), comprising single,
+seasonal, seasonal-trend and trend exponential smoothing. The mapping
+\(S\) was learned using a feed-forward neural network. Further, they
+evaluated the performance of different sets of features for
+forecast-model selection.
 
 \section{Methodology}\label{methodology}
 
@@ -642,7 +642,7 @@ Our proposed framework is presented in \autoref{fig:framework}. The
 offline and online parts of the framework are shown in blue and red
 respectively. A classification algorithm (the meta-learner) is trained
 during the offline phase and then is used to select appropriate
-forecasting models for new time series in the online phase.
+forecast-models for new time series in the online phase.
 
 \begin{figure}
 
@@ -745,10 +745,10 @@ is of no real consequence.
 \subsection{Input: features}\label{input-features}
 
 Our proposed algorithm requires features that enable identification of a
-suitable forecasting model for a given time series. Therefore, the
-features used should capture the dynamic structure of the time series,
-such as autocorrelation, trend, seasonality, nonlinearity,
-heterogeneity, and so on.
+suitable forecast-model for a given time series. Therefore, the features
+used should capture the dynamic structure of the time series, such as
+autocorrelation, trend, seasonality, nonlinearity, heterogeneity, and so
+on.
 
 The purpose of this feature-based framework is to reduce the time
 required for model selection. Therefore, time needed to calculate the
@@ -762,7 +762,7 @@ features used in the experiment is specified in \autoref{feature}.
 \subsection{Output: labels}\label{output-labels}
 
 The task of our classification framework is to identify the best
-forecasting method for a given time series. We define the best forecast
+forecast- model for a given time series. We define the best forecast
 method as the model with the lowest forecast accuracy measure (e.g.,
 MAPE or MASE) over the test period.
 
@@ -774,8 +774,8 @@ series models we need to forecast. For example, if we have only
 non-seasonal time series, and no chaotic features, we may wish to
 restrict our models to random walks, white noise, ARIMA processes and
 ETS processes. Even in this scenario, the number of possible models can
-be quite large. In order to identify the best forecasting method for
-each series, all the models considered are run on all time series in the
+be quite large. In order to identify the best forecast-model for each
+series, all the models considered are run on all time series in the
 reference set, and forecasts are generated from each of them. Model
 estimation is strictly done on the training period of each series and
 forecasts are compared with the values in the test period.This step is
@@ -814,7 +814,7 @@ classification by \textcite{breiman2004random}.
 \section{Application to M competition Data}\label{Mcomp}
 
 To test how well our proposed framework can identify suitable
-forecasting models, we use the time series of the M1 competition
+forecast-models, we use the time series of the M1 competition
 \autocite{makridakis1982accuracy} and M3 competition
 \autocite{makridakis2000m3}. The R package Mcomp \autocite{hyndmanmcomp}
 provides the data from both competitions. The proposed algorithm is
@@ -892,7 +892,7 @@ online phase of our algorithm very fast. The features are summarized in
 \begin{table}[!htp]
 \centering\footnotesize\tabcolsep=0.12cm
 \def\yes{$\checkmark$}
-\caption{Features used for selecting a forecasting model.}
+\caption{Features used for selecting a forecast-model.}
 \label{feature}
 \begin{tabular}{llp{8,8cm}cc}
 \toprule
@@ -975,7 +975,7 @@ third of the total number of features available.
 
 Our aim is different from most classification problems in that we are
 not interested in accurately predicting the class, but in finding a good
-forecasting model. It is possible that two models produce almost equally
+forecast-model. It is possible that two models produce almost equally
 good forecasts, and then it does not matter whether the classifier picks
 one or the other. Consequently, we do not study the classification
 accuracy of our random forests, but only report the forecast accuracy
@@ -1255,16 +1255,16 @@ data, and Theta does slightly better for the M1 data.
 
 \section{Discussion and Conclusions}\label{discussion}
 
-In this paper we have proposed a novel framework for forecasting model
+In this paper we have proposed a novel framework for forecast-model
 selection using meta-learning based on time series features. Our
 algorithm uses the knowledge of the past performance of different
-forecasting methods on a collection of time series in order to identify
-the best forecasting method for a new series. We have shown that the
-method almost always performs better than common benchmark methods, and
-better than the best-performing methods from the M3 competition.
-Although we have illustrated the method using the M1 and M3 competition
-data, the framework is general and can be applied to any large
-collection of time series.
+forecast-models on a collection of time series in order to identify the
+best forecasting method for a new series. We have shown that the method
+almost always performs better than common benchmark methods, and better
+than the best-performing methods from the M3 competition. Although we
+have illustrated the method using the M1 and M3 competition data, the
+framework is general and can be applied to any large collection of time
+series.
 
 A major advantage of our method is that it is not necessary to estimate
 several different models for the data and undertake an empirical
@@ -1303,7 +1303,7 @@ features}\label{appendix-definition-of-features}
 \subsubsection*{Length of time series}\label{length-of-time-series}
 \addcontentsline{toc}{subsubsection}{Length of time series}
 
-The appropriate forecasting method for a time series depends on how many
+The appropriate forecast-method for a time series depends on how many
 observations are available. For example, shorter series tend to need
 simple models such as random walk, naive method. On the other hand, for
 longer time series, we have enough information to be able to estimate a
