@@ -34,7 +34,7 @@ output:
     keep_tex: yes
     number_sections: yes
     citation_package: biblatex
-abstract: A crucial task in time series forecasting is the identification of the most suitable forecasting method. We present a general framework for forecast model selection using meta-learning. A Random Forest is used to identify the best forecasting method using only time series features. The proposed framework has been evaluated using time series from the M1 and M3 competitions, and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting. A key advantage of our algorithm is that the time-consuming process of building the random forest can be handled in advance of the forecasting task. 
+abstract: A crucial task in time series forecasting is the identification of the most suitable forecasting method. We present a general framework for forecast- model selection using meta-learning. A Random Forest is used to identify the best forecasting method using only time series features. The proposed framework has been evaluated using time series from the M1 and M3 competitions, and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting. A key advantage of our algorithm is that the time-consuming process of building the random forest can be handled in advance of the forecasting task. 
 keywords: Time Series, Forecasting, Time Series Features, Random Forest, Meta-learning, Algorithm selection problem
 ---
 
@@ -84,7 +84,7 @@ An alternative approach, which avoids selecting a class of models *a priori*, is
 
 Clearly, there is a need for a fast, accurate algorithm to automate forecasting model selection. We propose a general meta-learning framework using features of the time series to select the class of models, or even the specific model, to be used for forecasting.  The model selection process is carried out using a classification algorithm --- we use the time series features as inputs, and the best forecasting algorithm as the output. The classification algorithm can be built using a large historical collection of time series, in advance of the real forecasting exercise (so it is an "offline" procedure). Then, when we have a new time series to forecast, we can quickly compute its features, use the pre-trained classification algorithm to identify the best forecasting model, and produce the required forecasts. Thus, the "online" part of our algorithm requires only feature computation, and the application of a single forecasting model, with no need to estimate large numbers of models within a class, or to carry out a computationally-intensive cross-validation procedure.
 
-The rest of this paper is organized as follows. We review the related work in \autoref{litreview}. In \autoref{methodology} we explain the detailed components and procedures of our proposed framework for forecast model selection. In \autoref{Mcomp} we present the results, followed by the conclusions and future work in \autoref{discussion}.
+The rest of this paper is organized as follows. We review the related work in \autoref{litreview}. In \autoref{methodology} we explain the detailed components and procedures of our proposed framework for forecast-model selection. In \autoref{Mcomp} we present the results, followed by the conclusions and future work in \autoref{discussion}.
 
 
 # Literature Review {#litreview}
@@ -124,7 +124,7 @@ ggplot(df, aes(x = trend, y = seasonality)) +
   theme(legend.position = "none")
 ```
 
-The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select time series features for the purpose of forecast model selection. Because the M1 and M3 competitions involve time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good model for forecasting.
+The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select time series features for the purpose of forecast-model selection. Because the M1 and M3 competitions involve time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good model for forecasting.
 
 ## What makes features useful for forecasting model identification?
 
@@ -153,7 +153,7 @@ The main challenge in ASP is to identify the selection mapping $S$ from the feat
 
 The meta-learning framework consists of an offline (training) phase and an online (prediction) phase. In the offline phase, the mapping $S$ is learnt based on a collection of training examples. This is performed using a *meta-learner* which can be any supervised learning algorithm designed to estimate $S$. The inputs for the meta-learner are known as *meta-features*, and instances in the algorithm space are the *output labels*. The database comprising both input-features and output-labels is called *meta-data*. In the online phase of the algorithm, input-features are extracted from new data and passed into the meta-learner that was constructed in the offline phase, in order to predict the output-labels of the new data.
 
-## Forecast model selection using meta-learning
+## Forecast-model selection using meta-learning
 
 Selecting models for forecasting can be framed according to Rice's ASP framework.
 
