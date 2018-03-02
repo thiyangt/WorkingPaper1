@@ -406,6 +406,41 @@ For the yearly data, the first 3 principal components explain 62.5% of the total
 As seen in \autoref{fig:pca1}, simulated time series are able to fill the gaps between the points in the observed sample. By augmenting the reference set with simulated time series, we were able to increase the diversity and evenness of the feature space of the observed time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This strongly indicates that we have not reduced the feature diversity from the observed sample. The remaining plots in Figures \ref{fig:pca2}--\ref{fig:pca3} can be interpreted similarly.
 
 
+```{r exp1, fig.cap="Distribution of yearly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A-- 1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A- 2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
+img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1Y.png")),interpolate = FALSE)
+img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1Y.png")),interpolate = FALSE)
+img3 <- rasterGrob(as.raster(readPNG("figures/pca3M1Y.png")),interpolate = FALSE)
+img4 <- rasterGrob(as.raster(readPNG("figures/pca1M1Q.png")),interpolate = FALSE)
+img5 <- rasterGrob(as.raster(readPNG("figures/pca2M1Q.png")),interpolate = FALSE)
+img6 <- rasterGrob(as.raster(readPNG("figures/pca3M1Q.png")),interpolate = FALSE)
+img7 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
+img8 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
+img9 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
+grid.arrange(img1, img2, img3, img4, img5, img6,img7, img8, img9, ncol = 3)
+```
+
+
+```{r exp2, fig.cap="Distribution of yearly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A-- 1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A- 2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
+
+img1 <- rasterGrob(as.raster(readPNG("figures/pca1M3Y.png")),interpolate = FALSE)
+img2 <- rasterGrob(as.raster(readPNG("figures/pca2M3Y.png")),interpolate = FALSE)
+img3 <- rasterGrob(as.raster(readPNG("figures/pca3M3Y.png")),interpolate = FALSE)
+img4 <- rasterGrob(as.raster(readPNG("figures/pca1M3Q.png")),interpolate = FALSE)
+img5 <- rasterGrob(as.raster(readPNG("figures/pca2M3Q.png")),interpolate = FALSE)
+img6 <- rasterGrob(as.raster(readPNG("figures/pca3M3Q.png")),interpolate = FALSE)
+img7 <- rasterGrob(as.raster(readPNG("figures/pca1M3M.png")), interpolate = FALSE)
+img8 <- rasterGrob(as.raster(readPNG("figures/pca2M3M.png")), interpolate = FALSE)
+img9 <- rasterGrob(as.raster(readPNG("figures/pca3M3M.png")), interpolate = FALSE)
+
+grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
+```
+
+
+
+
+
 ```{r pca1, fig.cap="Distribution of yearly time series in the PCA space. Results of experiment 1 (observed sample M1, new time series M3) are shown in panels 1A-- 1C, and results of experiment 2 (observed sample M3, new time series M1) are shown in panels 2A- 2C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
 # the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(
