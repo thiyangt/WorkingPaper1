@@ -730,14 +730,17 @@ population. This process may be useful when our observed sample of time
 series is too small to build a reliable classifier. Alternatively, we
 may wish to add more of some types of time series to the reference set
 in order to get a more balanced sample for the classification. In order
-to produce simulated series that are similar to our population, we use
-several standard automatic forecasting algorithms such as ETS or
-automated ARIMA models, and then simulate multiple time series from the
-selected model within each model class. Assuming the models produce data
-that are similar to the observed time series, this ensures that the
-simulated series are similar to those in the population. Note that this
-is done in the offline phase of the algorithm, so the computational time
-in producing these simulated series is of no real consequence.
+to produce simulated series that are similar to our population, we
+consider two classes of data generating processes: Exponential Smoothing
+Models and ARIMA models using automated algorithms such as \texttt{ets}
+and \texttt{auto.arima} \textcite{forecast}. We identify models, based
+on model selection criteria (such as AICc) and simulate multiple time
+series from the selected models within each model class. Assuming the
+models produce data that are similar to the observed time series, this
+ensures that the simulated series are similar to those in the
+population. Note that this is done in the offline phase of the
+algorithm, so the computational time in producing these simulated series
+is of no real consequence.
 
 \subsection{Input: features}\label{input-features}
 
