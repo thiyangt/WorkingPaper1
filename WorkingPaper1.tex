@@ -789,12 +789,12 @@ with this task is of no significant cost.
 A random forest \autocite{breiman2001random} is an ensemble learning
 method that combines a large number of decision trees using a two-step
 randomization process. Let
-\(Z=\{(\bm{x}_1, y_1), (\bm{x}_2, y_2), \dots, (\bm{x}_M, y_M)\}\) be
+\(Z=\{(\bm{x}_1, y_1), (\bm{x}_2, y_2), \dots, (\bm{x}_N, y_N)\}\) be
 the reference set, where the input \(\bm{x}_i\) is an \(m\)-vector of
 features, the output, \(y_i\), corresponds to the class label of the
-\(i\)th observation, \(m\) is the total number of features, and \(M\) is
+\(i\)th observation, \(m\) is the total number of features, and \(N\) is
 the number of training samples in the reference set. Each tree in the
-forest is grown based on a bootstrap sample of size \(M\) from the
+forest is grown based on a bootstrap sample of size \(N\) from the
 reference set. At each node of the tree, randomly select \(f<m\)
 features from the full set of features. The best split is selected among
 those \(f\) features. The split which results in the most homogeneous
