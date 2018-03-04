@@ -94,7 +94,7 @@ The rest of this paper is organized as follows. We review the related work in \a
 
 Rather than work with the time series directly at the level of individual observations, we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the time-domain representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of the same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower right quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and non-linearity. @fulcher2014highly introduced 9000 operations to extract features from time series.  
 
-```{r fig1, fig.cap="Instance-based representation of time series"}
+```{r fig1, fig.cap="Time-domain representation of time series"}
 # Extract required series
 series_id <- c("N0001", "N0633", "N0625", "N0645","N1912", "N2012")
 six_series <- lapply(M3[series_id], function(u){u$x})

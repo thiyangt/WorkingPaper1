@@ -236,7 +236,7 @@ ggsave(ggheatmapD, filename = "figures/ggheatmapD.png")
 ggsave(ggheatmapE, filename = "figures/ggheatmapE.png")
 ggsave(ggheatmapF, filename = "figures/ggheatmapF.png")
 
-## ---- figure 6
+## ---- Yearly
 pcaM1YDF <- filter(yearly_exp1, datasource=="M1") # E-1
 pcaM1YDFvariables <- pcaM1YDF[,1:25]
 pcaM1Y <- prcomp(pcaM1YDFvariables, center=TRUE, scale=TRUE)
@@ -299,7 +299,7 @@ pca3M3Y <- ggplot(pcaALLM3Y, aes(x=PC2, y=PC3, color=source)) + geom_point()+ th
   scale_color_manual(values=c("forestgreen", "yellow", "black", "firebrick1" ))+theme(aspect.ratio = 1)+ggtitle("1.C")
 ggsave("figures/pca3M3Y.png")
 
-## ---- figure 7
+## ---- Quarterly
 pcaM1QDF <- filter(quarterly_exp1, datasource=="M1")
 pcaM1QDFvariables <- pcaM1QDF[,1:30]
 pcaM1Q <- prcomp(pcaM1QDFvariables, center=TRUE, scale=TRUE)
@@ -362,7 +362,7 @@ pca3M3Q <- ggplot(pcaALLM3Q, aes(x=PC2, y=PC3, color=source)) + geom_point()+ th
   scale_color_manual(values=c("forestgreen", "yellow", "black", "firebrick1"))+theme(aspect.ratio = 1)+ggtitle("2.C")
 ggsave("figures/pca3M3Q.png")
 
-## ---- figure 8
+## ---- Monthly
 pcaM1MDF <- filter(monthly_exp1, datasource=="M1") # M-E1
 pcaM1MDFvariables <- pcaM1MDF[,1:30]
 pcaM1M <- prcomp(pcaM1MDFvariables, center=TRUE, scale=TRUE)
@@ -389,7 +389,7 @@ pca2M1M <- ggplot(pcaALLM1M, aes(x=PC1, y=PC3, color=source)) + geom_point()+ th
 	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.B")
 ggsave("figures/pca2M1M.png")
 pca3M1M <- ggplot(pcaALLM1M, aes(x=PC2, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.c")
+	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.C")
 ggsave("figures/pca3M1M.png")
 
 pcaM3MDF <- filter(monthly_exp2, datasource=="M3") #ME-2
