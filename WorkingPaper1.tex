@@ -565,7 +565,7 @@ of number of step changes, skewness, kurtosis, the coefficient of
 variation, autocorrelations at lags 1--4, and partial autocorrelations
 at lag 2--4. Casting Shah's work in Rice's framework, we can specify:
 \(P=203\) quarterly series from the M1 competition
-\autocite{makridakis1982accuracy}; \(A=3\) forecast-models, namely
+\autocite{makridakis1982accuracy}; \(A=3\) forecasting methods, namely
 simple exponential smoothing, Holt-Winters exponential smoothing with
 multiplicative seasonality, and a basic structural time series model;
 \(Y=\) mean squared error for a hold-out sample. The mapping \(S\) is
@@ -576,17 +576,17 @@ learned using discriminant analysis.
 studied the applicability of meta-learning approaches for forecast-model
 selection based on two case studies. Again using the notation of
 Definition \ref{def2}, we can describe their first case study with:
-\(A\) contained only two forecast-models, simple exponential smoothing
-and a time-delay neural network; \(Y=\) mean absolute error; \(F\)
-consisted of 14 features, namely length, autocorrelation coefficients,
-coefficient of variation, skewness, kurtosis, and a test of turning
-points to measure the randomness of the time series; \(S\) was learnt
-using the C4.5 decision tree algorithm. For their second study, the
-algorithm space included a random walk, Holt's linear exponential
-smoothing and AR models; the problem space \(P\) contained the yearly
-series from the M3 competition \autocite{makridakis2000m3}; \(F\)
-included a subset of features from the first study; and \(Y\) was a
-ranking based on error. Beyond the task of forecast-model selection,
+\(A\) contained only two forecasting methods, simple exponential
+smoothing and a time-delay neural network; \(Y=\) mean absolute error;
+\(F\) consisted of 14 features, namely length, autocorrelation
+coefficients, coefficient of variation, skewness, kurtosis, and a test
+of turning points to measure the randomness of the time series; \(S\)
+was learnt using the C4.5 decision tree algorithm. For their second
+study, the algorithm space included a random walk, Holt's linear
+exponential smoothing and AR models; the problem space \(P\) contained
+the yearly series from the M3 competition \autocite{makridakis2000m3};
+\(F\) included a subset of features from the first study; and \(Y\) was
+a ranking based on error. Beyond the task of forecast-model selection,
 they used the NOEMON approach to rank the algorithms
 \autocite{kalousis1999noemon}.
 
