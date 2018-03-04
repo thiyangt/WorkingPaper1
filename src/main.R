@@ -290,13 +290,13 @@ M3RFdataSubPCA <- scale(projectM3RFdataSub, pcaM3Y$center,pcaM3Y$scale) %*% pcaM
 subsamplePCA <- data.frame(PC1=M3RFdataSubPCA[,1], PC2=M3RFdataSubPCA[,2], PC3=M3RFdataSubPCA[,3])
 pcaALLM3Y <- bind_rows(SimulatedPCAM3Y, subsamplePCA, M3Ypca,M1YPCA, .id="source")
 pca1M3Y <- ggplot(pcaALLM3Y, aes(x=PC1, y=PC2, color=source)) + geom_point()+ theme(legend.position="none")+
-  scale_color_manual(values=c("forestgreen", "yellow", "black", "firebrick1"))+theme(aspect.ratio = 1)+ggtitle("2.A")
+  scale_color_manual(values=c("forestgreen", "yellow", "black", "firebrick1"))+theme(aspect.ratio = 1)+ggtitle("1.A")
 ggsave("figures/pca1M3Y.png")
 pca2M3Y <- ggplot(pcaALLM3Y, aes(x=PC1, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-  scale_color_manual(values=c("forestgreen", "yellow" ,"black", "firebrick1"))+theme(aspect.ratio = 1)+ggtitle("2.B")
+  scale_color_manual(values=c("forestgreen", "yellow" ,"black", "firebrick1"))+theme(aspect.ratio = 1)+ggtitle("1.B")
 ggsave("figures/pca2M3Y.png")
 pca3M3Y <- ggplot(pcaALLM3Y, aes(x=PC2, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-  scale_color_manual(values=c("forestgreen", "yellow", "black", "firebrick1" ))+theme(aspect.ratio = 1)+ggtitle("2.C")
+  scale_color_manual(values=c("forestgreen", "yellow", "black", "firebrick1" ))+theme(aspect.ratio = 1)+ggtitle("1.C")
 ggsave("figures/pca3M3Y.png")
 
 ## ---- figure 7
@@ -320,13 +320,13 @@ simM3QPCA <- scale(projectM3Q, pcaM1Q$center,pcaM1Q$scale) %*% pcaM1Q$rotation
 M3QPCA <- data.frame(PC1=simM3QPCA[,1], PC2=simM3QPCA[,2], PC3=simM3QPCA[,3])
 pcaALLM1Q <- bind_rows(SimulatedPCAM1Q, M3QPCA, M1Qpca, .id="source")
 pca1M1Q <- ggplot(pcaALLM1Q, aes(x=PC1, y=PC2, color=source)) + geom_point()+ theme(legend.position="none")+
-  scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("1.A")
+  scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("2.A")
 ggsave("figures/pca1M1Q.png")
 pca2M1Q <- ggplot(pcaALLM1Q, aes(x=PC1, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-  scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("1.B")
+  scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("2.B")
 ggsave("figures/pca2M1Q.png")
 pca3M1Q <- ggplot(pcaALLM1Q, aes(x=PC2, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-  scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("1.C")
+  scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("2.C")
 ggsave("figures/pca3M1Q.png")
 
 
@@ -383,13 +383,13 @@ simM3MPCA <- scale(projectM3M, pcaM1M$center,pcaM1M$scale) %*% pcaM1M$rotation
 M3MPCA <- data.frame(PC1=simM3MPCA[,1], PC2=simM3MPCA[,2], PC3=simM3MPCA[,3])
 pcaALLM1M <- bind_rows(SimulatedPCAM1M, M3MPCA, M1Mpca, .id="source")
 pca1M1M <- ggplot(pcaALLM1M, aes(x=PC1, y=PC2, color=source)) + geom_point()+ theme(legend.position="none")+
-	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("1.A")
+	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.A")
 ggsave("figures/pca1M1M.png")
 pca2M1M <- ggplot(pcaALLM1M, aes(x=PC1, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("1.B")
+	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.B")
 ggsave("figures/pca2M1M.png")
 pca3M1M <- ggplot(pcaALLM1M, aes(x=PC2, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("1.B")
+	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.c")
 ggsave("figures/pca3M1M.png")
 
 pcaM3MDF <- filter(monthly_exp2, datasource=="M3") #ME-2
@@ -412,13 +412,13 @@ simM1MPCA <- scale(projectM1M, pcaM3M$center,pcaM3M$scale) %*% pcaM3M$rotation
 M1MPCA <- data.frame(PC1=simM1MPCA[,1], PC2=simM1MPCA[,2], PC3=simM1MPCA[,3])
 pcaALLM3M <- bind_rows(SimulatedPCAM3M, M1MPCA, M3Mpca, .id="source")
 pca1M3M <- ggplot(pcaALLM3M, aes(x=PC1, y=PC2, color=source)) + geom_point()+ theme(legend.position="none")+
-	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("2.A")
+	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.A")
 ggsave("figures/pca1M3M.png")
 pca2M3M <- ggplot(pcaALLM3M, aes(x=PC1, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("2.B")
+	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.B")
 ggsave("figures/pca2M3M.png")
 pca3M3M <- ggplot(pcaALLM3M, aes(x=PC2, y=PC3, color=source)) + geom_point()+ theme(legend.position="none")+
-	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("2.C")
+	scale_color_manual(values=c("forestgreen", "firebrick1", "black"))+theme(aspect.ratio = 1)+ggtitle("3.C")
 ggsave("figures/pca3M3M.png")
 
 
