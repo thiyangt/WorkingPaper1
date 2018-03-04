@@ -1210,7 +1210,7 @@ STL-decomposition}
 The strength of trend, strength of seasonality, linearity, curvature,
 spikiness and first autocorrelation coefficient of the remainder series,
 are calculated based on a decomposition of the time series. Suppose we
-denote our time series as \(y_1, y_2, \dots,y_N\). First, a Box-Cox
+denote our time series as \(y_1, y_2, \dots,y_T\). First, a Box-Cox
 transformation is applied to the time series in order to to stabilize
 the variance and to make the seasonal effect additive. The transformed
 series is denoted by \(y_{t}^*\). For quarterly and monthly data, this
@@ -1232,7 +1232,7 @@ detrended series and the original series \autocite{wang2009rule}: \[
 The linearity and curvature features are based on the coefficients of a
 quadratic regression \[
   T_t=\beta_0+\beta_1 t + \beta_2t^2+\epsilon_t,
-\] where \(t=1, 2, \dots,N\). The estimated value of \(\beta_1\) is used
+\] where \(t=1, 2, \dots,T\). The estimated value of \(\beta_1\) is used
 as a measure of linearity while the estimated value of \(\beta_2\) is
 considered as a measure of curvature. These features were used by
 \textcite{hyndman2015large}.

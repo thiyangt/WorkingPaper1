@@ -510,7 +510,7 @@ The appropriate forecast-method for a time series depends on how many observatio
 
 ### Features based on an STL-decomposition {-}
 
-The strength of trend, strength of seasonality, linearity, curvature, spikiness and first autocorrelation coefficient of the remainder series, are calculated based on a decomposition of the time series. Suppose we denote our time series as $y_1, y_2, \dots,y_N$. First, a Box-Cox transformation is applied to the time series in order to to stabilize the variance and to make the seasonal effect additive. The transformed series is denoted by $y_{t}^*$. For quarterly and monthly data, this is decomposed using STL [@cleveland1990stl] to give $y_t^*=T_t+S_t+E_t$, where $T_t$ denotes the trend, $S_t$ denotes the seasonal component, and $E_t$ is the remainder component. For non-seasonal data, Friedman's supersmoother [@supsmu] is used to decompose $y_t^*=T_t+E_t$, and $S_t=0$ for all $t$. The detrended series is $x_t=y_t^*-T_t$, the deseasonalized series is $z_t=y_t^*-S_t$, and the remainder series is $r_t=y_t^*-T_t-S_t$.
+The strength of trend, strength of seasonality, linearity, curvature, spikiness and first autocorrelation coefficient of the remainder series, are calculated based on a decomposition of the time series. Suppose we denote our time series as $y_1, y_2, \dots,y_T$. First, a Box-Cox transformation is applied to the time series in order to to stabilize the variance and to make the seasonal effect additive. The transformed series is denoted by $y_{t}^*$. For quarterly and monthly data, this is decomposed using STL [@cleveland1990stl] to give $y_t^*=T_t+S_t+E_t$, where $T_t$ denotes the trend, $S_t$ denotes the seasonal component, and $E_t$ is the remainder component. For non-seasonal data, Friedman's supersmoother [@supsmu] is used to decompose $y_t^*=T_t+E_t$, and $S_t=0$ for all $t$. The detrended series is $x_t=y_t^*-T_t$, the deseasonalized series is $z_t=y_t^*-S_t$, and the remainder series is $r_t=y_t^*-T_t-S_t$.
 
 
 The strength of trend is measured by comparing the variance of the detrended series and the original series [@wang2009rule]:
@@ -527,7 +527,7 @@ The linearity and curvature features are based on the coefficients of a quadrati
 \[
   T_t=\beta_0+\beta_1 t + \beta_2t^2+\epsilon_t,
 \]
-where $t=1, 2, \dots,N$. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. These features were used by @hyndman2015large. 
+where $t=1, 2, \dots,T$. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. These features were used by @hyndman2015large. 
 
 
 The spikiness feature is useful when a time series is affected by occasional outliers. @hyndman2015large introduced an index to measure spikiness, computed as the variance of the leave-one-out variances of $E_t$.
