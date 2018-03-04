@@ -573,7 +573,7 @@ learned using discriminant analysis.
 
 \textcite{prudencio2004meta} was the first paper to use the term
 ``meta-learning'' in the context of time series model selection. They
-studied the applicability of meta-learning approaches for forecas-model
+studied the applicability of meta-learning approaches for forecast-model
 selection based on two case studies. Again using the notation of
 Definition \ref{def2}, we can describe their first case study with:
 \(A\) contained only two forecast-models, simple exponential smoothing
@@ -597,7 +597,7 @@ neural network model. In addition to statistical measures such as the
 standard deviation of the detrended series, skewness, kurtosis, length,
 strength of trend, Durbin-Watson statistics of regression residuals, the
 number of turning points, step changes, a predictability measure,
-non-linearity, the largest Lyapunov exponent, and auto-correlation and
+nonlinearity, the largest Lyapunov exponent, and auto-correlation and
 partial-autocorrelation coefficients, he also used frequency domain
 based features. The feed forward neural network, decision tree and
 support vector machine approaches were considered to learn the mapping
@@ -610,7 +610,7 @@ measure \(Y =\) \emph{simple percentage better (SPB)}, which calculates
 the forecasting accuracy of a method against the forecasting accuracy
 error of random walk model. They used a feature set \(F\) comprising
 nine features: strength of trend, strength of seasonality, serial
-correlation, non linearity, skewness, kurtosis, self-similarity, chaos
+correlation, nonlinearity, skewness, kurtosis, self-similarity, chaos
 and periodicity. The algorithm space \(A\) included eight
 forecast-models, namely, exponential smoothing, ARIMA, neural networks
 and random walk model; while the mapping \(S\) was learned using the
@@ -762,7 +762,7 @@ features used in the experiment is specified in \autoref{feature}.
 \subsection{Output: labels}\label{output-labels}
 
 The task of our classification framework is to identify the best
-forecast-model for a given time series. We define the best
+forecasting method for a given time series. We define the best
 forecast-model as the model with the lowest forecast accuracy measure
 (e.g., MAPE or MASE) over the test period.
 
@@ -807,8 +807,8 @@ the largest extent possible without pruning. To determine the class
 label for a new instance, features are calculated and passed down the
 trees. Then each tree gives a prediction and the majority vote over all
 individual trees leads to the final decision. In this work, we have used
-the randomForest package \autocite{liaw2002randomforest} in R
-\autocite{Rcore} which implements the Fortran code for Random Forest
+the randomForest package \autocites{liaw2002randomforest}[;][]{rfpkg} in
+R \autocite{Rcore} which implements the Fortran code for Random Forest
 classification by \textcite{breiman2004random}.
 
 \section{Application to M competition Data}\label{Mcomp}
@@ -955,9 +955,9 @@ other, showing the different collections have similar feature spaces.
 
 The random forest algorithm is highly sensitive to class imbalance
 \autocite{breiman2001random}, and our reference set is unbalanced: some
-classes contains significantly more cases than other classes. The degree
+classes contain significantly more cases than other classes. The degree
 of class imbalance is reduced to some extent by augmenting the observed
-sample with simulated time series. We consider three approaches to
+sample with the simulated time series. We consider three approaches to
 address the class imbalance in the data: 1) we incorporate class priors
 into the random forest classifier; 2) we use the Balanced Random Forest
 (BRF) algorithm introduced by \textcite{chen2004using}; and 3) we
@@ -1052,7 +1052,7 @@ commonly-used forecasting methods:
 
 The automated ARIMA and ETS algorithms are implemented using the
 \texttt{auto.arima} and \texttt{ets} functions available in the forecast
-package in R \autocite{Hyndman2008}. Each method is implemented on the
+package in R \autocite{forecast}. Each method is implemented on the
 training period and forecasts are computed up to the full length of the
 test period. Then we compute the MASE for each forecast horizon, by
 averaging the MASE across all series in the collection of new time
