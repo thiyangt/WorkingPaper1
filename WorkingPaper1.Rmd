@@ -376,7 +376,8 @@ grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
 
 ## Model calibration
 
-The random forest algorithm is highly sensitive to class imbalance [@breiman2001random], and our reference set is unbalanced: some classes contains significantly more cases than other classes. The degree of class imbalance is reduced to some extent by augmenting the observed sample with simulated time series.  We consider three approaches to address the class imbalance in the data: 1) we incorporate class priors into the random forest classifier; 2) we use the Balanced Random Forest (BRF) algorithm introduced by @chen2004using; and 3) we re-balance the reference set with down-sampling. In down-sampling, the size of the reference set is reduced by down-sampling the larger classes so that they match the smallest class in size; this potentially discards some useful information. We compare the results of these three approaches to the classifier built on unbalanced data. The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest]. The class priors are introduced through the option `classwt`. We use the reciprocal of class size as the class priors. The number of trees `ntree` is set to 1000, and the number of randomly selected features `mtry` is set to be one third of the total number of features available. 
+The random forest algorithm is highly sensitive to class imbalance [@breiman2001random], and our reference set is unbalanced: some classes contains significantly more cases than other classes. The degree of class imbalance is reduced to some extent by augmenting the observed sample with simulated time series.  We consider three approaches to address the class imbalance in the data: 1) we incorporate class priors into the random forest classifier; 2) we use the Balanced Random Forest (BRF) algorithm introduced by @chen2004using; and 3) we re-balance the reference set with down-sampling. In down-sampling, the size of the reference set is reduced by down-sampling the larger classes so that they match the smallest class in size; this potentially discards some useful information. We compare the results of these three approaches to the classifier built on unbalanced data. The BRF and RF with down-sampling did not yield
+satisfactory results. Therefore, we reported only the results obtained by RF bulilt on unbalanced data and RF with class priors. The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest; @rfpkg]. The class priors are introduced through the option `classwt`. We use the reciprocal of class size as the class priors. The number of trees `ntree` is set to 1000, and the number of randomly selected features `mtry` is set to be one third of the total number of features available. 
 
 Our aim is different from most classification problems in that we are not interested in accurately predicting the class, but in finding a good forecast-model. It is possible that two models produce almost equally good forecasts, and then it does not matter whether the classifier picks one or the other. Consequently, we do not study the classification accuracy of our random forests, but only report the forecast accuracy obtained with using them.
 
@@ -401,7 +402,7 @@ The accuracy of our method is compared against the following commonly-used forec
   7. STL-AR method;
   8. seasonal naive (for seasonal data).
 
-The automated ARIMA and ETS algorithms are implemented using the `auto.arima` and `ets` functions available in the forecast package in R [@Hyndman2008]. Each method is implemented on the training period and forecasts are computed up to the full length of the test period. Then we compute the MASE for each forecast horizon, by averaging the MASE across all series in the collection of new time series. To assist in the evaluation of the proposed framework, for each forecast horizon we rank our method compared to the other methods listed above, and an average ranking over all forecast horizons is computed. The results are given in Tables \ref{YM3}--\ref{M1M}. The MASE value corresponding to the best performing method in each category is highlighted in bold.
+The automated ARIMA and ETS algorithms are implemented using the `auto.arima` and `ets` functions available in the forecast package in R [@Hyndman2008]. Each method is implemented on the training period and forecasts are computed up to the full length of the test period. Then we compute the MASE for each forecast horizon, by averaging the MASE across all series in the collection of new time series. To assist in the evaluation of the proposed framework, for each forecast horizon we rank our method compared to the other methods listed above, and an average ranking over all forecast horizons is computed. The results are given in Table \ref{masetab}. The MASE value corresponding to the best performing method in each category is highlighted in bold.
 
 
 ```{r exp1, fig.cap="Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series."}
@@ -435,12 +436,10 @@ img9 <- rasterGrob(as.raster(readPNG("figures/pca3M3M.png")), interpolate = FALS
 grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
 ```
 
-Table \ref{masetab} compare the performance of our proposed framework to the benchmark methods. For each method, we calculate out-of-sample MASE over the forecast horizons, and average over all time series. 
-
 \begin{table}[!htbp]
 \centering\tiny
 \centering
-\caption{Out-of-sample forecast performances}
+\caption{Out-of-sample forecast performances from experiment 1 and experiment 2}
 \label{masetab}
 \begin{tabular}{lrrrrrrcrrrrrrc}
 \hline
@@ -484,7 +483,7 @@ Snaive &  0.95 &  0.97 &  0.97 &  0.98& 0.98 &  1.14& 9.00 &1.09   &  1.11 &  1.
 \end{tabular}
 \end{table}
 
-
+Table \ref{masetab} compare the performance of our proposed framework to the benchmark methods. For each method, we calculate out-of-sample MASE over the forecast horizons, and average over all time series. 
 
 For yearly series from the M3 competition, our meta-learning method beats all methods other than the random walk with drift model. For yearly series from the M1 competition data, our meta-learning method using RF-unbalanced and RF-class priors consistently forecast more accurately than all benchmark methods. For quarterly data our method using RF-unbalanced outperforms all the bennchmark methods. For monthly data, Table \ref{masetab} shows that our meta-learning method with RF-unbalanced and RF-class priors provides more accurate forecasts than the benchmark methods for the longest forecast horizons (1--18). However, over shorter horizons, ETS does slightly better for the M3 data, and Theta does slightly better for the M1 data.
 

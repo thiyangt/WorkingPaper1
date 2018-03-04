@@ -965,13 +965,16 @@ re-balance the reference set with down-sampling. In down-sampling, the
 size of the reference set is reduced by down-sampling the larger classes
 so that they match the smallest class in size; this potentially discards
 some useful information. We compare the results of these three
-approaches to the classifier built on unbalanced data. The RF algorithms
-are implemented by the randomForest R package
-\autocite{liaw2002randomforest}. The class priors are introduced through
-the option \texttt{classwt}. We use the reciprocal of class size as the
-class priors. The number of trees \texttt{ntree} is set to 1000, and the
-number of randomly selected features \texttt{mtry} is set to be one
-third of the total number of features available.
+approaches to the classifier built on unbalanced data. The BRF and RF
+with down-sampling did not yield satisfactory results. Therefore, we
+reported only the results obtained by RF bulilt on unbalanced data and
+RF with class priors. The RF algorithms are implemented by the
+randomForest R package \autocites{liaw2002randomforest}{rfpkg}. The
+class priors are introduced through the option \texttt{classwt}. We use
+the reciprocal of class size as the class priors. The number of trees
+\texttt{ntree} is set to 1000, and the number of randomly selected
+features \texttt{mtry} is set to be one third of the total number of
+features available.
 
 Our aim is different from most classification problems in that we are
 not interested in accurately predicting the class, but in finding a good
@@ -1056,7 +1059,7 @@ averaging the MASE across all series in the collection of new time
 series. To assist in the evaluation of the proposed framework, for each
 forecast horizon we rank our method compared to the other methods listed
 above, and an average ranking over all forecast horizons is computed.
-The results are given in Tables \ref{YM3}--\ref{M1M}. The MASE value
+The results are given in Table \ref{masetab}. The MASE value
 corresponding to the best performing method in each category is
 highlighted in bold.
 
@@ -1078,14 +1081,10 @@ highlighted in bold.
 \caption{Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp2}
 \end{figure}
 
-Table \ref{masetab} compare the performance of our proposed framework to
-the benchmark methods. For each method, we calculate out-of-sample MASE
-over the forecast horizons, and average over all time series.
-
 \begin{table}[!htbp]
 \centering\tiny
 \centering
-\caption{Out-of-sample forecast performances}
+\caption{Out-of-sample forecast performances from experiment 1 and experiment 2}
 \label{masetab}
 \begin{tabular}{lrrrrrrcrrrrrrc}
 \hline
@@ -1128,6 +1127,10 @@ Theta & 0.63  & 0.67  & 0.72  & 0.75 &  0.77& 0.89 &  5.67& \bf{0.68}  &  \bf{0.
 Snaive &  0.95 &  0.97 &  0.97 &  0.98& 0.98 &  1.14& 9.00 &1.09   &  1.11 &  1.11 &  1.13& 1.14 & 1.31 & 8.67 \\ \hline
 \end{tabular}
 \end{table}
+
+Table \ref{masetab} compare the performance of our proposed framework to
+the benchmark methods. For each method, we calculate out-of-sample MASE
+over the forecast horizons, and average over all time series.
 
 For yearly series from the M3 competition, our meta-learning method
 beats all methods other than the random walk with drift model. For
