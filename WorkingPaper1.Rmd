@@ -94,36 +94,10 @@ The rest of this paper is organized as follows. We review the related work in \a
 
 Rather than work with the time series directly at the level of individual observations, we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the time-domain representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of the same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower right quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and non-linearity. @fulcher2014highly introduced 9000 operations to extract features from time series.  
 
-```{r fig1, fig.cap="Time-domain representation of time series"}
-# Extract required series
-series_id <- c("N0001", "N0633", "N0625", "N0645","N1912", "N2012")
-six_series <- lapply(M3[series_id], function(u){u$x})
-p <- lapply(six_series,
-  function(u) {autoplot(u) + xlab("") + ylab("")}
-)
-for (i in seq_along(six_series))
-  p[[i]] <- p[[i]] + ggtitle(series_id[i])
-grid.arrange(grobs = p, ncol = 3, nrow = 2)
-```
+[Insert \autoref{fig:fig1} here]
 
-```{r fig2, fig.cap="Feature-based representation of time series", out.width="70%"}
-df <- tsfeatures(six_series, c("stl_features")) %>%
-  select(trend, seasonal_strength) %>%
-  rename(seasonality = seasonal_strength) %>%
-  replace_na(list(seasonality = 0))
-df$id <- names(six_series)
-ggplot(df, aes(x = trend, y = seasonality)) +
-  geom_point() +
-  xlim(0, 1) + ylim(0, 1) +
-  coord_fixed() +
-  geom_text_repel(
-    aes(label = id),
-    colour = "black",
-    size = 3,
-    box.padding = unit(0.5, "lines")
-  ) +
-  theme(legend.position = "none")
-```
+[Insert \autoref{fig:fig2} here]
+
 
 The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select time series features for the purpose of forecast-model selection. Because the M1 and M3 competitions involve time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good model for forecasting.
 
@@ -139,9 +113,7 @@ Several researchers have introduced rules for forecasting based on features [@co
 
 John Rice was an early and strong proponent of the idea of meta-learning, which he called the algorithm selection problem (ASP) [@rice1976]. The term *meta-learning* started to appear with the emergence of the machine-learning literature. Rice's framework for algorithm selection is shown in \autoref{fig:rice}.
 
-```{r rice, fig.cap="Rice's framework for the Algorithm Selection Problem (reproduced from Smith-Miles, 2009)", out.width="80%"}
-knitr::include_graphics("figures/RiceFramework.png")
-```
+[Insert \autoref{fig:rice} here]
 
 There are four main components in Rice's framework. The problem space, $P$, represents the data sets used in the study. The feature space, $F$, is the range of measures that characterize the problem space $P$. The algorithm space, $A$, is a list of suitable candidate algorithms which we can use to find solutions to the problems in $P$. The performance metric, $Y$, is a measure of algorithm performance such as accuracy, speed, etc. Rice's formal definition of the algorithm selection problem is [@smith2009cross] as follows.
 
@@ -181,58 +153,11 @@ More recently, @kuck2016meta proposed a meta-learning framework based on neural 
 
 Our proposed framework is presented in \autoref{fig:framework}. The offline and online parts of the framework are shown in blue and red respectively. A classification algorithm (the meta-learner) is trained during the offline phase and then is used to select appropriate forecast-models for new time series in the online phase. 
 
-
-```{r framework, fig.cap="Proposed framework (blue: offline phase, red: online phase)"}
-knitr::include_graphics("figures/framework.png")
-```
-
-\begin{algorithm}[!hb]
-  \caption{Identification of the "best" forecast method for a new time series.}
-  \label{alg:algo-lab}
-  \begin{algorithmic}[1]
-    \Statex \textbf{Offline phase}
-    \Statex \text{Given:}
-    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series.
-      \Statex \hspace{1cm}$L:$ the set of class labels (e.g.\ ARIMA, ETS, SNAIVE).
-         \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features.
-         \Statex \hspace{1cm}$nsim:$ number of series to be simulated.
-         \Statex \hspace{1cm}$B:$ number of trees in the random forest.
-         \Statex \hspace{1cm}$mtry:$ number of features to be selected at each node.
-     \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{a random forest classifier} 
-      \Statex
-     \Statex \textit{Prepare the reference set}
-    \Statex For $i=1$ to $n$:
-            \State Fit ARIMA and ETS models to $t_i$.
-            \State Simulate $nsim$ time series from each model in step 1.
-            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
-    \Statex 
-    \Statex \textit{Prepare the meta-data}
-    \Statex For $j=1$ to $N$:
-            \State Split $t_j$ into a training period and test period.
-            \State Calculate features $F$ based on the training period. 
-            \State Fit $L$ models to the training period.
-            \State Calculate forecasts for the test period from each model.
-            \State Calculate forecast error measure over the test period for all models in $L$.
-            \State Select the model with the minimum forecast error.
-            \State Meta-data: input features (step 5), output labels (step 9).
-     \Statex
-    \Statex \textit{Train a random forest classifier}
-            \State Train a random forest classifier based on the meta-data.
-            \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
-    \Statex
-     \Statex \textbf{Online phase}
-    \Statex \text{Given:}
-    \Statex \hspace{1cm}\text{the random forest classifier from step 12} .
-     \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
-  \State For $t_{new}$ calculate features $F$.
-  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote\{\hat{C_b}(t_{new})\}_1^B$.
-   \end{algorithmic}
-\end{algorithm}
-
+[Insert \autoref{fig:framework} here]
 
 In order to train our classification algorithm, we need a large collection of time series which are similar to those we will be forecasting. We assume that we have an essentially infinite population of time series, and we take a sample of them in order to train the classification algorithm. The new time series we wish to forecast can be thought of as additional draws from the same population.  Hence, any conclusions made from the classification framework refer only to the population from which the sample has been selected. We may call this the "target population" of time series. It is important to have a well-defined target population to avoid misapplying the classification rules. We denote the collection of time series used for training the classifier as the "reference set". We split each time series within the reference set into a training period and a test period. From each training period we compute a range of time series features, and fit a selection of potential models. The calculated features form the input vector to the classification algorithm. Using the fitted models, we generate forecasts and identify the "best" model for each time series based on a forecast error measure (e.g., MASE) calculated over the test period. The models deemed "best" form the output labels for the classification algorithm. The pseudo code for this algorithm is given in Algorithm \autoref{alg:algo-lab} below. In the following sections, we briefly discuss aspects of the offline part of the algorithm.
+
+[Insert Algorithm \autoref{alg:algo-lab} here]
 
 ## Augmenting the observed sample with simulated series
 
@@ -256,28 +181,9 @@ A random forest [@breiman2001random] is an ensemble learning method that combine
 
 # Application to M competition Data {#Mcomp}
 
-To test how well our proposed framework can identify suitable model for forecasting, we use the time series of the M1 [@makridakis1982accuracy] and M3 competitions [@makridakis2000m3]. The R package Mcomp [@hyndmanmcomp] provides the data for both these. The proposed algorithm is applied to yearly, quarterly and monthly series separately.  We run two experiments for each case. In the first experiment, we treat the time series of the M1 competition as the *observed sample* and the time series of the M3 competition as the collection of *new time series* to be forecast. We reverse the sets in the second experiment, using the M3 data as the *observed sample* and the M1 data as the *new time series*. These are summarised in Table \autoref{tbl:Mcomps} below. 
+To test how well our proposed framework can identify suitable model for forecasting, we use the time series of the M1 [@makridakis1982accuracy] and M3 competitions [@makridakis2000m3]. The R package Mcomp [@hyndmanmcomp] provides the data for both these. The proposed algorithm is applied to yearly, quarterly and monthly series separately.  We run two experiments for each case. In the first experiment, we treat the time series of the M1 competition as the *observed sample* and the time series of the M3 competition as the collection of *new time series* to be forecast. We reverse the sets in the second experiment, using the M3 data as the *observed sample* and the M1 data as the *new time series*. These are summarised in \autoref{tbl:Mcomps}. 
 
-
-
-<!--\begin{tabular}{llp{8,8cm}cc}-->
-
-\begin{table}[!htp]
-\centering\footnotesize\tabcolsep=0.16cm
-\def\yes{$\checkmark$}
-\caption{The number of series the their sources used in the two forecast experiments as training and test sets.}
-\label{tbl:Mcomps}
-\begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
-\toprule
-                &  \multicolumn{ 4}{c}{Experiment 1} & & \multicolumn{ 4}{c}{Experiment 2} \\
-                &    Source  &    Yearly  & Quarterly  &    Monthly &            &    Source  &    Yearly  & Quarterly  &    Monthly \\\cline{2-5}\cline{7-10}
-& & & & & & & & & \\[-0.25cm]
-Observed series &         M1 &        181 &        203 &        617 &            &         M3 &        645 &        756 &       1428 \\
-     New series &         M3 &        645 &        756 &       1428 &            &         M1 &        181 &        203 &        617 \\
-\bottomrule
-\end{tabular}  
-\end{table}
-
+[Insert \autoref{tbl:Mcomps} here]
 
 This allow us to compare our results with published forecast accuracy results for each competition. In both experiments, we fit ARIMA and ETS models to the full length of each series in the corresponding *observed samples* using the `auto.arima` and `ets` functions in the forecast package [@forecast]. From each model fitted to annual and quarterly data, we simulate a further 1000 series. For monthly time series, we simulate a further 100 series (to speed up the offline calculation process). The lengths of the simulated time series are set to be equal to the lengths of the series on which they were based.
 
@@ -317,85 +223,11 @@ The models are estimated using the training period for each series, and forecast
 
 We use a set of 25 features for yearly data and a set of 30 features for seasonal data. Some of these are taken from previous studies [@wang2009rule; @hyndman2015large; @kang2017visualising], and we have added some new features that we believe provide some useful information. Each feature can be computed rapidly, thus making the online phase of our algorithm very fast. The features are summarized in \autoref{feature}, and fully described in the Appendix.
 
-\begin{table}[!htp]
-\centering\footnotesize\tabcolsep=0.12cm
-\def\yes{$\checkmark$}
-\caption{Features used for selecting a forecast-model.}
-\label{feature}
-\begin{tabular}{llp{8,8cm}cc}
-\toprule
-\multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\ 
-\midrule
-1  & T              & length of time series                                                                   & \yes  & \yes \\
-2  & trend          & strength of trend                                                                       & \yes  & \yes\\
-3  & seasonality       & strength of seasonality                                                                 & -     & \yes \\
-4  & linearity      & linearity                                                                               & \yes  & \yes \\
-5  & curvature      & curvature                                                                               & \yes  & \yes \\
-6  & spikiness      & spikiness                                                                               & \yes  & \yes \\
-7  & e\_acf1        & first ACF value of remainder series                                                     & \yes  & \yes \\
-8  & stability      & stability                                                                               & \yes  & \yes \\
-9  & lumpiness      & lumpiness                                                                               & \yes  & \yes \\
-10 & entropy        & spectral entropy                                                                        & \yes  & \yes \\
-11 & hurst          & Hurst exponent                                                                          & \yes  & \yes \\
-12 & nonlinearity   & nonlinearity                                                                            & \yes\ & \yes \\
-13 & alpha          & ETS(A,A,N) $\hat\alpha$                                                                 & \yes  & \yes \\
-14 & beta           & ETS(A,A,N) $\hat\beta$                                                                  & \yes  & \yes\\
-15 & hwalpha        & ETS(A,A,A) $\hat\alpha$                                                                 & -     & \yes \\
-16 & hwbeta         & ETS(A,A,A) $\hat\beta$                                                                  & -     & \yes \\
-17 & hwgamma        & ETS(A,A,A) $\hat\gamma$                                                                 & -     & \yes \\
-18 & ur\_pp         & test statistic based on Phillips-Perron test                                            & \yes  & - \\
-19 & ur\_kpss       & test statistic based on KPSS test                                                       & \yes  & - \\
-20 & y\_acf1        & first ACF value of the original series                                                  & \yes  & \yes \\
-21 & diff1y\_acf1   & first ACF value of the differenced series                                               & \yes  & \yes \\
-22 & diff2y\_acf1   & first ACF value of the twice-differenced series                                         & \yes  & \yes \\
-23 & y\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
-24 & diff1y\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
-25 & diff2y\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
-26 & seas\_acf1     & autocorrelation coefficient at first seasonal lag                                                & -     & \yes \\
-27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
-28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
-29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
-30 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
-31 & y\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
-32 & diff1y\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
-33 & diff2y\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
-\bottomrule
- \end{tabular}
-\end{table}
-
+[Insert \autoref{feature} here]
 
 The correlation matrices for all features are presented in \autoref{fig:cormat}. The variability in the correlations reflects the diversity of the selected features. In other words, the features we used were able to capture different characteristics of the time series. Further, the structure of the correlation matrices are similar to each other, showing the different collections have similar feature spaces.
 
-
-```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots for the reference sets. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
-# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
-
-img1 <- rasterGrob(
-  as.raster(readPNG("figures/ggheatmapA.png")),
-  interpolate = FALSE
-)
-img2 <- rasterGrob(
-  as.raster(readPNG("figures/ggheatmapB.png")),
-  interpolate = FALSE
-)
-img3 <- rasterGrob(
-  as.raster(readPNG("figures/ggheatmapC.png")),
-  interpolate = FALSE
-)
-img4 <- rasterGrob(
-  as.raster(readPNG("figures/ggheatmapD.png")),
-  interpolate = FALSE
-)
-img5 <- rasterGrob(
-  as.raster(readPNG("figures/ggheatmapE.png")),
-  interpolate = FALSE
-)
-img6 <- rasterGrob(
-  as.raster(readPNG("figures/ggheatmapF.png")),
-  interpolate = FALSE
-)
-grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
-```
+[Insert \autoref{fig:cormat} here]
 
 ## Model calibration
 
@@ -406,11 +238,15 @@ Our aim is different from most classification problems in that we are not intere
 
 ## Summary of the main results {#sec:results}
 
-We build separate random forest classifiers for yearly data, quarterly data and monthly data. For the second experiment, in the case of yearly and quarterly data we take a subset of the simulated time series when training the RF-unbalanced and RF-class priors, to reduce the size of the reference set. The subsets are selected randomly according to the proportions of output-labels in the observed samples. This ensures that our reference set shares similar characteristics to the observed sample. 
+We build separate random forest classifiers for yearly data, quarterly data and monthly data. For the second experiment, in the case of yearly and quarterly data we take a subset of the simulated time series when training the RF-unbalanced and RF-class priors, to reduce the size of the reference set (these are shown in yellow in the figures that follow). The subsets are selected randomly according to the proportions of output-labels in the observed samples. This ensures that our reference set shares similar characteristics to the observed sample. 
 
-Principal component analysis is used to visualize the feature-spaces of the different time series collections. We compute the principal components projection using the features in the observed sample, and then project the simulated time series and the new time series using the same projection. The results are shown in Figures \ref{fig:exp1}--\ref{fig:exp2}, where the first three principal components are plotted against each other. Figure \ref{fig:exp1} refer to Experiment 1 (for which M1 is the observed times series and M3 is the new times series) and the Figure \ref{fig:exp2} to Experiment 2 (for which M3 is the observed time series and M1 is the new time series). The points on each plot represent individual time series. On each figure the top three rows refer to the yearly data, the middle three to the quarterly data and the bottom three to the monthly data. The first three principle components explain 62.5\%, 62.4\% and 58.93\% of the total variation in the yearly, quarterly and monthly M1 data and 62.2\% 64.75\% and 65.97\%  of the total variation in the yearly, quarterly and monthly M3 data.
+Principal component analysis is used to visualize the feature-spaces of the different time series collections. We compute the principal components projection using the features in the observed sample, and then project the simulated time series and the new time series using the same projection. The results are shown in Figures \ref{fig:exp1}--\ref{fig:exp2}, where the first three principal components are plotted against each other. Figure \ref{fig:exp1} refers to Experiment 1 and Figure \ref{fig:exp2} to Experiment 2. The points on each plot represent individual time series. In each fogure the top row of plots refers to the yearly data, the middle row to the quarterly data and the bottom row to the monthly data. The plots show that the first three principle components explain 62.5\%, 62.4\% and 58.93\% of the total variation in the yearly, quarterly and monthly M1 data and 62.2\% 64.75\% and 65.97\%  of the total variation in the yearly, quarterly and monthly M3 data.
 
-The plots show that the distribution of the observed times series over the PCA space (represented by the black dots) is very similar to that of the new time series (represented by the orange dots). More importantly, we see that the distribution of the simulated time series (represented by the green dots and yellow dots - the yellow dots are a subset of the simulated series) clearly nests that and fills in the space of the new time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This strongly indicates that we have not reduced the feature diversity from the observed sample. This shows that our approach of augmenting the observed time series with simulated is successful. By augmenting the reference set with simulated time series, we were able to increase the diversity and evenness of the feature space of the observed time series. 
+[Insert \autoref{fig:exp1} here]
+
+[Insert \autoref{fig:exp2} here]
+
+The plots show that the distribution of the observed times series over the PCA space (represented by the black dots) is very similar to that of the new time series (represented by the orange dots). More importantly, we see that the distribution of the simulated time series (represented by the green dots and yellow dots - the yellow dots are a subset of the simulated series as mentioned above) clearly nests that and fills in the space of the new time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This strongly indicates that we have not reduced the feature diversity from the observed sample. Our approach of augmenting the observed time series with simulated data is successful. By augmenting the reference set with simulated time series, we were able to increase the diversity and evenness of the feature space of the observed time series. 
 
 
 The accuracy of our method is compared against the following commonly-used forecasting methods:
@@ -424,90 +260,11 @@ The accuracy of our method is compared against the following commonly-used forec
   7. STL-AR method;
   8. seasonal naive (for seasonal data).
 
-The automated ARIMA and ETS algorithms are implemented using the `auto.arima` and `ets` functions available in the forecast package in R [@forecast]. Each method is implemented on the training period and forecasts are computed up to the full length of the test period. Then we compute the MASE for each forecast horizon, by averaging the MASE across all series in the collection of new time series. To assist in the evaluation of the proposed framework, for each forecast horizon we rank our method compared to the other methods listed above, and an average ranking over all forecast horizons is computed. The results are given in Table \ref{masetab}. The MASE value corresponding to the best performing method in each category is highlighted in bold.
+The automated ARIMA and ETS algorithms are implemented using the `auto.arima` and `ets` functions available in the forecast package in R [@forecast]. Each method is implemented on the training period of the new series and forecasts are computed for the full length of the test period. This follows closely the forecast evaluation process implemented in the M1 and M3 forecasting competitions. The MASE is computed for each forecast horizon, by averaging the absolute scaled forecast errors across all series. The rank is calculated by averaging the ranks of each completing method across all forecast horizons and series. The results are presented in Table \ref{masetab}. The lowest MASE and average Rank values corresponding to the best performing method are presented in bold font.
 
+[Insert \autoref{masetab} here]
 
-```{r exp1,  fig.width=10, fig.asp = .8, fig.cap="Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series."}
-# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
-img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1Ytest.png")),interpolate = FALSE)
-img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1Y.png")),interpolate = FALSE)
-img3 <- rasterGrob(as.raster(readPNG("figures/pca3M1Y.png")),interpolate = FALSE)
-img4 <- rasterGrob(as.raster(readPNG("figures/pca1M1Q.png")),interpolate = FALSE)
-img5 <- rasterGrob(as.raster(readPNG("figures/pca2M1Q.png")),interpolate = FALSE)
-img6 <- rasterGrob(as.raster(readPNG("figures/pca3M1Q.png")),interpolate = FALSE)
-img7 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
-img8 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
-img9 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
-grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
-```
-
-
-```{r exp2, fig.cap="Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
-# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
-
-img1 <- rasterGrob(as.raster(readPNG("figures/pca1M3Y.png")),interpolate = FALSE)
-img2 <- rasterGrob(as.raster(readPNG("figures/pca2M3Y.png")),interpolate = FALSE)
-img3 <- rasterGrob(as.raster(readPNG("figures/pca3M3Y.png")),interpolate = FALSE)
-img4 <- rasterGrob(as.raster(readPNG("figures/pca1M3Q.png")),interpolate = FALSE)
-img5 <- rasterGrob(as.raster(readPNG("figures/pca2M3Q.png")),interpolate = FALSE)
-img6 <- rasterGrob(as.raster(readPNG("figures/pca3M3Q.png")),interpolate = FALSE)
-img7 <- rasterGrob(as.raster(readPNG("figures/pca1M3M.png")), interpolate = FALSE)
-img8 <- rasterGrob(as.raster(readPNG("figures/pca2M3M.png")), interpolate = FALSE)
-img9 <- rasterGrob(as.raster(readPNG("figures/pca3M3M.png")), interpolate = FALSE)
-
-grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
-```
-
-\begin{table}[!htbp]
-\centering\tiny
-\centering
-\caption{Out-of-sample forecast performances from experiment 1 and experiment 2}
-\label{masetab}
-\begin{tabular}{lrrrrrrcrrrrrrc}
-\hline
- & \multicolumn{7}{c}{Experiment 1: training-M1, test-M3} & \multicolumn{7}{c}{Experiment 2: training-M3, test-M1} \\ \cmidrule(lr){2-8} \cmidrule(lr){9-15}
- & \multicolumn{7}{c}{Yearly: 645 M3 time series} & \multicolumn{7}{c}{Yearly: 181 M1 time series} \\ 
- & h=1  & 1-2  &  1-3 & 1-4 & 1-5 & 1-6 & avg. Rank &  h=1 & 1-2  &  1-3 & 1-4 & 1-5 & 1-6 & avg. Rank\\ \cmidrule(lr){2-8} \cmidrule(lr){9-15}
-RF-unbalanced &  1.06 & 1.42  & 1.83  & 2.20 &  2.54&2.85  &  3.50& \bf{0.97}  & \bf{1.39}  & 1.93  &2.42  &  2.90& 3.37 &1.67  \\ 
-RF-class priors & \bf{1.03}  & 1.37  &  1.78 &  2.14& 2.47 &  2.77&  1.83&  1.02 &  1.40 &  \bf{1.92} & \bf{2.40} & \bf{2.87} & \bf{3.33} & 1.33 \\ 
-auto.arima &  1.11 &  1.48 &  1.90 &  2.28& 2.63 &2.96  & 6.83 &  1.06 &  1.47 &  2.01 &  2.51&3.00  &3.47  & 3.50 \\ 
-ets & 1.09  & 1.44  & 1.84  & 2.20 &  2.54& 2.86 &  4.17& 1.12  & 1.59
-&2.17   &2.72  &3.26  & 3.77 &  6.00\\ 
-WN &  6.54 &  6.91 &  7.22 &  7.48& 7.76 &8.07  &9.00  &  6.38 &  7.08 &  7.92 &8.59  &9.28  &  10.01&  9.00\\ 
-RW & 1.24  &  1.68 &  2.11 &  2.48& 2.83 &  3.17&8.00  &  1.35 &  2.00 &  2.80 &  3.50& 4.19 &  4.89& 8.00 \\ 
-RWD & \bf{1.03}  &  \bf{1.36} & \bf{1.74}  &  \bf{2.05}&  \bf{2.35}&  \bf{2.63}&1.17  & 1.03  &  1.44 & 2.00  & 2.51 &  3.01& 3.49 &  3.33\\ 
-STL-AR & 1.09  &  1.47 &  1.89 &  2.27& 2.62 &  2.95& 5.50 & 1.10  &  1.51 &  2.07 &  2.55& 3.04 & 3.52 & 5.00 \\ 
-Theta & 1.12  & 1.47  & 1.86  & 2.18 &  2.48&  2.77&  4.17& 1.15  & 1.70  & 2.38  & 3.00 &  3.59& 4.19 &  7.00\\ \cmidrule(lr){2-8} \cmidrule(lr){9-15}
- & \multicolumn{7}{c}{Quarterly: 756 M3 time series} & \multicolumn{7}{c}{Quarterly: 203 M1 time series} \\ 
-  & h=1  & 1-4  &  1-5 & 1-6 & 1-7 & 1-8 & avg. Rank &  h=1 & 1-4  &  1-5 & 1-6 & 1-7 & 1-8 & avg. Rank\\ \cmidrule(lr){2-8} \cmidrule(lr){9-15}
-RF-unbalanced  &  0.58 &  \bf{0.81} & \bf{0.88}  &  \bf{0.96}&\bf{1.04}  &1.12  &  1.33 & \bf{0.77}  & \bf{1.08}  & \bf{1.22}  &  \bf{1.36}&  \bf{1.48}&\bf{1.59}  &  1.00\\ 
-RF-class priors & 0.58  & 0.81  & 0.89  & 0.97 &  1.05&1.13  & 2.17 &  0.79 & 1.12  & 1.28& 1.41 & 1.53 & 1.65  & 2.33 \\ 
-auto.arima & 0.58  & 0.85  &  0.93 & 1.01 & 1.10 & 1.19 & 4.50 &  0.85 &  1.19 & 1.37  & 1.53 &  1.67 & 1.80 & 5.00 \\ 
-ets & \bf{0.56}  &  0.82 &  0.91 &  0.99& 1.08 &  1.17& 3.33 & 0.78  &  1.11 &  1.28 &  1.42& 1.54 &  1.66& 2.50 \\ 
-WN  & 3.25  & 3.59  & 3.63  & 3.70 &  3.78& 3.87 &10.00  &  3.97 &  4.27 &  4.35 &  4.45& 4.52 &4.64  &  10.00\\ 
-RW  & 1.14  & 1.16  & 1.25  & 1.32 &  1.41& 1.46 &7.17  &0.97   & 1.35  & 1.52  & 1.67 &  1.83& 1.95 & 7.17 \\ 
-RWD & 1.20  & 1.17  &1.29   & 1.36 &  1.44& 1.47 &8.17  &0.95   & 1.26  &1.42   &1.56  &  1.71& 1.81 &  6.00\\ 
-STL-AR &  0.70 &  1.27 &  1.44 &  1.60& 1.75 &  1.91& 8.50 &  0.96 &  1.63 &  1.85 &  2.05& 2.23 & 2.43 & 8.67 \\ 
-Theta &  0.62 & 0.83  & 0.90  & 0.97 &  1.04& \bf{1.11} & 2.67 & 0.79  &  1.13 &  1.29 &1.42  &1.55  & 1.67 & 3.67 \\ 
-Snaive & 1.11  &  1.09 &  1.21 &  1.30&  1.36&  1.43& 6.17 &  1.52 &  1.56 &  1.74 &  1.86& 1.98 &2.08  & 8.17 \\ \cmidrule(lr){2-8} \cmidrule(lr){9-15}
- & \multicolumn{7}{c}{Monthly: 1428 M3 time series} & \multicolumn{7}{c}{Monthly: 617 M1 time series} \\ 
-  & h=1-4  & 1-6  &  1-8 & 1-10 & 1-12 & 1-18 & avg. Rank &  h=1-4 & 1-6  &  1-8 & 1-10 & 1-12 & 1-18 & avg. Rank\\ \cmidrule(lr){2-8} \cmidrule(lr){9-15}
-RF-unbalanced &  0.66 & 0.69  & 0.72  & 0.75 &  0.75& 0.78 &  5.17& 0.72  & 0.78  & 0.83  & 0.88 &  \bf{0.89}&\bf{0.97}  &  2.50\\ 
-RF-class priors & 0.65  & 0.68  & 0.71  & 0.74 &  \bf{0.74}&  \bf{0.77}&  4.00& 0.71  & 0.78  & 0.83  & 0.89 &  0.91& 0.99 &  2.83\\ 
-auto.arima &  0.61 &  0.65 &  0.69 &  0.72& 0.75 &0.88  & 2.67 &0.73   &0.81   &  0.87 &  0.94& 0.99 & 1.16 & 6.83 \\ 
-ets & \bf{0.59}  &  \bf{0.64} &  \bf{0.68} &  \bf{0.72}&\bf{0.74}  &  0.86&1.67  &  0.68 & 0.76  &0.82   & 0.88 & 0.93 &1.07  & 2.50 \\ 
-WN &  2.06 &  2.08 &  2.10 &  2.13& 2.15 &  2.27& 12.00 & 2.06  & 2.09  & 2.12  & 2.14 &  2.18&  2.28&  12.00\\ 
-RW & 0.91  &  0.97 &  1.01 &  1.04&  1.04&  1.17& 10.33 & 1.18  & 1.24  & 1.31  & 1.34 &  1.33& 1.47 & 10.00 \\ 
-RWD & 0.90  & 0.96  & 1.00  & 1.03 &  1.02& 1.14 &9.17  &  1.19 & 1.27  & 1.37  &1.40  &  1.39& 1.55 & 11.00 \\ 
-STL-AR &  0.73 &  0.81 &  0.90 &  0.98& 1.04 &  1.27& 8.83 &0.79   &  0.91 &  0.99 &  1.09& 1.17 & 1.39 & 8.33 \\ 
-Theta & 0.63  & 0.67  & 0.72  & 0.75 &  0.77& 0.89 &  5.67& \bf{0.68}  &  \bf{0.75} & \bf{0.81}  & \bf{0.87} &  0.91& 1.04 &  1.67\\ 
-Snaive &  0.95 &  0.97 &  0.97 &  0.98& 0.98 &  1.14& 9.00 &1.09   &  1.11 &  1.11 &  1.13& 1.14 & 1.31 & 8.67 \\ \hline
-\end{tabular}
-\end{table}
-
-Table \ref{masetab} compare the performance of our proposed framework to the benchmark methods. For each method, we calculate out-of-sample MASE over the forecast horizons, and average over all time series. 
-
-For yearly series from the M3 competition, our meta-learning method beats all methods other than the random walk with drift model. For yearly series from the M1 competition data, our meta-learning method using RF-unbalanced and RF-class priors consistently forecast more accurately than all benchmark methods. For quarterly data our method using RF-unbalanced outperforms all the bennchmark methods. For monthly data, Table \ref{masetab} shows that our meta-learning method with RF-unbalanced and RF-class priors provides more accurate forecasts than the benchmark methods for the longest forecast horizons (1--18). However, over shorter horizons, ETS does slightly better for the M3 data, and Theta does slightly better for the M1 data.
+In general, our proposed meta-learning algorithm performs quite well in both experimental settings. It consistenly ranks in the top most accurate forecasting methods for forecasting both the M1 and the M3 series and most often ranks as the most accurate method. More specifically, for yearly data the algorithm ranks best for forecasting the M1 data in experiment 2 and second (to the random walk with drift) in forecasting the M3 data. For quarterly data the meta-learning algoritm ranks as the most accurate in both experiments. For the monthly frequency the algoritm seems to perform best for the longer horizons in both experimental settings. It also seems to be competitive for the shorter horizons with the three methods (`auto.arima`, `ets` and theta) that perform best. In general, comparing the results between the two experimental settings it seems that the meta-learning algorithm achieves marginally better results in experiment 2. Hence, we can  conclude that the meta-learning algorithm benefits from being trained on the larger sample of time series (M3 series) while forecasting a smaller set (M1 series). 
 
 
 # Discussion and Conclusions {#discussion}
@@ -620,6 +377,268 @@ A linear trend model is fitted to the time series, and the first-order autocorre
 
 We calculate the sum of squares of first five partial autocorrelation coefficients of the original series, the first-differenced series and the second-differenced series.
 
-\newpage
+\clearpage
+
+```{r fig1, fig.cap="Time-domain representation of time series"}
+# Extract required series
+series_id <- c("N0001", "N0633", "N0625", "N0645","N1912", "N2012")
+six_series <- lapply(M3[series_id], function(u){u$x})
+p <- lapply(six_series,
+  function(u) {autoplot(u) + xlab("") + ylab("")}
+)
+for (i in seq_along(six_series))
+  p[[i]] <- p[[i]] + ggtitle(series_id[i])
+grid.arrange(grobs = p, ncol = 3, nrow = 2)
+```
+
+```{r fig2, fig.cap="Feature-based representation of time series", out.width="70%"}
+df <- tsfeatures(six_series, c("stl_features")) %>%
+  select(trend, seasonal_strength) %>%
+  rename(seasonality = seasonal_strength) %>%
+  replace_na(list(seasonality = 0))
+df$id <- names(six_series)
+ggplot(df, aes(x = trend, y = seasonality)) +
+  geom_point() +
+  xlim(0, 1) + ylim(0, 1) +
+  coord_fixed() +
+  geom_text_repel(
+    aes(label = id),
+    colour = "black",
+    size = 3,
+    box.padding = unit(0.5, "lines")
+  ) +
+  theme(legend.position = "none")
+```
+
+```{r rice, fig.cap="Rice's framework for the Algorithm Selection Problem (reproduced from Smith-Miles, 2009)", out.width="80%"}
+knitr::include_graphics("figures/RiceFramework.png")
+```
+
+```{r framework, fig.cap="Proposed framework (blue: offline phase, red: online phase)"}
+knitr::include_graphics("figures/framework.png")
+```
+
+```{r cormat,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots for the reference sets. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
+
+img1 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapA.png")),
+  interpolate = FALSE
+)
+img2 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapB.png")),
+  interpolate = FALSE
+)
+img3 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapC.png")),
+  interpolate = FALSE
+)
+img4 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapD.png")),
+  interpolate = FALSE
+)
+img5 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapE.png")),
+  interpolate = FALSE
+)
+img6 <- rasterGrob(
+  as.raster(readPNG("figures/ggheatmapF.png")),
+  interpolate = FALSE
+)
+grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
+```
+
+
+```{r exp1,  fig.width=11, fig.asp = .9, fig.cap="Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
+img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1Y.png")),interpolate = FALSE)
+img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1Y.png")),interpolate = FALSE)
+img3 <- rasterGrob(as.raster(readPNG("figures/pca3M1Y.png")),interpolate = FALSE)
+img4 <- rasterGrob(as.raster(readPNG("figures/pca1M1Q.png")),interpolate = FALSE)
+img5 <- rasterGrob(as.raster(readPNG("figures/pca2M1Q.png")),interpolate = FALSE)
+img6 <- rasterGrob(as.raster(readPNG("figures/pca3M1Q.png")),interpolate = FALSE)
+img7 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
+img8 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
+img9 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
+grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
+```
+
+
+```{r exp2,  fig.width=11, fig.asp = .9, fig.cap="Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
+# the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
+
+img1 <- rasterGrob(as.raster(readPNG("figures/pca1M3Y.png")),interpolate = FALSE)
+img2 <- rasterGrob(as.raster(readPNG("figures/pca2M3Y.png")),interpolate = FALSE)
+img3 <- rasterGrob(as.raster(readPNG("figures/pca3M3Y.png")),interpolate = FALSE)
+img4 <- rasterGrob(as.raster(readPNG("figures/pca1M3Q.png")),interpolate = FALSE)
+img5 <- rasterGrob(as.raster(readPNG("figures/pca2M3Q.png")),interpolate = FALSE)
+img6 <- rasterGrob(as.raster(readPNG("figures/pca3M3Q.png")),interpolate = FALSE)
+img7 <- rasterGrob(as.raster(readPNG("figures/pca1M3M.png")), interpolate = FALSE)
+img8 <- rasterGrob(as.raster(readPNG("figures/pca2M3M.png")), interpolate = FALSE)
+img9 <- rasterGrob(as.raster(readPNG("figures/pca3M3M.png")), interpolate = FALSE)
+
+grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
+```
+
+
+\clearpage
+
+\begin{algorithm}[!ht]
+  \caption{Identification of the "best" forecast method for a new time series.}
+  \label{alg:algo-lab}
+  \begin{algorithmic}[1]
+    \Statex \textbf{Offline phase}
+    \Statex \text{Given:}
+    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series.
+      \Statex \hspace{1cm}$L:$ the set of class labels (e.g.\ ARIMA, ETS, SNAIVE).
+         \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features.
+         \Statex \hspace{1cm}$nsim:$ number of series to be simulated.
+         \Statex \hspace{1cm}$B:$ number of trees in the random forest.
+         \Statex \hspace{1cm}$mtry:$ number of features to be selected at each node.
+     \Statex \text{Output:}
+      \Statex \hspace{1cm}\text{a random forest classifier} 
+      \Statex
+     \Statex \textit{Prepare the reference set}
+    \Statex For $i=1$ to $n$:
+            \State Fit ARIMA and ETS models to $t_i$.
+            \State Simulate $nsim$ time series from each model in step 1.
+            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
+    \Statex 
+    \Statex \textit{Prepare the meta-data}
+    \Statex For $j=1$ to $N$:
+            \State Split $t_j$ into a training period and test period.
+            \State Calculate features $F$ based on the training period. 
+            \State Fit $L$ models to the training period.
+            \State Calculate forecasts for the test period from each model.
+            \State Calculate forecast error measure over the test period for all models in $L$.
+            \State Select the model with the minimum forecast error.
+            \State Meta-data: input features (step 5), output labels (step 9).
+     \Statex
+    \Statex \textit{Train a random forest classifier}
+            \State Train a random forest classifier based on the meta-data.
+            \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
+    \Statex
+     \Statex \textbf{Online phase}
+    \Statex \text{Given:}
+    \Statex \hspace{1cm}\text{the random forest classifier from step 12} .
+     \Statex \text{Output:}
+      \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
+  \State For $t_{new}$ calculate features $F$.
+  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote\{\hat{C_b}(t_{new})\}_1^B$.
+   \end{algorithmic}
+\end{algorithm}
+
+\begin{table}[!htp]
+\centering\footnotesize\tabcolsep=0.16cm
+\def\yes{$\checkmark$}
+\caption{The number of series the their sources used in the two forecast experiments as training and test sets.}
+\label{tbl:Mcomps}
+\begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
+\toprule
+                &  \multicolumn{ 4}{c}{Experiment 1} & & \multicolumn{ 4}{c}{Experiment 2} \\
+                &    Source  &    Yearly  & Quarterly  &    Monthly &            &    Source  &    Yearly  & Quarterly  &    Monthly \\\cline{2-5}\cline{7-10}
+& & & & & & & & & \\[-0.25cm]
+Observed series &         M1 &        181 &        203 &        617 &            &         M3 &        645 &        756 &       1428 \\
+     New series &         M3 &        645 &        756 &       1428 &            &         M1 &        181 &        203 &        617 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!htp]
+\centering\footnotesize\tabcolsep=0.12cm
+\def\yes{$\checkmark$}
+\caption{Features used for selecting a forecast-model.}
+\label{feature}
+\begin{tabular}{llp{8,8cm}cc}
+\toprule
+\multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\ 
+\midrule
+1  & T              & length of time series                                                                   & \yes  & \yes \\
+2  & trend          & strength of trend                                                                       & \yes  & \yes\\
+3  & seasonality       & strength of seasonality                                                                 & -     & \yes \\
+4  & linearity      & linearity                                                                               & \yes  & \yes \\
+5  & curvature      & curvature                                                                               & \yes  & \yes \\
+6  & spikiness      & spikiness                                                                               & \yes  & \yes \\
+7  & e\_acf1        & first ACF value of remainder series                                                     & \yes  & \yes \\
+8  & stability      & stability                                                                               & \yes  & \yes \\
+9  & lumpiness      & lumpiness                                                                               & \yes  & \yes \\
+10 & entropy        & spectral entropy                                                                        & \yes  & \yes \\
+11 & hurst          & Hurst exponent                                                                          & \yes  & \yes \\
+12 & nonlinearity   & nonlinearity                                                                            & \yes\ & \yes \\
+13 & alpha          & ETS(A,A,N) $\hat\alpha$                                                                 & \yes  & \yes \\
+14 & beta           & ETS(A,A,N) $\hat\beta$                                                                  & \yes  & \yes\\
+15 & hwalpha        & ETS(A,A,A) $\hat\alpha$                                                                 & -     & \yes \\
+16 & hwbeta         & ETS(A,A,A) $\hat\beta$                                                                  & -     & \yes \\
+17 & hwgamma        & ETS(A,A,A) $\hat\gamma$                                                                 & -     & \yes \\
+18 & ur\_pp         & test statistic based on Phillips-Perron test                                            & \yes  & - \\
+19 & ur\_kpss       & test statistic based on KPSS test                                                       & \yes  & - \\
+20 & y\_acf1        & first ACF value of the original series                                                  & \yes  & \yes \\
+21 & diff1y\_acf1   & first ACF value of the differenced series                                               & \yes  & \yes \\
+22 & diff2y\_acf1   & first ACF value of the twice-differenced series                                         & \yes  & \yes \\
+23 & y\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
+24 & diff1y\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
+25 & diff2y\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
+26 & seas\_acf1     & autocorrelation coefficient at first seasonal lag                                                & -     & \yes \\
+27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
+28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
+29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
+30 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
+31 & y\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
+32 & diff1y\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
+33 & diff2y\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
+\bottomrule
+ \end{tabular}
+\end{table}
+
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\centering
+\caption{MASE values calculated over the test-sets from experiments 1 and 2.}
+\label{masetab}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+                     &                              \multicolumn{ 5}{c}{Experiment 1} &            &                              \multicolumn{ 5}{c}{Experiment 2} \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+                     &                                    \multicolumn{ 5}{c}{Yearly} &            &                                    \multicolumn{ 5}{c}{Yearly} \\
+                     &   $h=1$    &    $1-2$   &     $1-4$  &     $1-6$  &      Rank  &            &     $h=1$  &    $1-2$   &     $1-4$  &     $1-6$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       1.06 &       1.42 &       2.20 &       2.85 &       3.50 &            & {\bf 0.97} & {\bf 1.39} &       2.42 &       3.37 &       1.67 \\
+RF-class priors      & {\bf 1.03} &       1.37 &       2.14 &       2.77 &       1.83 &            &       1.02 &       1.40 & {\bf 2.40} & {\bf 3.33} & {\bf 1.33} \\
+auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &       6.83 &            &       1.06 &       1.47 &       2.51 &       3.47 &       3.50 \\
+ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.17 &            &       1.12 &       1.59 &       2.72 &       3.77 &       6.00 \\
+WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       9.00 \\
+RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       8.00 \\
+RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.17} &            &       1.03 &       1.44 &       2.51 &       3.49 &       3.33 \\
+STL-AR               &       1.09 &       1.47 &       2.27 &       2.95 &       5.50 &            &       1.10 &       1.51 &       2.55 &       3.52 &       5.00 \\
+Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       4.17 &            &       1.15 &       1.70 &       3.00 &       4.19 &       7.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+           &                                 \multicolumn{ 5}{c}{Quarterly} &            &                                 \multicolumn{ 5}{c}{Quarterly} \\
+                     &    $h=1$   &    $1-4$   &     $1-6$  &     $1-8$  &      Rank  &            &     $h=1$  &    $1-4$   &     $1-6$  &     $1-8$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       0.58 & {\bf 0.81} & {\bf 0.96} &       1.12 & {\bf 1.33} &            & {\bf 0.77} & {\bf 1.08} & {\bf 1.36} & {\bf 1.59} & {\bf 1.00} \\
+RF-class priors      &       0.58 & {\bf 0.81} &       0.97 &       1.13 &       2.17 &            &       0.79 &       1.12 &       1.41 &       1.65 &       2.33 \\
+auto.arima           &       0.58 &       0.85 &       1.01 &       1.19 &       4.50 &            &       0.85 &       1.19 &       1.53 &       1.80 &       5.00 \\
+ets                  & {\bf 0.56} &       0.82 &       0.99 &       1.17 &       3.33 &            &       0.78 &       1.11 &       1.42 &       1.66 &       2.50 \\
+WN                   &       3.25 &       3.59 &       3.70 &       3.87 &      10.00 &            &       3.97 &       4.27 &       4.45 &       4.64 &      10.00 \\
+RW                   &       1.14 &       1.16 &       1.32 &       1.46 &       7.17 &            &       0.97 &       1.35 &       1.67 &       1.95 &       7.17 \\
+RWD                  &       1.20 &       1.17 &       1.36 &       1.47 &       8.17 &            &       0.95 &       1.26 &       1.56 &       1.81 &       6.00 \\
+STL-AR               &       0.70 &       1.27 &       1.60 &       1.91 &       8.50 &            &       0.96 &       1.63 &       2.05 &       2.43 &       8.67 \\
+Theta                &       0.62 &       0.83 &       0.97 & {\bf 1.11} &       2.67 &            &       0.79 &       1.13 &       1.42 &       1.67 &       3.67 \\
+Snaive               &       1.11 &       1.09 &       1.30 &       1.43 &       6.17 &            &       1.52 &       1.56 &       1.86 &       2.08 &       8.17 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+           &                                   \multicolumn{ 5}{c}{Monthly} &            &                                   \multicolumn{ 5}{c}{Monthly} \\
+                     &    $h=1-4$ &    $1-6$   &     $1-12$ &    $1-18$  &   Rank     &            &   $h=1-4$  &    $1-6$   &    $1-12$  &    $1-18$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       0.66 &       0.69 &       0.75 &       0.78 &       5.17 &            &       0.72 &       0.78 & {\bf 0.89} & {\bf 0.97} &       2.50 \\
+RF-class priors      &       0.65 &       0.68 & {\bf 0.74} & {\bf 0.77} &       4.00 &            &       0.71 &       0.78 &       0.91 &       0.99 &       2.83 \\
+auto.arima           &       0.61 &       0.65 &       0.75 &       0.88 &       2.67 &            &       0.73 &       0.81 &       0.99 &       1.16 &       6.83 \\
+ets                  & {\bf 0.59} & {\bf 0.64} & {\bf 0.74} &       0.86 & {\bf 1.67} &            &       0.68 &       0.76 &       0.93 &       1.07 &       2.50 \\
+WN                   &       2.06 &       2.08 &       2.15 &       2.27 &      12.00 &            &       2.06 &       2.09 &       2.18 &       2.28 &      12.00 \\
+RW                   &       0.91 &       0.97 &       1.04 &       1.17 &      10.33 &            &       1.18 &       1.24 &       1.33 &       1.47 &      10.00 \\
+RWD                  &       0.90 &       0.96 &       1.02 &       1.14 &       9.17 &            &       1.19 &       1.27 &       1.39 &       1.55 &      11.00 \\
+STL-AR               &       0.73 &       0.81 &       1.04 &       1.27 &       8.83 &            &       0.79 &       0.91 &       1.17 &       1.39 &       8.33 \\
+Theta                &       0.63 &       0.67 &       0.77 &       0.89 &       5.67 &            & {\bf 0.68} & {\bf 0.75} &       0.91 &       1.04 & {\bf 1.67} \\
+Snaive               &       0.95 &       0.97 &       0.98 &       1.14 &       9.00 &            &       1.09 &       1.11 &       1.14 &       1.31 &       8.67 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
 
 #References
