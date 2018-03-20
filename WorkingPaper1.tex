@@ -429,9 +429,23 @@ measures of self-similarity and non-linearity.
 \textcite{fulcher2014highly} introduced 9000 operations to extract
 features from time series.
 
-{[}Insert \autoref{fig:fig1} here{]}
+\begin{figure}
 
-{[}Insert \autoref{fig:fig2} here{]}
+{\centering \includegraphics[width=\textwidth]{figure/fig1-1} 
+
+}
+
+\caption{Time-domain representation of time series}\label{fig:fig1}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.7\linewidth]{figure/fig2-1} 
+
+}
+
+\caption{Feature-based representation of time series}\label{fig:fig2}
+\end{figure}
 
 The choice of the most appropriate set of features depends on both the
 nature of the time series being analysed, and the purpose of the
@@ -487,7 +501,14 @@ meta-learning, which he called the algorithm selection problem (ASP)
 with the emergence of the machine-learning literature. Rice's framework
 for algorithm selection is shown in \autoref{fig:rice}.
 
-{[}Insert \autoref{fig:rice} here{]}
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{figures/RiceFramework} 
+
+}
+
+\caption{Rice's framework for the Algorithm Selection Problem (reproduced from Smith-Miles, 2009)}\label{fig:rice}
+\end{figure}
 
 There are four main components in Rice's framework. The problem space,
 \(P\), represents the data sets used in the study. The feature space,
@@ -624,7 +645,14 @@ respectively. A classification algorithm (the meta-learner) is trained
 during the offline phase and then is used to select appropriate
 forecast-models for new time series in the online phase.
 
-{[}Insert \autoref{fig:framework} here{]}
+\begin{figure}
+
+{\centering \includegraphics[width=\textwidth]{figures/framework} 
+
+}
+
+\caption{Proposed framework (blue: offline phase, red: online phase)}\label{fig:framework}
+\end{figure}
 
 In order to train our classification algorithm, we need a large
 collection of time series which are similar to those we will be
@@ -649,7 +677,50 @@ classification algorithm. The pseudo code for this algorithm is given in
 Algorithm \autoref{alg:algo-lab} below. In the following sections, we
 briefly discuss aspects of the offline part of the algorithm.
 
-{[}Insert Algorithm \autoref{alg:algo-lab} here{]}
+\begin{algorithm}[!ht]
+  \caption{Identification of the "best" forecast method for a new time series.}
+  \label{alg:algo-lab}
+  \begin{algorithmic}[1]
+    \Statex \textbf{Offline phase}
+    \Statex \text{Given:}
+    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series.
+      \Statex \hspace{1cm}$L:$ the set of class labels (e.g.\ ARIMA, ETS, SNAIVE).
+         \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features.
+         \Statex \hspace{1cm}$nsim:$ number of series to be simulated.
+         \Statex \hspace{1cm}$B:$ number of trees in the random forest.
+         \Statex \hspace{1cm}$mtry:$ number of features to be selected at each node.
+     \Statex \text{Output:}
+      \Statex \hspace{1cm}\text{a random forest classifier} 
+      \Statex
+     \Statex \textit{Prepare the reference set}
+    \Statex For $i=1$ to $n$:
+            \State Fit ARIMA and ETS models to $t_i$.
+            \State Simulate $nsim$ time series from each model in step 1.
+            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
+    \Statex 
+    \Statex \textit{Prepare the meta-data}
+    \Statex For $j=1$ to $N$:
+            \State Split $t_j$ into a training period and test period.
+            \State Calculate features $F$ based on the training period. 
+            \State Fit $L$ models to the training period.
+            \State Calculate forecasts for the test period from each model.
+            \State Calculate forecast error measure over the test period for all models in $L$.
+            \State Select the model with the minimum forecast error.
+            \State Meta-data: input features (step 5), output labels (step 9).
+     \Statex
+    \Statex \textit{Train a random forest classifier}
+            \State Train a random forest classifier based on the meta-data.
+            \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
+    \Statex
+     \Statex \textbf{Online phase}
+    \Statex \text{Given:}
+    \Statex \hspace{1cm}\text{the random forest classifier from step 12} .
+     \Statex \text{Output:}
+      \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
+  \State For $t_{new}$ calculate features $F$.
+  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote\{\hat{C_b}(t_{new})\}_1^B$.
+   \end{algorithmic}
+\end{algorithm}
 
 \subsection{Augmenting the observed sample with simulated
 series}\label{augmenting-the-observed-sample-with-simulated-series}
@@ -756,7 +827,21 @@ forecast. We reverse the sets in the second experiment, using the M3
 data as the \emph{observed sample} and the M1 data as the \emph{new time
 series}. These are summarised in \autoref{tbl:Mcomps}.
 
-{[}Insert \autoref{tbl:Mcomps} here{]}
+\begin{table}[!htp]
+\centering\footnotesize\tabcolsep=0.16cm
+\def\yes{$\checkmark$}
+\caption{The number of series the their sources used in the two forecast experiments as training and test sets.}
+\label{tbl:Mcomps}
+\begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
+\toprule
+                &  \multicolumn{ 4}{c}{Experiment 1} & & \multicolumn{ 4}{c}{Experiment 2} \\
+                &    Source  &    Yearly  & Quarterly  &    Monthly &            &    Source  &    Yearly  & Quarterly  &    Monthly \\\cline{2-5}\cline{7-10}
+& & & & & & & & & \\[-0.25cm]
+Observed series &         M1 &        181 &        203 &        617 &            &         M3 &        645 &        756 &       1428 \\
+     New series &         M3 &        645 &        756 &       1428 &            &         M1 &        181 &        203 &        617 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 This allow us to compare our results with published forecast accuracy
 results for each competition. In both experiments, we fit ARIMA and ETS
@@ -823,7 +908,51 @@ information. Each feature can be computed rapidly, thus making the
 online phase of our algorithm very fast. The features are summarized in
 \autoref{feature}, and fully described in the Appendix.
 
-{[}Insert \autoref{feature} here{]}
+\begin{table}[!htp]
+\centering\footnotesize\tabcolsep=0.12cm
+\def\yes{$\checkmark$}
+\caption{Features used for selecting a forecast-model.}
+\label{feature}
+\begin{tabular}{llp{8,8cm}cc}
+\toprule
+\multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\ 
+\midrule
+1  & T              & length of time series                                                                   & \yes  & \yes \\
+2  & trend          & strength of trend                                                                       & \yes  & \yes\\
+3  & seasonality       & strength of seasonality                                                                 & -     & \yes \\
+4  & linearity      & linearity                                                                               & \yes  & \yes \\
+5  & curvature      & curvature                                                                               & \yes  & \yes \\
+6  & spikiness      & spikiness                                                                               & \yes  & \yes \\
+7  & e\_acf1        & first ACF value of remainder series                                                     & \yes  & \yes \\
+8  & stability      & stability                                                                               & \yes  & \yes \\
+9  & lumpiness      & lumpiness                                                                               & \yes  & \yes \\
+10 & entropy        & spectral entropy                                                                        & \yes  & \yes \\
+11 & hurst          & Hurst exponent                                                                          & \yes  & \yes \\
+12 & nonlinearity   & nonlinearity                                                                            & \yes\ & \yes \\
+13 & alpha          & ETS(A,A,N) $\hat\alpha$                                                                 & \yes  & \yes \\
+14 & beta           & ETS(A,A,N) $\hat\beta$                                                                  & \yes  & \yes\\
+15 & hwalpha        & ETS(A,A,A) $\hat\alpha$                                                                 & -     & \yes \\
+16 & hwbeta         & ETS(A,A,A) $\hat\beta$                                                                  & -     & \yes \\
+17 & hwgamma        & ETS(A,A,A) $\hat\gamma$                                                                 & -     & \yes \\
+18 & ur\_pp         & test statistic based on Phillips-Perron test                                            & \yes  & - \\
+19 & ur\_kpss       & test statistic based on KPSS test                                                       & \yes  & - \\
+20 & y\_acf1        & first ACF value of the original series                                                  & \yes  & \yes \\
+21 & diff1y\_acf1   & first ACF value of the differenced series                                               & \yes  & \yes \\
+22 & diff2y\_acf1   & first ACF value of the twice-differenced series                                         & \yes  & \yes \\
+23 & y\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
+24 & diff1y\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
+25 & diff2y\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
+26 & seas\_acf1     & autocorrelation coefficient at first seasonal lag                                                & -     & \yes \\
+27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
+28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
+29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
+30 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
+31 & y\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
+32 & diff1y\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
+33 & diff2y\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
+\bottomrule
+ \end{tabular}
+\end{table}
 
 The correlation matrices for all features are presented in
 \autoref{fig:cormat}. The variability in the correlations reflects the
@@ -832,7 +961,14 @@ were able to capture different characteristics of the time series.
 Further, the structure of the correlation matrices are similar to each
 other, showing the different collections have similar feature spaces.
 
-{[}Insert \autoref{fig:cormat} here{]}
+\begin{figure}
+
+{\centering \includegraphics[width=\textwidth]{figure/cormatplots-1} 
+
+}
+
+\caption{ Correlation matrix plots for the reference sets. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly.}\label{fig:cormatplots}
+\end{figure}
 
 \subsection{Model calibration}\label{model-calibration}
 
@@ -893,9 +1029,23 @@ total variation in the yearly, quarterly and monthly M1 data and 62.2\%
 64.75\% and 65.97\% of the total variation in the yearly, quarterly and
 monthly M3 data.
 
-{[}Insert \autoref{fig:exp1} here{]}
+\begin{figure}
 
-{[}Insert \autoref{fig:exp2} here{]}
+{\centering \includegraphics[width=\textwidth]{figure/exp1pca-1} 
+
+}
+
+\caption{Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp1pca}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=\textwidth]{figure/exp2pca-1} 
+
+}
+
+\caption{Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp2pca}
+\end{figure}
 
 The plots show that the distribution of the observed times series over
 the PCA space (represented by the black dots) is very similar to that of
@@ -948,7 +1098,52 @@ across all forecast horizons and series. The results are presented in
 Table \ref{masetab}. The lowest MASE and average Rank values
 corresponding to the best performing method are presented in bold font.
 
-{[}Insert \autoref{masetab} here{]}
+\begin{table}[!htbp]
+\centering\footnotesize
+\centering
+\caption{MASE values calculated over the test-sets from experiments 1 and 2.}
+\label{masetab}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+                     &                              \multicolumn{ 5}{c}{Experiment 1} &            &                              \multicolumn{ 5}{c}{Experiment 2} \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+                     &                                    \multicolumn{ 5}{c}{Yearly} &            &                                    \multicolumn{ 5}{c}{Yearly} \\
+                     &   $h=1$    &    $1-2$   &     $1-4$  &     $1-6$  &      Rank  &            &     $h=1$  &    $1-2$   &     $1-4$  &     $1-6$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       1.06 &       1.42 &       2.20 &       2.85 &       3.50 &            & {\bf 0.97} & {\bf 1.39} &       2.42 &       3.37 &       1.67 \\
+RF-class priors      & {\bf 1.03} &       1.37 &       2.14 &       2.77 &       1.83 &            &       1.02 &       1.40 & {\bf 2.40} & {\bf 3.33} & {\bf 1.33} \\
+auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &       6.83 &            &       1.06 &       1.47 &       2.51 &       3.47 &       3.50 \\
+ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.17 &            &       1.12 &       1.59 &       2.72 &       3.77 &       6.00 \\
+WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       9.00 \\
+RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       8.00 \\
+RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.17} &            &       1.03 &       1.44 &       2.51 &       3.49 &       3.33 \\
+STL-AR               &       1.09 &       1.47 &       2.27 &       2.95 &       5.50 &            &       1.10 &       1.51 &       2.55 &       3.52 &       5.00 \\
+Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       4.17 &            &       1.15 &       1.70 &       3.00 &       4.19 &       7.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+           &                                 \multicolumn{ 5}{c}{Quarterly} &            &                                 \multicolumn{ 5}{c}{Quarterly} \\
+                     &    $h=1$   &    $1-4$   &     $1-6$  &     $1-8$  &      Rank  &            &     $h=1$  &    $1-4$   &     $1-6$  &     $1-8$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       0.58 & {\bf 0.81} & {\bf 0.96} &       1.12 & {\bf 1.33} &            & {\bf 0.77} & {\bf 1.08} & {\bf 1.36} & {\bf 1.59} & {\bf 1.00} \\
+RF-class priors      &       0.58 & {\bf 0.81} &       0.97 &       1.13 &       2.17 &            &       0.79 &       1.12 &       1.41 &       1.65 &       2.33 \\
+auto.arima           &       0.58 &       0.85 &       1.01 &       1.19 &       4.50 &            &       0.85 &       1.19 &       1.53 &       1.80 &       5.00 \\
+ets                  & {\bf 0.56} &       0.82 &       0.99 &       1.17 &       3.33 &            &       0.78 &       1.11 &       1.42 &       1.66 &       2.50 \\
+WN                   &       3.25 &       3.59 &       3.70 &       3.87 &      10.00 &            &       3.97 &       4.27 &       4.45 &       4.64 &      10.00 \\
+RW                   &       1.14 &       1.16 &       1.32 &       1.46 &       7.17 &            &       0.97 &       1.35 &       1.67 &       1.95 &       7.17 \\
+RWD                  &       1.20 &       1.17 &       1.36 &       1.47 &       8.17 &            &       0.95 &       1.26 &       1.56 &       1.81 &       6.00 \\
+STL-AR               &       0.70 &       1.27 &       1.60 &       1.91 &       8.50 &            &       0.96 &       1.63 &       2.05 &       2.43 &       8.67 \\
+Theta                &       0.62 &       0.83 &       0.97 & {\bf 1.11} &       2.67 &            &       0.79 &       1.13 &       1.42 &       1.67 &       3.67 \\
+Snaive               &       1.11 &       1.09 &       1.30 &       1.43 &       6.17 &            &       1.52 &       1.56 &       1.86 &       2.08 &       8.17 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+           &                                   \multicolumn{ 5}{c}{Monthly} &            &                                   \multicolumn{ 5}{c}{Monthly} \\
+                     &    $h=1-4$ &    $1-6$   &     $1-12$ &    $1-18$  &   Rank     &            &   $h=1-4$  &    $1-6$   &    $1-12$  &    $1-18$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       0.66 &       0.69 &       0.75 &       0.78 &       5.17 &            &       0.72 &       0.78 & {\bf 0.89} & {\bf 0.97} &       2.50 \\
+RF-class priors      &       0.65 &       0.68 & {\bf 0.74} & {\bf 0.77} &       4.00 &            &       0.71 &       0.78 &       0.91 &       0.99 &       2.83 \\
+auto.arima           &       0.61 &       0.65 &       0.75 &       0.88 &       2.67 &            &       0.73 &       0.81 &       0.99 &       1.16 &       6.83 \\
+ets                  & {\bf 0.59} & {\bf 0.64} & {\bf 0.74} &       0.86 & {\bf 1.67} &            &       0.68 &       0.76 &       0.93 &       1.07 &       2.50 \\
+WN                   &       2.06 &       2.08 &       2.15 &       2.27 &      12.00 &            &       2.06 &       2.09 &       2.18 &       2.28 &      12.00 \\
+RW                   &       0.91 &       0.97 &       1.04 &       1.17 &      10.33 &            &       1.18 &       1.24 &       1.33 &       1.47 &      10.00 \\
+RWD                  &       0.90 &       0.96 &       1.02 &       1.14 &       9.17 &            &       1.19 &       1.27 &       1.39 &       1.55 &      11.00 \\
+STL-AR               &       0.73 &       0.81 &       1.04 &       1.27 &       8.83 &            &       0.79 &       0.91 &       1.17 &       1.39 &       8.33 \\
+Theta                &       0.63 &       0.67 &       0.77 &       0.89 &       5.67 &            & {\bf 0.68} & {\bf 0.75} &       0.91 &       1.04 & {\bf 1.67} \\
+Snaive               &       0.95 &       0.97 &       0.98 &       1.14 &       9.00 &            &       1.09 &       1.11 &       1.14 &       1.31 &       8.67 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 In general, our proposed meta-learning algorithm performs quite well in
 both experimental settings. It consistenly ranks in the top most
@@ -1190,224 +1385,7 @@ the second-differenced series.
 
 \clearpage
 
-\begin{figure}
-
-{\centering \includegraphics[width=\textwidth]{figure/fig1-1} 
-
-}
-
-\caption{Time-domain representation of time series}\label{fig:fig1}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.7\linewidth]{figure/fig2-1} 
-
-}
-
-\caption{Feature-based representation of time series}\label{fig:fig2}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{figures/RiceFramework} 
-
-}
-
-\caption{Rice's framework for the Algorithm Selection Problem (reproduced from Smith-Miles, 2009)}\label{fig:rice}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=\textwidth]{figures/framework} 
-
-}
-
-\caption{Proposed framework (blue: offline phase, red: online phase)}\label{fig:framework}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=\textwidth]{figure/cormatplots-1} 
-
-}
-
-\caption{ Correlation matrix plots for the reference sets. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly.}\label{fig:cormatplots}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=\textwidth]{figure/exp1pca-1} 
-
-}
-
-\caption{Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp1pca}
-\end{figure}
-
-\begin{figure}
-
-{\centering \includegraphics[width=\textwidth]{figure/exp2pca-1} 
-
-}
-
-\caption{Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp2pca}
-\end{figure}
-
 \clearpage
-
-\begin{algorithm}[!ht]
-  \caption{Identification of the "best" forecast method for a new time series.}
-  \label{alg:algo-lab}
-  \begin{algorithmic}[1]
-    \Statex \textbf{Offline phase}
-    \Statex \text{Given:}
-    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series.
-      \Statex \hspace{1cm}$L:$ the set of class labels (e.g.\ ARIMA, ETS, SNAIVE).
-         \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features.
-         \Statex \hspace{1cm}$nsim:$ number of series to be simulated.
-         \Statex \hspace{1cm}$B:$ number of trees in the random forest.
-         \Statex \hspace{1cm}$mtry:$ number of features to be selected at each node.
-     \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{a random forest classifier} 
-      \Statex
-     \Statex \textit{Prepare the reference set}
-    \Statex For $i=1$ to $n$:
-            \State Fit ARIMA and ETS models to $t_i$.
-            \State Simulate $nsim$ time series from each model in step 1.
-            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
-    \Statex 
-    \Statex \textit{Prepare the meta-data}
-    \Statex For $j=1$ to $N$:
-            \State Split $t_j$ into a training period and test period.
-            \State Calculate features $F$ based on the training period. 
-            \State Fit $L$ models to the training period.
-            \State Calculate forecasts for the test period from each model.
-            \State Calculate forecast error measure over the test period for all models in $L$.
-            \State Select the model with the minimum forecast error.
-            \State Meta-data: input features (step 5), output labels (step 9).
-     \Statex
-    \Statex \textit{Train a random forest classifier}
-            \State Train a random forest classifier based on the meta-data.
-            \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
-    \Statex
-     \Statex \textbf{Online phase}
-    \Statex \text{Given:}
-    \Statex \hspace{1cm}\text{the random forest classifier from step 12} .
-     \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
-  \State For $t_{new}$ calculate features $F$.
-  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote\{\hat{C_b}(t_{new})\}_1^B$.
-   \end{algorithmic}
-\end{algorithm}
-
-\begin{table}[!htp]
-\centering\footnotesize\tabcolsep=0.16cm
-\def\yes{$\checkmark$}
-\caption{The number of series the their sources used in the two forecast experiments as training and test sets.}
-\label{tbl:Mcomps}
-\begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
-\toprule
-                &  \multicolumn{ 4}{c}{Experiment 1} & & \multicolumn{ 4}{c}{Experiment 2} \\
-                &    Source  &    Yearly  & Quarterly  &    Monthly &            &    Source  &    Yearly  & Quarterly  &    Monthly \\\cline{2-5}\cline{7-10}
-& & & & & & & & & \\[-0.25cm]
-Observed series &         M1 &        181 &        203 &        617 &            &         M3 &        645 &        756 &       1428 \\
-     New series &         M3 &        645 &        756 &       1428 &            &         M1 &        181 &        203 &        617 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[!htp]
-\centering\footnotesize\tabcolsep=0.12cm
-\def\yes{$\checkmark$}
-\caption{Features used for selecting a forecast-model.}
-\label{feature}
-\begin{tabular}{llp{8,8cm}cc}
-\toprule
-\multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\ 
-\midrule
-1  & T              & length of time series                                                                   & \yes  & \yes \\
-2  & trend          & strength of trend                                                                       & \yes  & \yes\\
-3  & seasonality       & strength of seasonality                                                                 & -     & \yes \\
-4  & linearity      & linearity                                                                               & \yes  & \yes \\
-5  & curvature      & curvature                                                                               & \yes  & \yes \\
-6  & spikiness      & spikiness                                                                               & \yes  & \yes \\
-7  & e\_acf1        & first ACF value of remainder series                                                     & \yes  & \yes \\
-8  & stability      & stability                                                                               & \yes  & \yes \\
-9  & lumpiness      & lumpiness                                                                               & \yes  & \yes \\
-10 & entropy        & spectral entropy                                                                        & \yes  & \yes \\
-11 & hurst          & Hurst exponent                                                                          & \yes  & \yes \\
-12 & nonlinearity   & nonlinearity                                                                            & \yes\ & \yes \\
-13 & alpha          & ETS(A,A,N) $\hat\alpha$                                                                 & \yes  & \yes \\
-14 & beta           & ETS(A,A,N) $\hat\beta$                                                                  & \yes  & \yes\\
-15 & hwalpha        & ETS(A,A,A) $\hat\alpha$                                                                 & -     & \yes \\
-16 & hwbeta         & ETS(A,A,A) $\hat\beta$                                                                  & -     & \yes \\
-17 & hwgamma        & ETS(A,A,A) $\hat\gamma$                                                                 & -     & \yes \\
-18 & ur\_pp         & test statistic based on Phillips-Perron test                                            & \yes  & - \\
-19 & ur\_kpss       & test statistic based on KPSS test                                                       & \yes  & - \\
-20 & y\_acf1        & first ACF value of the original series                                                  & \yes  & \yes \\
-21 & diff1y\_acf1   & first ACF value of the differenced series                                               & \yes  & \yes \\
-22 & diff2y\_acf1   & first ACF value of the twice-differenced series                                         & \yes  & \yes \\
-23 & y\_acf5        & sum of squares of first 5 ACF values of original series                                 & \yes  & \yes \\
-24 & diff1y\_acf5   & sum of squares of first 5 ACF values of differenced series                              & \yes  & \yes \\
-25 & diff2y\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
-26 & seas\_acf1     & autocorrelation coefficient at first seasonal lag                                                & -     & \yes \\
-27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
-28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
-29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
-30 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
-31 & y\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
-32 & diff1y\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
-33 & diff2y\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
-\bottomrule
- \end{tabular}
-\end{table}
-
-\begin{table}[!htbp]
-\centering\footnotesize
-\centering
-\caption{MASE values calculated over the test-sets from experiments 1 and 2.}
-\label{masetab}
-\begin{tabular}{lrrrrrrrrrrr}
-\toprule
-                     &                              \multicolumn{ 5}{c}{Experiment 1} &            &                              \multicolumn{ 5}{c}{Experiment 2} \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-                     &                                    \multicolumn{ 5}{c}{Yearly} &            &                                    \multicolumn{ 5}{c}{Yearly} \\
-                     &   $h=1$    &    $1-2$   &     $1-4$  &     $1-6$  &      Rank  &            &     $h=1$  &    $1-2$   &     $1-4$  &     $1-6$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-RF-unbalanced        &       1.06 &       1.42 &       2.20 &       2.85 &       3.50 &            & {\bf 0.97} & {\bf 1.39} &       2.42 &       3.37 &       1.67 \\
-RF-class priors      & {\bf 1.03} &       1.37 &       2.14 &       2.77 &       1.83 &            &       1.02 &       1.40 & {\bf 2.40} & {\bf 3.33} & {\bf 1.33} \\
-auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &       6.83 &            &       1.06 &       1.47 &       2.51 &       3.47 &       3.50 \\
-ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.17 &            &       1.12 &       1.59 &       2.72 &       3.77 &       6.00 \\
-WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       9.00 \\
-RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       8.00 \\
-RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.17} &            &       1.03 &       1.44 &       2.51 &       3.49 &       3.33 \\
-STL-AR               &       1.09 &       1.47 &       2.27 &       2.95 &       5.50 &            &       1.10 &       1.51 &       2.55 &       3.52 &       5.00 \\
-Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       4.17 &            &       1.15 &       1.70 &       3.00 &       4.19 &       7.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-           &                                 \multicolumn{ 5}{c}{Quarterly} &            &                                 \multicolumn{ 5}{c}{Quarterly} \\
-                     &    $h=1$   &    $1-4$   &     $1-6$  &     $1-8$  &      Rank  &            &     $h=1$  &    $1-4$   &     $1-6$  &     $1-8$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-RF-unbalanced        &       0.58 & {\bf 0.81} & {\bf 0.96} &       1.12 & {\bf 1.33} &            & {\bf 0.77} & {\bf 1.08} & {\bf 1.36} & {\bf 1.59} & {\bf 1.00} \\
-RF-class priors      &       0.58 & {\bf 0.81} &       0.97 &       1.13 &       2.17 &            &       0.79 &       1.12 &       1.41 &       1.65 &       2.33 \\
-auto.arima           &       0.58 &       0.85 &       1.01 &       1.19 &       4.50 &            &       0.85 &       1.19 &       1.53 &       1.80 &       5.00 \\
-ets                  & {\bf 0.56} &       0.82 &       0.99 &       1.17 &       3.33 &            &       0.78 &       1.11 &       1.42 &       1.66 &       2.50 \\
-WN                   &       3.25 &       3.59 &       3.70 &       3.87 &      10.00 &            &       3.97 &       4.27 &       4.45 &       4.64 &      10.00 \\
-RW                   &       1.14 &       1.16 &       1.32 &       1.46 &       7.17 &            &       0.97 &       1.35 &       1.67 &       1.95 &       7.17 \\
-RWD                  &       1.20 &       1.17 &       1.36 &       1.47 &       8.17 &            &       0.95 &       1.26 &       1.56 &       1.81 &       6.00 \\
-STL-AR               &       0.70 &       1.27 &       1.60 &       1.91 &       8.50 &            &       0.96 &       1.63 &       2.05 &       2.43 &       8.67 \\
-Theta                &       0.62 &       0.83 &       0.97 & {\bf 1.11} &       2.67 &            &       0.79 &       1.13 &       1.42 &       1.67 &       3.67 \\
-Snaive               &       1.11 &       1.09 &       1.30 &       1.43 &       6.17 &            &       1.52 &       1.56 &       1.86 &       2.08 &       8.17 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-           &                                   \multicolumn{ 5}{c}{Monthly} &            &                                   \multicolumn{ 5}{c}{Monthly} \\
-                     &    $h=1-4$ &    $1-6$   &     $1-12$ &    $1-18$  &   Rank     &            &   $h=1-4$  &    $1-6$   &    $1-12$  &    $1-18$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-RF-unbalanced        &       0.66 &       0.69 &       0.75 &       0.78 &       5.17 &            &       0.72 &       0.78 & {\bf 0.89} & {\bf 0.97} &       2.50 \\
-RF-class priors      &       0.65 &       0.68 & {\bf 0.74} & {\bf 0.77} &       4.00 &            &       0.71 &       0.78 &       0.91 &       0.99 &       2.83 \\
-auto.arima           &       0.61 &       0.65 &       0.75 &       0.88 &       2.67 &            &       0.73 &       0.81 &       0.99 &       1.16 &       6.83 \\
-ets                  & {\bf 0.59} & {\bf 0.64} & {\bf 0.74} &       0.86 & {\bf 1.67} &            &       0.68 &       0.76 &       0.93 &       1.07 &       2.50 \\
-WN                   &       2.06 &       2.08 &       2.15 &       2.27 &      12.00 &            &       2.06 &       2.09 &       2.18 &       2.28 &      12.00 \\
-RW                   &       0.91 &       0.97 &       1.04 &       1.17 &      10.33 &            &       1.18 &       1.24 &       1.33 &       1.47 &      10.00 \\
-RWD                  &       0.90 &       0.96 &       1.02 &       1.14 &       9.17 &            &       1.19 &       1.27 &       1.39 &       1.55 &      11.00 \\
-STL-AR               &       0.73 &       0.81 &       1.04 &       1.27 &       8.83 &            &       0.79 &       0.91 &       1.17 &       1.39 &       8.33 \\
-Theta                &       0.63 &       0.67 &       0.77 &       0.89 &       5.67 &            & {\bf 0.68} & {\bf 0.75} &       0.91 &       1.04 & {\bf 1.67} \\
-Snaive               &       0.95 &       0.97 &       0.98 &       1.14 &       9.00 &            &       1.09 &       1.11 &       1.14 &       1.31 &       8.67 \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \clearpage
 
