@@ -3,18 +3,14 @@ library(tidyverse)
 library(ggplot2)
 library(reshape2)
 
+## ---- data
 YE1 <- load("data/yearly_exp1.rda")
-
 YE2 <- load("data/yearly_exp2.rda")
 YE2_sub <- load("data/yearly_exp2_sub.rda")
-
 QE1 <- load("data/quarterly_exp1.rda")
-
 QE2 <- load("data/quarterly_exp2.rda")
 QE2_sub <- load("data/quarterly_exp2_sub.rda")
-
 ME1 <- load("data/monthly_exp1.rda")
-
 ME2 <- load("data/monthly_exp2.rda")
 
 yearly_exp1 <- rename(yearly_exp1, spikiness = spike)
@@ -61,15 +57,15 @@ ggheatmapA <- ggplot(melted_cormatA, aes(Var2, Var1, fill = value))+
                                    size = 9, hjust = 1),
         axis.text.y = element_text(size = 9),
         axis.title.x =  element_blank(),
-        axis.title.y = element_blank(),
+        axis.title.y = element_text(size = 13, face="bold"),
         legend.justification = c(1, 0),
         legend.position = c(0.6, 0.7),
-        legend.direction = "horizontal")+
+        legend.direction = "horizontal",
+        plot.title = element_text(hjust = 0.5))+
   coord_fixed()+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))+
-  ggtitle("A")
-
+  labs(title = "Experiment 1", y = "Yearly")
 
 
 cormatB <- round(cor(yearly_exp2[,1:25]),2)
@@ -92,16 +88,17 @@ ggheatmapB <- ggplot(melted_cormatB, aes(Var2, Var1, fill = value))+
   theme_minimal()+ 
   theme(axis.text.x = element_text(angle = 90, vjust = 1, 
                                    size = 9, hjust = 1),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 13),
         axis.title.x =  element_blank(),
         axis.title.y = element_blank(),
         legend.justification = c(1, 0),
         legend.position = c(0.6, 0.7),
-        legend.direction = "horizontal")+
+        legend.direction = "horizontal",
+        plot.title = element_text(hjust = 0.5))+
   coord_fixed()+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))+
-  ggtitle("B")
+  labs(title = "Experiment 2", y = "")
 
 
 cormatC <- round(cor(quarterly_exp1[, 1:30]),2)
@@ -123,16 +120,16 @@ ggheatmapC <- ggplot(melted_cormatC, aes(Var2, Var1, fill = value))+
   theme_minimal()+ 
   theme(axis.text.x = element_text(angle = 90, vjust = 1, 
                                    size = 9, hjust = 1),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 13),
         axis.title.x =  element_blank(),
-        axis.title.y = element_blank(),
+        axis.title.y = element_text(size = 13, face="bold"),
         legend.justification = c(1, 0),
         legend.position = c(0.6, 0.7),
         legend.direction = "horizontal")+
   coord_fixed()+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))+
-  ggtitle("C")
+  labs(title = "", y = "Quarterly")
 
 
 
@@ -155,16 +152,16 @@ ggheatmapD <- ggplot(melted_cormatD, aes(Var2, Var1, fill = value))+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 90, vjust = 1, 
                                    size = 9, hjust = 1),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 13),
         axis.title.x =  element_blank(),
-        axis.title.y = element_blank(),
+        axis.title.y =  element_text(size = 12, face="bold"),
         legend.justification = c(1, 0),
         legend.position = c(0.6, 0.7),
         legend.direction = "horizontal")+
   coord_fixed()+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))+
-  ggtitle("D")
+  labs(title = "", y = "")
 
 
 cormatE <- round(cor(monthly_exp1[, 1:30]),2)
@@ -186,16 +183,16 @@ ggheatmapE <- ggplot(melted_cormatE, aes(Var2, Var1, fill = value))+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 90, vjust = 1, 
                                    size = 9, hjust = 1),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 13),
         axis.title.x =  element_blank(),
-        axis.title.y = element_blank(),
+        axis.title.y = element_text(size = 12, face="bold"),
         legend.justification = c(1, 0),
         legend.position = c(0.6, 0.7),
         legend.direction = "horizontal")+
   coord_fixed()+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))+
-  ggtitle("E")
+  labs(title = "", y = "Monthly")
 
 
 cormatF <- round(cor(monthly_exp2[, 1:30]),2)
@@ -218,16 +215,16 @@ ggheatmapF <- ggplot(melted_cormatF, aes(Var2, Var1, fill = value))+
   theme_minimal()+ 
   theme(axis.text.x = element_text(angle = 90, vjust = 1, 
                                    size = 9, hjust = 1),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 13),
         axis.title.x =  element_blank(),
-        axis.title.y = element_blank(),
+        axis.title.y =   element_text(size = 14, face="bold"),
         legend.justification = c(1, 0),
         legend.position = c(0.6, 0.7),
         legend.direction = "horizontal")+
   coord_fixed()+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))+
-  ggtitle("F")
+  labs(title = "", y = "")
 
 ggsave(ggheatmapA, filename = "figures/ggheatmapA.png")
 ggsave(ggheatmapB, filename = "figures/ggheatmapB.png")
@@ -236,7 +233,7 @@ ggsave(ggheatmapD, filename = "figures/ggheatmapD.png")
 ggsave(ggheatmapE, filename = "figures/ggheatmapE.png")
 ggsave(ggheatmapF, filename = "figures/ggheatmapF.png")
 
-## ---- Yearly
+## ---- Experiment 1
 pcaM1YDF <- filter(yearly_exp1, datasource=="M1") # E-1
 pcaM1YDFvariables <- pcaM1YDF[,1:25]
 pcaM1Y <- prcomp(pcaM1YDFvariables, center=TRUE, scale=TRUE)

@@ -64,7 +64,7 @@ library(png)
 library(tsfeatures)
 library(tidyverse)
 library(ggpubr)
-# read_chunk('src/main.R')
+#read_chunk('src/main.R')
 ```
 
 \setlength{\abovedisplayskip}{5pt}
@@ -460,7 +460,9 @@ img6 <- rasterGrob(as.raster(readPNG("figures/pca3M1Q.png")),interpolate = FALSE
 img7 <- rasterGrob(as.raster(readPNG("figures/pca1M1M.png")), interpolate = FALSE)
 img8 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALSE)
 img9 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
-grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
+#grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
+#library(cowplot)
+plot_grid(img6, img6, img6, img6, img6, img6, img6, img6, img6, nrow = 3, ncol=3, rel_heights = c(1/3, 1/3, 1/3), rel_widths  = c(1/3, 1/3, 1/3))
 ```
 
 
