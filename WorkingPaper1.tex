@@ -955,9 +955,9 @@ online phase of our algorithm very fast. The features are summarized in
 \end{table}
 
 The correlation matrices for all features are presented in
-\autoref{fig:cormat}. The variability in the correlations reflects the
-diversity of the selected features. In other words, the features we used
-were able to capture different characteristics of the time series.
+\autoref{fig:cormatplots}. The variability in the correlations reflects
+the diversity of the selected features. In other words, the features we
+used were able to capture different characteristics of the time series.
 Further, the structure of the correlation matrices are similar to each
 other, showing the different collections have similar feature spaces.
 
@@ -1018,16 +1018,16 @@ the different time series collections. We compute the principal
 components projection using the features in the observed sample, and
 then project the simulated time series and the new time series using the
 same projection. The results are shown in Figures
-\ref{fig:exp1}--\ref{fig:exp2}, where the first three principal
+\ref{fig:exp1pca}--\ref{fig:exp2pca}, where the first three principal
 components are plotted against each other. Figure \ref{fig:exp1} refers
-to Experiment 1 and Figure \ref{fig:exp2} to Experiment 2. The points on
-each plot represent individual time series. In each fogure the top row
-of plots refers to the yearly data, the middle row to the quarterly data
-and the bottom row to the monthly data. The plots show that the first
-three principle components explain 62.5\%, 62.4\% and 58.93\% of the
-total variation in the yearly, quarterly and monthly M1 data and 62.2\%
-64.75\% and 65.97\% of the total variation in the yearly, quarterly and
-monthly M3 data.
+to Experiment 1 and Figure \ref{fig:exp2pca} to Experiment 2. The points
+on each plot represent individual time series. In each figure the first
+column of plots refers to the yearly data, the middle column to the
+quarterly data and the last column to the monthly data. The plots show
+that the first three principle components explain 62.5\%, 62.4\% and
+58.93\% of the total variation in the yearly, quarterly and monthly M1
+data and 62.2\% 64.75\% and 65.97\% of the total variation in the
+yearly, quarterly and monthly M3 data.
 
 \begin{figure}
 
@@ -1035,7 +1035,7 @@ monthly M3 data.
 
 }
 
-\caption{Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp1pca}
+\caption{Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in the first column, distribution of quarterly series are shown in the second column, and the distribution of monthly series are shown in the third. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp1pca}
 \end{figure}
 
 \begin{figure}
@@ -1044,7 +1044,7 @@ monthly M3 data.
 
 }
 
-\caption{Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in panels 1A-- 1C, distribution of quarterly series are shown in panels 2A--2C, and the distribution of monthly series are shown in panels 3A--3C. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp2pca}
+\caption{Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in the first column, distribution of quarterly series are shown in the second column, and the distribution of monthly series are shown in the third column. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series.}\label{fig:exp2pca}
 \end{figure}
 
 The plots show that the distribution of the observed times series over
@@ -1101,7 +1101,7 @@ corresponding to the best performing method are presented in bold font.
 \begin{table}[!htbp]
 \centering\footnotesize
 \centering
-\caption{MASE values calculated over the test-sets from experiments 1 and 2.}
+\caption{MASE values calculated over the new series from experiments 1 and 2.}
 \label{masetab}
 \begin{tabular}{lrrrrrrrrrrr}
 \toprule
@@ -1114,7 +1114,7 @@ auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &      
 ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.17 &            &       1.12 &       1.59 &       2.72 &       3.77 &       6.00 \\
 WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       9.00 \\
 RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       8.00 \\
-RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.17} &            &       1.03 &       1.44 &       2.51 &       3.49 &       3.33 \\
+RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.00} &            &       1.03 &       1.44 &       2.51 &       3.49 &       3.33 \\
 STL-AR               &       1.09 &       1.47 &       2.27 &       2.95 &       5.50 &            &       1.10 &       1.51 &       2.55 &       3.52 &       5.00 \\
 Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       4.17 &            &       1.15 &       1.70 &       3.00 &       4.19 &       7.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
            &                                 \multicolumn{ 5}{c}{Quarterly} &            &                                 \multicolumn{ 5}{c}{Quarterly} \\
