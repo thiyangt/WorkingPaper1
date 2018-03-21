@@ -592,7 +592,7 @@ The ETS(A,A,N) model [@expsmooth08] produces equivalent forecasts to Holt's line
 \end{align*}
 where $\alpha$ is the smoothing parameter for the level, and $\beta$ is the smoothing parameter for the trend. We include the parameter estimates of both $\alpha$ and $\beta$ in our feature set for yearly time series.
 
-The ETS(A,A,N) model [@expsmooth08] produces equivalent forecasts to Holt-Winters' additive method, and can be expressed as follows:\vspace*{-.9cm}
+The ETS(A,A,A) model [@expsmooth08] produces equivalent forecasts to Holt-Winters' additive method, and can be expressed as follows:\vspace*{-.9cm}
 \begin{align*}
   y_t    & = \ell_{t-1}+b_{t-1}+s_{t-m}+\varepsilon_t\\
   \ell_t & = \ell_{t-1}+b_{t-1}+s_{t-m}+\alpha \varepsilon_t\\
