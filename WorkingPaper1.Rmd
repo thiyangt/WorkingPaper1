@@ -265,7 +265,7 @@ To test how well our proposed framework can identify suitable model for forecast
 \begin{table}[!htp]
 \centering\footnotesize\tabcolsep=0.16cm
 \def\yes{$\checkmark$}
-\caption{The number of series the their sources used in the two forecast experiments as training and test sets.}
+\caption{The number of series the their sources used in the two forecast experiments as observed sample and new series.}
 \label{tbl:Mcomps}
 \begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
 \toprule
@@ -369,7 +369,7 @@ The correlation matrices for all features are presented in \autoref{fig:cormatpl
 
 
 
-```{r cormatplots,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots for the reference sets. A: Experiment 1 yearly, B: Experiment 2 yearly, C: Experiment 1 quarterly, D: Experiment 2 quarterly, E: Experiment 1 monthly, F: Experiment 2 monthly."}
+```{r cormatplots,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots for the reference sets."}
 # the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(as.raster(readPNG("figures/ggheatmapA.png")),
   interpolate = FALSE
@@ -407,7 +407,7 @@ Principal component analysis is used to visualize the feature-spaces of the diff
 
 
 
-```{r exp1pca,  fig.width=11, fig.asp = .9, fig.cap="Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in the first column, distribution of quarterly series are shown in the second column, and the distribution of monthly series are shown in the third. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series."}
+```{r exp1pca,  fig.width=11, fig.asp = .9, fig.cap="Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in the first column, distribution of quarterly series are shown in the second column, and the distribution of monthly series are shown in the third column. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series."}
 # the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
 img1 <- rasterGrob(as.raster(readPNG("figures/pca1M1Y.png")),interpolate = FALSE)
 img2 <- rasterGrob(as.raster(readPNG("figures/pca2M1Y.png")),interpolate = FALSE)
