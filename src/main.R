@@ -2,6 +2,7 @@
 library(tidyverse)
 library(ggplot2)
 library(reshape2)
+library(forecTheta)
 
 ## ---- data
 YE1 <- load("data/yearly_exp1.rda")
@@ -440,7 +441,7 @@ pca3M3M <- ggplot(pcaALLM3M, aes(x=PC2, y=PC3, color=source)) + geom_point()+
 ggsave("figures/pca3M3M.png", width = 5, height = 4)
 
 
-## ---- Table 3
+## ---- Table3
 source("src/stlar.R")
 source("src/calMASEh.R")
 source("src/mase_mdata.R")
