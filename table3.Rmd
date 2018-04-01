@@ -1,0 +1,302 @@
+---
+title: "Table 03 results"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, warning=F}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, warning = FALSE)
+```
+
+```{r}
+library(forecTheta)
+library(forecast)
+source("src/stlar.R")
+source("src/calMASEh.R")
+source("src/mase_mdata.R")
+source("src/monthly_mase_h1.R")
+source("src/monthly_mase_h.R")
+source("src/MASE_h1_rf_monthly.R")
+source("src/monthly_mase_other.R")
+
+library(Mcomp)
+data(M3)
+yearly_m3 <- subset(M3, "yearly")
+quarterly_m3 <- subset(M3, "quarterly")
+monthly_m3 <- subset(M3, "monthly")
+
+data(M1)
+yearly_m1 <- subset(M1, "yearly")
+quarterly_m1 <- subset(M1, "quarterly")
+monthly_m1 <- subset(M1, "monthly")
+```
+
+# Yearly - M3
+
+```{r yearly-m3}
+
+M3Yunb_pred <- load("data/M1YPunb.rda")
+M3Yrfu_h1_meanMASE <- calMASEh(M1YPunb, yearly_m3, 1)
+M3Yrfu_h2_meanMASE <- calMASEh(M1YPunb, yearly_m3, 2)
+M3Yrfu_h4_meanMASE <- calMASEh(M1YPunb, yearly_m3, 4)
+M3Yrfu_h6_meanMASE <- calMASEh(M1YPunb, yearly_m3, 6)
+M3Y_RFunbalanced <- c(mean(M3Yrfu_h1_meanMASE ), mean(M3Yrfu_h2_meanMASE ), 
+                      mean(M3Yrfu_h4_meanMASE ), mean(M3Yrfu_h6_meanMASE ))
+names(M3Y_RFunbalanced) <- c("h=1", "h=1-2", "h=1-4", "h=1-6")
+print(M3Y_RFunbalanced) 
+### M3-yearly: RF-class priors results
+M3Yunb_pred <- load("data/M1YPwrpsam.rda")
+M3Yrfc_h1_meanMASE <- calMASEh(M1YPwrpsam, yearly_m3, 1)
+M3Yrfc_h2_meanMASE <- calMASEh(M1YPwrpsam, yearly_m3, 2)
+M3Yrfc_h4_meanMASE <- calMASEh(M1YPwrpsam, yearly_m3, 4)
+M3Yrfc_h6_meanMASE <- calMASEh(M1YPwrpsam, yearly_m3, 6)
+M3Y_RFclasspriors <- c(mean(M3Yrfc_h1_meanMASE ), mean(M3Yrfc_h2_meanMASE ),
+                      mean(M3Yrfc_h4_meanMASE ), mean(M3Yrfc_h6_meanMASE ))
+names(M3Y_RFclasspriors) <- c("h=1", "h=1-2", "h=1-4", "h=1-6")
+print(M3Y_RFclasspriors)
+### M3-yearly: benchmark methods
+MASEh1m3y <- lapply(yearly_m3,mase_mdata,h=1)
+MASEh1_m3y <- do.call("rbind", MASEh1m3y) # Combine all dataframes into one
+benchmark_h1y <- colMeans(MASEh1_m3y)
+print(benchmark_h1y) 
+MASEh2m3y <- lapply(yearly_m3,mase_mdata,h=2)
+MASEh2_m3y <- do.call("rbind", MASEh2m3y) # Combine all dataframes into one
+benchmark_h2y <- colMeans(MASEh2_m3y)
+print(benchmark_h2y) 
+MASEh4m3y <- lapply(yearly_m3,mase_mdata,h=4)
+MASEh4_m3y <- do.call("rbind", MASEh4m3y) # Combine all dataframes into one
+benchmark_h4y <- colMeans(MASEh4_m3y)
+print(benchmark_h4y) 
+MASEh6m3y <- lapply(yearly_m3,mase_mdata,h=6)
+MASEh6_m3y <- do.call("rbind", MASEh6m3y) # Combine all dataframes into one
+benchmark_h6y <- colMeans(MASEh6_m3y)
+print(benchmark_h6y) 
+
+```
+
+# Yearly - M1
+
+```{r yearly-m1}
+
+### M1-yearly: RF-unbalanced results
+M1Yunb_pred <- load("data/M3YPunb.rda")
+M1Yrfu_h1_meanMASE <- calMASEh(M3YPunb, yearly_m1, 1)
+M1Yrfu_h2_meanMASE <- calMASEh(M3YPunb, yearly_m1, 2)
+M1Yrfu_h4_meanMASE <- calMASEh(M3YPunb, yearly_m1, 4)
+M1Yrfu_h6_meanMASE <- calMASEh(M3YPunb, yearly_m1, 6)
+M1Y_RFunbalanced <- c(mean(M1Yrfu_h1_meanMASE ), mean(M1Yrfu_h2_meanMASE ), 
+                      mean(M1Yrfu_h4_meanMASE ), mean(M1Yrfu_h6_meanMASE ))
+names(M1Y_RFunbalanced) <- c("h=1", "h=1-2", "h=1-4", "h=1-6")
+print(M1Y_RFunbalanced)
+### M1-yearly: RF-class priors results
+M1Yunb_pred <- load("data/M3YPwrpsam.rda")
+M1Yrfc_h1_meanMASE <- calMASEh(M3YPwrpsam, yearly_m1, 1)
+M1Yrfc_h2_meanMASE <- calMASEh(M3YPwrpsam, yearly_m1, 2)
+M1Yrfc_h4_meanMASE <- calMASEh(M3YPwrpsam, yearly_m1, 4)
+M1Yrfc_h6_meanMASE <- calMASEh(M3YPwrpsam, yearly_m1, 6)
+M1Y_RFclasspriors <- c(mean(M1Yrfc_h1_meanMASE ), mean(M1Yrfc_h2_meanMASE ),
+                       mean(M1Yrfc_h4_meanMASE ), mean(M1Yrfc_h6_meanMASE ))
+names(M1Y_RFclasspriors) <- c("h=1", "h=1-2", "h=1-4", "h=1-6")
+print(M1Y_RFclasspriors)
+### M1-yearly: benchmark methods
+MASEh1m1y <- lapply(yearly_m1,mase_mdata,h=1)
+MASEh1_m1y <- do.call("rbind", MASEh1m1y) # Combine all dataframes into one
+benchmark_h1ym1 <- colMeans(MASEh1_m1y)
+print(benchmark_h1ym1) 
+MASEh2m1y <- lapply(yearly_m1,mase_mdata,h=2)
+MASEh2_m1y <- do.call("rbind", MASEh2m1y) # Combine all dataframes into one
+benchmark_h2ym1 <- colMeans(MASEh2_m1y)
+print(benchmark_h2ym1) 
+MASEh4m1y <- lapply(yearly_m1,mase_mdata,h=4)
+MASEh4_m1y <- do.call("rbind", MASEh4m1y) # Combine all dataframes into one
+benchmark_h4ym1 <- colMeans(MASEh4_m1y)
+print(benchmark_h4ym1) 
+MASEh6m1y <- lapply(yearly_m1,mase_mdata,h=6)
+MASEh6_m1y <- do.call("rbind", MASEh6m1y) # Combine all dataframes into one
+benchmark_h6ym1 <- colMeans(MASEh6_m1y)
+print(benchmark_h6ym1) 
+
+```
+
+# Quartely - M3
+
+```{r quarterly-m3}
+### M3-quarterly: RF-unbalanced results
+source("src/calMASEh_quarterly.R")
+M3Qunb_pred <- load("data/M1QPunb.rda")
+M3Qrfu_h1_meanMASE <- calMASEh_quarterly(M1QPunb, quarterly_m3, 1)
+M3Qrfu_h4_meanMASE <- calMASEh_quarterly(M1QPunb, quarterly_m3, 4)
+M3Qrfu_h6_meanMASE <- calMASEh_quarterly(M1QPunb, quarterly_m3, 6)
+M3Qrfu_h8_meanMASE <- calMASEh_quarterly(M1QPunb, quarterly_m3, 8)
+M3Q_RFunbalanced <- c(mean(M3Qrfu_h1_meanMASE ), mean(M3Qrfu_h4_meanMASE ), 
+                      mean(M3Qrfu_h6_meanMASE ), mean(M3Qrfu_h8_meanMASE ))
+names(M3Q_RFunbalanced) <- c("h=1", "h=1-4", "h=1-6", "h=1-8")
+print(M3Q_RFunbalanced)
+### M3-quarterly: RF-class priors results
+M3Qunb_pred <- load("data/M1QPwrpsam.rda")
+M3Qrfc_h1_meanMASE <- calMASEh_quarterly(M1QPwrpsam, quarterly_m3, 1)
+M3Qrfc_h4_meanMASE <- calMASEh_quarterly(M1QPwrpsam, quarterly_m3, 4)
+M3Qrfc_h6_meanMASE <- calMASEh_quarterly(M1QPwrpsam, quarterly_m3, 6)
+M3Qrfc_h8_meanMASE <- calMASEh_quarterly(M1QPwrpsam, quarterly_m3, 8)
+M3Q_RFclasspriors <- c(mean(M3Qrfc_h1_meanMASE ), mean(M3Qrfc_h4_meanMASE ),
+                       mean(M3Qrfc_h6_meanMASE ), mean(M3Qrfc_h8_meanMASE ))
+names(M3Q_RFclasspriors) <- c("h=1", "h=1-2", "h=1-4", "h=1-6")
+print(M3Q_RFclasspriors)
+### M3-quarterly: benchmark methods
+source("src/mase_quarterlyother.R")
+mase_Otherm3quarterly <- lapply(quarterly_m3, mase_quarterlyOther)
+MASEOtherm3quarterly <- do.call("rbind", mase_Otherm3quarterly) # Combine all dataframes into one
+colMeans(MASEOtherm3quarterly)
+
+```
+
+# Quarterly - M1
+
+```{r quaterly-m1}
+
+### M1-quarterly: RF-unbalanced results
+M1Qunb_pred <- load("data/M3QPunb.rda")
+M1Qrfu_h1_meanMASE <- calMASEh_quarterly(M3QPunb, quarterly_m1, 1)
+M1Qrfu_h4_meanMASE <- calMASEh_quarterly(M3QPunb, quarterly_m1, 4)
+M1Qrfu_h6_meanMASE <- calMASEh_quarterly(M3QPunb, quarterly_m1, 6)
+M1Qrfu_h8_meanMASE <- calMASEh_quarterly(M3QPunb, quarterly_m1, 8)
+M1Q_RFunbalanced <- c(mean(M1Qrfu_h1_meanMASE ), mean(M1Qrfu_h4_meanMASE ), 
+                      mean(M1Qrfu_h6_meanMASE ), mean(M1Qrfu_h8_meanMASE ))
+names(M1Q_RFunbalanced) <- c("h=1", "h=1-4", "h=1-6", "h=1-8")
+print(M1Q_RFunbalanced)
+### M1-quarterly: RF-class priors results
+M1Qwrp_pred <- load("data/M3QPwrpsam.rda")
+M1Qrfc_h1_meanMASE <- calMASEh_quarterly(M3QPwrpsam, quarterly_m1, 1)
+M1Qrfc_h4_meanMASE <- calMASEh_quarterly(M3QPwrpsam, quarterly_m1, 4)
+M1Qrfc_h6_meanMASE <- calMASEh_quarterly(M3QPwrpsam, quarterly_m1, 6)
+M1Qrfc_h8_meanMASE <- calMASEh_quarterly(M3QPwrpsam, quarterly_m1, 8)
+M1Q_RFclasspriors <- c(mean(M1Qrfc_h1_meanMASE ), mean(M1Qrfc_h4_meanMASE ),
+                       mean(M1Qrfc_h6_meanMASE ), mean(M1Qrfc_h8_meanMASE ))
+names(M1Q_RFclasspriors) <- c("h=1", "h=1-4", "h=1-6", "h=1-8")
+print(M1Q_RFclasspriors)
+### M1-quarterly: benchmark methods
+source("src/mase_quarterlyother.R")
+mase_Otherm1quarterly <- lapply(quarterly_m1, mase_quarterlyOther)
+MASEOtherm1quarterly <- do.call("rbind", mase_Otherm1quarterly) # Combine all dataframes into one
+colMeans(MASEOtherm1quarterly)
+
+
+```
+
+# Monthly - M3
+
+```{r monthly-m3}
+### M3-monthly:  RF-unbalanced results
+M3Munb_pred <- load("data/M1MPunb.rda")
+M3Munb_h1 <- monthly_h1_rf(M1MPunb, monthly_m3)
+M3Munb_h <- monthlyMASE_h(M1MPunb, monthly_m3)
+M3M_RFunbalanced <- c(colMeans(M3Munb_h1), colMeans(M3Munb_h))
+names(M3M_RFunbalanced) <- c("h=1", "h=1:6", "h=1-12", "h=1:18")
+M3M_RFunbalanced
+### M3-monthly: RF-class priors results
+M3Mwrp_pred <- load("data/M1MPwrpsam.rda")
+M3Mrfc_h1 <- monthly_h1_rf(M1MPwrpsam, monthly_m3)
+M3Mrfc_h <- monthlyMASE_h(M1MPwrpsam, monthly_m3)
+M3M_RFclasspriors <- c(colMeans(M3Mrfc_h1), colMeans(M3Mrfc_h))
+names(M3M_RFclasspriors) <- c("h=1", "h=1:6", "h=1-12", "h=1:18")
+M3M_RFclasspriors
+### M3-monthly: benchmark methods
+monthly_m3_h1_benchmark <- lapply(monthly_m3,monthly_mase_h1)
+MASE_Other_m3monthly_h1 <- do.call("rbind", monthly_m3_h1_benchmark) 
+summary(MASE_Other_m3monthly_h1)
+monthly_m3_h_benchmark <- lapply(monthly_m3,MASEmonthlyOther)
+MASEOtherm3monthly <- do.call("rbind", monthly_m3_h_benchmark )
+colMeans(MASEOtherm3monthly)
+
+```
+
+# Monthly - M1
+
+```{r monthly-m1, warning=FALSE}
+
+
+### M1-monthly:  RF-unbalanced results
+M1Munb_pred <- load("data/M3MPunb.rda")
+M1Munb_h1 <- monthly_h1_rf(M3MPunb, monthly_m1)
+M1Munb_h <- monthlyMASE_h(M3MPunb, monthly_m1)
+M1M_RFunbalanced <- c(colMeans(M1Munb_h1), colMeans(M1Munb_h))
+names(M1M_RFunbalanced) <- c("h=1", "h=1:6", "h=1-12", "h=1:18")
+M1M_RFunbalanced
+### M1-monthly: RF-class priors results
+M1Mwrp_pred <- load("data/M3MPwrpsam.rda")
+M1Mrfc_h1 <- monthly_h1_rf(M3MPwrpsam, monthly_m1)
+M1Mrfc_h <- monthlyMASE_h(M3MPwrpsam, monthly_m1)
+M1M_RFclasspriors <- c(colMeans(M1Mrfc_h1), colMeans(M1Mrfc_h))
+names(M1M_RFclasspriors) <- c("h=1", "h=1:6", "h=1-12", "h=1:18")
+M1M_RFclasspriors
+### M1-monthly: benchmark methods
+monthly_m1_h1_benchmark <- lapply(monthly_m1,monthly_mase_h1)
+MASE_Other_m1monthly_h1 <- do.call("rbind", monthly_m1_h1_benchmark) 
+colMeans(MASE_Other_m1monthly_h1)
+monthly_m1_h_benchmark <- lapply(monthly_m1,MASEmonthlyOther)
+MASE_Other_m1monthly_h <- do.call("rbind", monthly_m1_h_benchmark) 
+colMeans(MASE_Other_m1monthly_h)
+```
+
+# Ranking of Methods
+
+```{r rank}
+
+## Rank methods across all individual forecast horizons
+source("src/rank.r")
+
+#yearly_m3_rank
+y_m3_unb <- rank_yearly_rf(M1YPunb, yearly_m3, h=6)
+y_m3_rcp <- rank_yearly_rf(M1YPwrpsam, yearly_m3, h=6)
+y_m3_benchmark <- rank_benchmark(yearly_m3, h=6, m=1)
+y_m3_fcast <- rbind(y_m3_unb, y_m3_rcp)
+y_m3_fcast <- rbind(y_m3_fcast, y_m3_benchmark)
+y_m3_rank <- apply(y_m3_fcast, 2, rank)
+rowMeans(y_m3_rank)
+
+# yearly_m1_rank
+y_m1_unb <- rank_yearly_rf(M3YPunb, yearly_m1, h=6)
+y_m1_rcp <- rank_yearly_rf(M3YPwrpsam, yearly_m1, h=6)
+y_m1_benchmark <- rank_benchmark(yearly_m1, h=6, m=1)
+y_m1_fcast <- rbind(y_m1_unb, y_m1_rcp)
+y_m1_fcast <- rbind(y_m1_fcast, y_m1_benchmark)
+y_m1_rank <- apply(y_m1_fcast, 2, rank)
+rowMeans(y_m1_rank)
+
+# quarterly_m3_rank
+q_m3_unb <- rank_seasonal_rf(M1QPunb, quarterly_m3, h=8, m=4)
+q_m3_rcp <- rank_seasonal_rf(M1QPwrpsam, quarterly_m3, h=8, m=4)
+q_m3_benchmark <- rank_benchmark(quarterly_m3, h=8, m=4)
+q_m3_fcast <- rbind(q_m3_unb, q_m3_rcp)
+q_m3_fcast <- rbind(q_m3_fcast, q_m3_benchmark)
+q_m3_rank <- apply(q_m3_fcast, 2, rank)
+rowMeans(q_m3_rank)
+
+# quarterly_m1_rank
+q_m1_unb <- rank_seasonal_rf(M3QPunb, quarterly_m1, h=8, m=4)
+q_m1_rcp <- rank_seasonal_rf(M3QPwrpsam, quarterly_m1, h=8, m=4)
+q_m1_benchmark <- rank_benchmark(quarterly_m1, h=8, m=4)
+q_m1_fcast <- rbind(q_m1_unb, q_m1_rcp)
+q_m1_fcast <- rbind(q_m1_fcast, q_m1_benchmark)
+q_m1_rank <- apply(q_m1_fcast, 2, rank)
+rowMeans(q_m1_rank)
+
+# monthly_m3_rank
+m_m3_unb <- rank_seasonal_rf(M1MPunb, monthly_m3, h=18, m=12)
+m_m3_rcp <- rank_seasonal_rf(M1MPwrpsam, monthly_m3, h=18, m=12)
+m_m3_benchmark <- rank_benchmark(monthly_m3, h=18, m=12)
+m_m3_fcast <- rbind(m_m3_unb, m_m3_rcp)
+m_m3_fcast <- rbind(m_m3_fcast, m_m3_benchmark)
+m_m3_rank <- apply(m_m3_fcast, 2, rank)
+rowMeans(m_m3_rank)
+
+# monthly_m1_rank
+m_m1_unb <- rank_seasonal_rf(M3MPunb, monthly_m1, h=18, m=12)
+m_m1_rcp <- rank_seasonal_rf(M3MPwrpsam, monthly_m1, h=18, m=12)
+m_m1_benchmark <- rank_benchmark(monthly_m1, h=18, m=12)
+m_m1_fcast <- rbind(m_m1_unb, m_m1_rcp)
+m_m1_fcast <- rbind(m_m1_fcast, m_m1_benchmark)
+m_m1_rank <- apply(m_m1_fcast, 2, rank)
+rowMeans(m_m1_rank)
+
+
+```
