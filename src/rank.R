@@ -109,11 +109,11 @@ rank_seasonal_rf <- function(predictions, tsList, h, m){ # h=8 for quaterly and 
       fcast <- forecast(fit_snaive, h)$mean
       
     }else if (predictions[i] == "RW") { 
-      fit_rw <- rwf(training, drift = FALSE)
+      fit_rw <- rwf(training, drift = FALSE, h=h)
       fcast <- forecast(fit_rw,h)$mean
 
     } else if (predictions[i] == "RWD") { 
-      fit_rwd <- rwf(training, drift = TRUE)
+      fit_rwd <- rwf(training, drift = TRUE, h=h)
       fcast <- forecast(fit_rwd,h)$mean
 
     } else if (predictions[i] == "STL-AR") { 
@@ -179,11 +179,11 @@ rank_benchmark <- function(tsList, h, m){ # for quarterly=4, monthly=12
     fcast_wn <- forecast(fit_wn,h)$mean
     mase_wn[i,1:h] <- abs(fcast_wn-test)/mean(abs(diff(training, lag=m)))
     
-    fit_rw <- rwf(training, drift = FALSE)
+    fit_rw <- rwf(training, drift = FALSE, h=h)
     fcast_rw <- forecast(fit_rw,h)$mean
     mase_rw[i,1:h] <- abs(fcast_rw-test)/mean(abs(diff(training, lag=m)))
     
-    fit_rwd <- rwf(training, drift = TRUE)
+    fit_rwd <- rwf(training, drift = TRUE, h=h)
     fcast_rwd <- forecast(fit_rwd,h)$mean[1:h]
     mase_rwd[i,1:h] <- abs(fcast_rwd-test)/mean(abs(diff(training, lag=m)))
     

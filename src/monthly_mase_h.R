@@ -86,13 +86,13 @@ monthlyMASE_h <- function(predictions, tsList){
       outMASE12[i] <- accuracy(fit_snaive, testing12)["Test set","MASE"]
       outMASE18[i] <- accuracy(fit_snaive, testing18)["Test set","MASE"]
     }else if (predictions[i] == "RW") { 
-      fit_rw <- rwf(training, drift = FALSE)
+      fit_rw <- rwf(training, drift = FALSE, h=18)
       forecast_rw <- forecast(fit_rw,18)
       outMASE6[i] <- accuracy(forecast_rw,testing6)[2,"MASE"]
       outMASE12[i] <- accuracy(forecast_rw,testing12)[2,"MASE"]
       outMASE18[i] <- accuracy(forecast_rw,testing18)[2,"MASE"]
     } else if (predictions[i] == "RWD") { 
-      fit_rwd <- rwf(training, drift = TRUE)
+      fit_rwd <- rwf(training, drift = TRUE, h=18)
       forecast_rwd <- forecast(fit_rwd,18)
       outMASE6[i] <- accuracy(forecast_rwd,testing6)[2,"MASE"]
       outMASE12[i] <- accuracy(forecast_rwd,testing12)[2,"MASE"]
