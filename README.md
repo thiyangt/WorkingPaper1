@@ -1,4 +1,8 @@
 # WorkingPaper1
-Meta-learning classification framework for time series forecasting
 
-To do: George's comments on section 3.1
+Feature-based FORcast Model Selection (FFORMS)
+
+This repository contains all the materials for the paper "Meta-learning how to 
+forecast time series"
+
+
