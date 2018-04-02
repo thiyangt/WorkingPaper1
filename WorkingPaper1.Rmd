@@ -265,7 +265,7 @@ To test how well our proposed framework can identify suitable model for forecast
 \begin{table}[!htp]
 \centering\footnotesize\tabcolsep=0.16cm
 \def\yes{$\checkmark$}
-\caption{The number of series the their sources used in the two forecast experiments as observed sample and new series.}
+\caption{The number of series and their sources used in the two forecast experiments as observed sample and new series.}
 \label{tbl:Mcomps}
 \begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
 \toprule
