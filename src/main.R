@@ -469,7 +469,7 @@ M3Y_RFunbalanced <- c(mean(M3Yrfu_h1_meanMASE ), mean(M3Yrfu_h2_meanMASE ),
 names(M3Y_RFunbalanced) <- c("h=1", "h=1-2", "h=1-4", "h=1-6")
 print(M3Y_RFunbalanced) 
 ### M3-yearly: RF-class priors results
-M3Yunb_pred <- load("data/M1YPwrpsam.rda")
+M3Yrfc_pred <- load("data/M1YPwrpsam.rda")
 M3Yrfc_h1_meanMASE <- calMASEh(M1YPwrpsam, yearly_m3, 1)
 M3Yrfc_h2_meanMASE <- calMASEh(M1YPwrpsam, yearly_m3, 2)
 M3Yrfc_h4_meanMASE <- calMASEh(M1YPwrpsam, yearly_m3, 4)
@@ -507,7 +507,7 @@ M1Y_RFunbalanced <- c(mean(M1Yrfu_h1_meanMASE ), mean(M1Yrfu_h2_meanMASE ),
 names(M1Y_RFunbalanced) <- c("h=1", "h=1-2", "h=1-4", "h=1-6")
 print(M1Y_RFunbalanced)
 ### M1-yearly: RF-class priors results
-M1Yunb_pred <- load("data/M3YPwrpsam.rda")
+M1Yrfc_pred <- load("data/M3YPwrpsam.rda")
 M1Yrfc_h1_meanMASE <- calMASEh(M3YPwrpsam, yearly_m1, 1)
 M1Yrfc_h2_meanMASE <- calMASEh(M3YPwrpsam, yearly_m1, 2)
 M1Yrfc_h4_meanMASE <- calMASEh(M3YPwrpsam, yearly_m1, 4)
@@ -546,7 +546,7 @@ M3Q_RFunbalanced <- c(mean(M3Qrfu_h1_meanMASE ), mean(M3Qrfu_h4_meanMASE ),
 names(M3Q_RFunbalanced) <- c("h=1", "h=1-4", "h=1-6", "h=1-8")
 print(M3Q_RFunbalanced)
 ### M3-quarterly: RF-class priors results
-M3Qunb_pred <- load("data/M1QPwrpsam.rda")
+M3Qrfc_pred <- load("data/M1QPwrpsam.rda")
 M3Qrfc_h1_meanMASE <- calMASEh_quarterly(M1QPwrpsam, quarterly_m3, 1)
 M3Qrfc_h4_meanMASE <- calMASEh_quarterly(M1QPwrpsam, quarterly_m3, 4)
 M3Qrfc_h6_meanMASE <- calMASEh_quarterly(M1QPwrpsam, quarterly_m3, 6)
