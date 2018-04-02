@@ -312,11 +312,12 @@ selection problem, Classsification},
 A crucial task in time series forecasting is the identification of the
 most suitable forecasting method. We present a general framework for
 forecast-model selection using meta-learning. A Random Forest is used to
-identify the best forecasting method using only time series features.
-The proposed framework has been evaluated using time series from the M1
-and M3 competitions, and is shown to yield accurate forecasts comparable
-to several benchmarks and other commonly used automated approaches of
-time series forecasting. A key advantage of our algorithm is that the
+identify the best forecasting method using only time series features. We
+call this framework FFORMS (Feature-based FORcast Model Selection). The
+proposed framework has been evaluated using time series from the M1 and
+M3 competitions, and is shown to yield accurate forecasts comparable to
+several benchmarks and other commonly used automated approaches of time
+series forecasting. A key advantage of our algorithm is that the
 time-consuming process of building the random forest can be handled in
 advance of the forecasting task.
 \end{abstract}
@@ -399,7 +400,9 @@ best forecasting model, and produce the required forecasts. Thus, the
 ``online'' part of our algorithm requires only feature computation, and
 the application of a single forecasting model, with no need to estimate
 large numbers of models within a class, or to carry out a
-computationally-intensive cross-validation procedure.
+computationally-intensive cross-validation procedure. We call this
+framework FFORMS (\textbf{F}eature-based \textbf{FOR}ecast
+\textbf{M}odel \textbf{S}election).
 
 The rest of this paper is organized as follows. We review the related
 work in \autoref{litreview}. In \autoref{methodology} we explain the
