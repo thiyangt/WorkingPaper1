@@ -1149,16 +1149,16 @@ Snaive               &       0.95 &       0.97 &       0.99 &       1.15 &      
 \end{table}
 
 In general, our proposed meta-learning algorithm performs quite well in
-both experimental settings. It consistenly ranks in the top most
+both experimental settings. It consistently ranks in the top most
 accurate forecasting methods for forecasting both the M1 and the M3
 series and most often ranks as the most accurate method. More
 specifically, for yearly data the algorithm ranks best for forecasting
 the M1 data in experiment 2 and second (to the random walk with drift)
 in forecasting the M3 data. For quarterly data the meta-learning
-algoritm ranks as the most accurate in both experiments. For the monthly
-frequency the algoritm seems to perform best for the longer horizons in
-both experimental settings. It also seems to be competitive for the
-shorter horizons with the three methods (\texttt{auto.arima},
+algorithm ranks as the most accurate in both experiments. For the
+monthly frequency the algorithm seems to perform best for the longer
+horizons in both experimental settings. It also seems to be competitive
+for the shorter horizons with the three methods (\texttt{auto.arima},
 \texttt{ets} and theta) that perform best. In general, comparing the
 results between the two experimental settings it seems that the
 meta-learning algorithm achieves marginally better results in experiment
@@ -1239,9 +1239,9 @@ series is denoted by \(y_{t}^*\). For quarterly and monthly data, this
 is decomposed using STL \autocite{cleveland1990stl} to give
 \(y_t^*=T_t+S_t+E_t\), where \(T_t\) denotes the trend, \(S_t\) denotes
 the seasonal component, and \(E_t\) is the remainder component. For
-non-seasonal data, Friedman's supersmoother \autocite{supsmu} is used to
-decompose \(y_t^*=T_t+E_t\), and \(S_t=0\) for all \(t\). The detrended
-series is \(x_t=y_t^*-T_t\), the deseasonalized series is
+non-seasonal data, Friedman's super smoother \autocite{supsmu} is used
+to decompose \(y_t^*=T_t+E_t\), and \(S_t=0\) for all \(t\). The
+detrended series is \(x_t=y_t^*-T_t\), the deseasonalized series is
 \(z_t=y_t^*-S_t\), and the remainder series is \(r_t=y_t^*-T_t-S_t\).
 
 The strength of trend is measured by comparing the variance of the
