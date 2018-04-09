@@ -78,16 +78,15 @@ library(cowplot)
 
 Forecasting is a key activity for any business to operate efficiently. The rapid advances in computing technologies have enabled businesses to keep track of large numbers of time series. Hence, it is becoming increasingly common to have to regularly forecast many millions of time series. For example, large scale businesses may be interested in forecasting sales, cost, and demand for their thousands of products across various locations, warehouses, etc. Technology companies such as Google collect many millions of daily time series such as web-click logs, web search counts, queries, revenues, number of users for different services, etc. Such large collections of times series require fast automated procedures generating accurate forecasts. The scale of these tasks has raised some computational challenges we seek to address by proposing a new fast algorithm for model selection and time series forecasting.
 
-Two possible strategies for generating such a large number of forecasts is to either use a single method across all the time series or to select an appropriate method for each time series individually. It is highly unlikely that a single method will consistently outperform its competitors across all time series. We therefore reject the former strategy and focus on an approach for selecting an individual forecasting method for each time series. 
+Two alternative strategies for generating such a large number of forecasts are: to either use a single method across all the time series or to select an appropriate method for each time series individually. It is highly unlikely that a single method will consistently outperform its competitors across all time series. We therefore reject the former strategy and focus on an approach for selecting an individual forecasting method for each time series. 
 
-Selecting the most appropriate model for forecasting a given time series can also be challenging. Two of the most commonly used automated algorithms are the exponential smoothing (ETS) algorithm of @Hyndman2002 and the ARIMA algorithm of @Hyndman2008. Both algorithms are implemented in the forecast package in R [@forecast]. In this paradigm, a class of models is selected in advance, and many models within that class are estimated for each time series. The model with the smallest AICc value is chosen and used to generate forecasts. This approach relies on the expert judgement of the forecaster in first selecting the most appropriate class of models to use, as it is not usually possible to compare AICc values between model classes due to differences in the way the likelihood is computed, and the way initial conditions are handled.
+Selecting the most appropriate model for forecasting a given time series can be challenging. Two of the most commonly used automated algorithms are the exponential smoothing (`ets`) algorithm of @Hyndman2002 and the ARIMA (`auto.arima`) algorithm of @Hyndman2008. Both algorithms are implemented in the forecast package in R [@forecast]. In this paradigm, a class of models is selected in advance, and many models within that class are estimated for each time series. The model with the smallest AICc value is chosen and used for forecasting. This approach relies on the expert judgement of the forecaster in first selecting the most appropriate class of models to use, as it is not usually possible to compare AICc values between model classes due to differences in the way the likelihood is computed, and the way initial conditions are handled.
 
 An alternative approach, which avoids selecting a class of models *a priori*, is to use a simple "hold-out" test set; but then there is often insufficient data to draw a reliable conclusion. To overcome this drawback, time series cross-validation can be used [@hyndman2014forecasting]; then models from many different classes may be applied, and the model with the lowest cross-validated MSE selected. However, this increases the computation time involved considerably (at least to order $n^2$ where $n$ is the number of series to be forecast).
 
-Clearly, there is a need for a fast, scalable and accurate algorithm to automate the process of selecting models with the aim of forecasting. We refer to this process as forecast-model selection. We propose a general meta-learning framework using features of the time series to select the class of models, or even the specific model, to be used for forecasting.  The forecast-model selection process is carried out using a classification algorithm --- we use the time series features as inputs, and the "best" forecasting model as the output. We refer to this forecast-model selection algorithm as FFORMS (**F**eature-based **FOR**ecast-**M**odel **S**election). FFORMS is built using a large historical collection of time series, in advance of the forecasting task at hand. Hence, this is an "offline" procedure. 
+Clearly, there is a need for a fast and scalable algorithm to automate the process of selecting models with the aim of forecasting. We refer to this process as forecast-model selection. We propose a general meta-learning framework using features of the time series to select the class of models, or even the specific model, to be used for forecasting. The forecast-model selection process is carried out using a classification algorithm --- we use the time series features as inputs, and the "best" forecasting model as the output. We refer to this forecast-model selection algorithm as FFORMS (**F**eature-based **FOR**ecast-**M**odel **S**election). FFORMS is built using a large historical collection of time series, in advance of the forecasting task at hand. Hence, this is an "offline" procedure. 
 
-Following on the "online" process of forecasting a time series only involves calculating the features of the time series and using the pre-trained classification algorithm to identify the best forecasting model. This is then used to generate the forecasts which involves the estiamtion of a single forecasting model, with no need to estimate large numbers of models within a class, or to carry out a computationally-intensive cross-validation procedure.
- 
+The "online" process of generating forecasts for a time series only involves calculating its features and using the pre-trained FFORMS classifier to identify the best forecasting model. Hence, generating forecasts only involves the estimation of a single forecasting model, with no need to estimate large numbers of models within a class, or to carry out a computationally-intensive cross-validation procedure.
 
 The rest of this paper is organized as follows. We review the related work in \autoref{litreview}. In \autoref{methodology} we explain the detailed components and procedures of our proposed framework for forecast-model selection. In \autoref{Mcomp} we present the results, followed by the conclusions and future work in \autoref{discussion}.
 
@@ -96,7 +95,7 @@ The rest of this paper is organized as follows. We review the related work in \a
 
 ## Time series features
 
-Rather than work with the time series directly at the level of individual observations, we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the time-domain representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of the same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower right quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and non-linearity. @fulcher2014highly introduced 9000 operations to extract features from time series.  
+Rather than work with the time series directly at the level of individual observations, we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the time-domain representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of the same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower right quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and nonlinearity. @fulcher2014highly introduced 9000 operations to extract features from time series.  
 
 
 ```{r fig1, fig.cap="Time-domain representation of time series"}
@@ -131,35 +130,31 @@ ggplot(df, aes(x = trend, y = seasonality)) +
 ```
 
 
-The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study time series that have been used in the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select time series features for the purpose of forecast-model selection. Because the M1 and M3 competitions involve time series of different lengths, on different scales, and with different properties, we restrict our features to be ergodic, stationary and independent of scale. Because we are concerned with forecasting, we select features which have discriminatory power in selecting a good model for forecasting.
+The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study the time series from the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select features for the purpose of forecast-model selection. \textcolor{red}{Does this flow? Note that the M1 and M3 competitions involve time series of differing length, scale and other properties. We restrict our features to be ergodic, stationary and independent of scale.} As our main focus is forecasting, we select features which have discriminatory power in selecting a good model for forecasting.
 
 ## What makes features useful for forecast-model selection?
 
-@reid1972comparison pointed out that the performance of forecasting methods changes according to the nature of the data, and if the reasons for these variations are explored, they may be useful in selecting the most appropriate model. In response to the results of the M3 competition [@makridakis2000m3], similar ideas have been reported by others, who have argued that the characteristics of various time series may provide useful insights into which forecasting methods are most appropriate to forecast a given time series [@hyndman2001s;@lawrence2001s;@armstrong2001s].
+@reid1972comparison points out that the performance of forecasting methods changes according to the nature of the data. Exploring the reasons for these variations may be useful in selecting the most appropriate model. In response to the results of the M3 competition [@makridakis2000m3], similar ideas have been put forward by others. @hyndman2001s, @lawrence2001s and @armstrong2001s argue that the characteristics of a time series may provide useful insights into which methods are most appropriate for forecasting.
 
 Many time series forecasting techniques have been developed to capture specific characteristics of time series that are common in a particular discipline. For example, GARCH models were introduced to account for time-varying volatility in financial time series, and ETS models were introduced to handle the trend and seasonal patterns which are typical in quarterly and monthly sales data. An appropriate set of features should reveal the characteristics of the time series that are useful in determining the best forecasting method.
 
-Several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. @kang2017visualising applied principal component analysis to project a large collection of time series into a two dimensional feature space in order to visualize what makes a particular forecasting method perform well or not. The features they considered were spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and optimal Box-Cox transformation parameter. They also proposed a method for generating new time series based on specified features. 
+Several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. Most recently @kang2017visualising applied principal component analysis to project a large collection of time series into a two dimensional feature space in order to visualize what makes a particular forecasting method perform well or not. The features they considered were spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and optimal Box-Cox transformation parameter. They also proposed a method for generating new time series based on specified features. 
 
 ## Meta-learning for algorithm selection
 
-John Rice was an early and strong proponent of the idea of meta-learning, which he called the algorithm selection problem (ASP) [@rice1976]. The term *meta-learning* started to appear with the emergence of the machine-learning literature. Rice's framework for algorithm selection is shown in \autoref{fig:rice}.
-
-
-```{r rice, fig.cap="Rice's framework for the Algorithm Selection Problem (reproduced from Smith-Miles, 2009)", out.width="80%"}
-knitr::include_graphics("figures/RiceFramework.png")
-```
-
-There are four main components in Rice's framework. The problem space, $P$, represents the data sets used in the study. The feature space, $F$, is the range of measures that characterize the problem space $P$. The algorithm space, $A$, is a list of suitable candidate algorithms which we can use to find solutions to the problems in $P$. The performance metric, $Y$, is a measure of algorithm performance such as accuracy, speed, etc. Rice's formal definition of the algorithm selection problem is [@smith2009cross] as follows.
+John Rice was an early and strong proponent of the idea of meta-learning, which he called the algorithm selection problem (ASP) [@rice1976]. The term *meta-learning* started to appear with the emergence of the machine-learning literature. Rice's framework for algorithm selection is shown in \autoref{fig:rice} and comprises four main components. The problem space, $P$, represents the data sets used in the study. The feature space, $F$, is the range of measures that characterize the problem space $P$. The algorithm space, $A$, is a list of suitable candidate algorithms which can be used to find solutions to the problems in $P$. The performance metric, $Y$, is a measure of algorithm performance such as accuracy, speed, etc. Rice's formal definition of the algorithm selection problem is [@smith2009cross] as follows.
 
 \begin{definition}
 \label{def2}
 For a given problem instance $x \in P$, with features $f(x) \in F$, find the selection mapping $S(f(x))$ into algorithm space $A$, such that the selected algorithm $\alpha \in A$ maximizes the performance mapping $y(\alpha(x)) \in Y$.
 \end{definition}
 
+```{r rice, fig.cap="Rice's framework for the Algorithm Selection Problem --- I don't think we need this reference here --- (reproduced from Smith-Miles, 2009) ---", out.width="80%"}
+knitr::include_graphics("figures/RiceFramework.png")
+```
+
 The main challenge in ASP is to identify the selection mapping $S$ from the feature space to the algorithm space. Even though Rice's framework articulates a conceptually rich framework, it does not specify how to obtain $S$. This gives rise to the meta-learning approach. 
 
-The meta-learning framework consists of an offline (training) phase and an online (prediction) phase. In the offline phase, the mapping $S$ is learned based on a collection of training examples. This is performed using a *meta-learner* which can be any supervised learning algorithm designed to estimate $S$. The inputs for the meta-learner are known as *meta-features*, and instances in the algorithm space are the *output labels*. The database comprising both input-features and output-labels is called *meta-data*. In the online phase of the algorithm, input-features are extracted from new data and passed into the meta-learner that was constructed in the offline phase, in order to predict the output-labels of the new data.
 
 ## Forecast-model selection using meta-learning
 
@@ -174,9 +169,9 @@ Existing methods differ with respect to the way they define the problem space ($
 
 @collopy1992rule introduced 99 rules based on 18 features of time series, in order to make forecasts for economic and demographic time series. This work was extended by @armstrong2001s to reduce human intervention.  @shah1997model used the following features to classify time series: the number of observations, the ratio of the number of turning points to the length of the series, the ratio of number of step changes, skewness, kurtosis, the coefficient of variation, autocorrelations at lags 1--4, and partial autocorrelations at lag 2--4. Casting Shah's work in Rice's framework, we can specify: $P=203$ quarterly series from the M1 competition [@makridakis1982accuracy]; $A=3$ forecasting methods, namely simple exponential smoothing, Holt-Winters exponential smoothing with multiplicative seasonality, and a basic structural time series model; $Y=$ mean squared error for a hold-out sample. The mapping $S$ is learned using discriminant analysis. 
 
-@prudencio2004meta was the first paper to use the term "meta-learning" in the context of time series model selection. They studied the applicability of meta-learning approaches for forecast-model selection based on two case studies. Again using the notation of Definition \ref{def2}, we can describe their first case study with: $A$ contained only two forecasting methods, simple exponential smoothing and a time-delay neural network; $Y=$ mean absolute error; $F$ consisted of 14 features, namely length, autocorrelation coefficients, coefficient of variation, skewness, kurtosis, and a test of turning points to measure the randomness of the time series;  $S$ was learnt using the C4.5 decision tree algorithm. For their second study, the algorithm space included a random walk, Holt's linear exponential smoothing and AR models; the problem space $P$ contained the yearly series from the M3 competition [@makridakis2000m3]; $F$ included a subset of features from the first study; and $Y$ was a ranking based on error. Beyond the task of forecast-model selection, they used the NOEMON approach to rank the algorithms [@kalousis1999noemon].
+@prudencio2004meta was the first paper to use the term "meta-learning" in the context of time series model selection. They studied the applicability of meta-learning approaches for forecast-model selection based on two case studies. Again using the notation of Definition \ref{def2}, we can describe their first case study with: $A$ contained only two forecasting methods, simple exponential smoothing and a time-delay neural network; $Y=$ mean absolute error; $F$ consisted of 14 features, namely length, autocorrelation coefficients, coefficient of variation, skewness, kurtosis, and a test of turning points to measure the randomness of the time series;  $S$ was learned using the C4.5 decision tree algorithm. For their second study, the algorithm space included a random walk, Holt's linear exponential smoothing and AR models; the problem space $P$ contained the yearly series from the M3 competition [@makridakis2000m3]; $F$ included a subset of features from the first study; and $Y$ was a ranking based on error. Beyond the task of forecast-model selection, they used the NOEMON approach to rank the algorithms [@kalousis1999noemon].
 
-@lemke2010meta studied the applicability of different meta-learning approaches for time series forecasting. Their algorithm space $A$ contained ARIMA models, exponential smoothing models and a neural network model. In addition to statistical measures such as the standard deviation of the detrended series, skewness, kurtosis, length, strength of trend, Durbin-Watson statistics of regression residuals, the number of turning points, step changes, a predictability measure, nonlinearity, the largest Lyapunov exponent, and auto-correlation and partial-autocorrelation coefficients, he also used frequency domain based features. The feed forward neural network, decision tree and support vector machine approaches were considered to learn the mapping $S$.
+@lemke2010meta studied the applicability of different meta-learning approaches for time series forecasting. Their algorithm space $A$ contained ARIMA models, exponential smoothing models and a neural network model. In addition to statistical measures such as the standard deviation of the de-trended series, skewness, kurtosis, length, strength of trend, Durbin-Watson statistics of regression residuals, the number of turning points, step changes, a predictability measure, nonlinearity, the largest Lyapunov exponent, and auto-correlation and partial-autocorrelation coefficients, they also used frequency domain based features. The feed forward neural network, decision tree and support vector machine approaches were considered to learn the mapping $S$.
 
 @wang2009rule used a meta-learning framework to provide recommendations as to which forecast method to use to generate forecasts. In order to evaluate forecast accuracy, they introduced a new measure $Y =$ *simple percentage better (SPB)*, which calculates the forecasting accuracy of a method against the forecasting accuracy error of random walk model. They used a feature set $F$ comprising nine features: strength of trend, strength of seasonality, serial correlation, nonlinearity, skewness, kurtosis, self-similarity, chaos and periodicity. The algorithm space $A$ included eight forecast-models, namely, exponential smoothing, ARIMA, neural networks and random walk model; while the mapping $S$ was learned using the C4.5 algorithm for building decision trees. In addition, they used SOM clustering on the features of the time series in order to understand the nature of time series in a two-dimensional setting. 
 
@@ -186,39 +181,39 @@ More recently, @kuck2016meta proposed a meta-learning framework based on neural 
 
 # Methodology {#methodology}
 
-Our proposed framework is presented in \autoref{fig:framework}. The offline and online parts of the framework are shown in blue and red respectively. A classification algorithm (the meta-learner) is trained during the offline phase and then is used to select appropriate forecast-models for new time series in the online phase. 
+Our proposed framework is presented in \autoref{fig:framework}. The offline and online parts of the framework are shown in blue and red respectively. A classification algorithm (the meta-learner) is trained during the offline phase and then is used to select an appropriate forecast-model for a new time series in the online phase.
 
-```{r framework, fig.cap="Proposed framework (blue: offline phase, red: online phase)"}
+```{r framework, fig.cap="Offline phase (blue): FFORMS (Feature-based FORecast-Model Selection) algorithm. Online phase (red): generating forecasts for a new times series."}
 knitr::include_graphics("figures/framework.png")
 ```
 
-In order to train our classification algorithm, we need a large collection of time series which are similar to those we will be forecasting. We assume that we have an essentially infinite population of time series, and we take a sample of them in order to train the classification algorithm. The new time series we wish to forecast can be thought of as additional draws from the same population.  Hence, any conclusions made from the classification framework refer only to the population from which the sample has been selected. We may call this the "target population" of time series. It is important to have a well-defined target population to avoid misapplying the classification rules. We denote the collection of time series used for training the classifier as the "reference set". We split each time series within the reference set into a training period and a test period. From each training period we compute a range of time series features, and fit a selection of potential models. The calculated features form the input vector to the classification algorithm. Using the fitted models, we generate forecasts and identify the "best" model for each time series based on a forecast error measure (e.g., MASE) calculated over the test period. The models deemed "best" form the output labels for the classification algorithm. The pseudo code for this algorithm is given in Algorithm \autoref{alg:algo-lab} below. In the following sections, we briefly discuss aspects of the offline part of the algorithm.
-
+In order to train our classification algorithm, we need a large collection of time series which are similar to those we will be forecasting. We assume that we have an essentially infinite population of time series, and we take a sample of them in order to train the classification algorithm. The new time series we wish to forecast can be thought of as additional draws from the same population.  Hence, any conclusions made from the classification framework refer only to the population from which the sample has been selected. We may call this the "target population" of time series. It is important to have a well-defined target population to avoid misapplying the classification rules. We denote the collection of time series used for training the classifier as the "reference set". We split each time series within the reference set into a training period and a test period. From each training period we compute a range of time series features, and fit a selection of potential models. The calculated features form the input vector to the classification algorithm. Using the fitted models, we generate forecasts and identify the "best" model for each time series based on a forecast error measure (e.g., MASE) calculated over the test period. The models deemed "best" form the output labels for the 
+classification algorithm. As the focus of the offline phase is to select the "best" forecasting model based on features we refer to this as FFORMS (Feature-based FORecast-model Selection). The pseudo code for our proposed framework is presented in Algorithm \ref{alg:algo-lab} below. In the following sections, we briefly discuss aspects of the offline phase.
 
 \begin{algorithm}[!ht]
-  \caption{Identification of the "best" forecast method for a new time series.}
+  \caption{Forecasting based on meta-learning}
   \label{alg:algo-lab}
   \begin{algorithmic}[1]
-    \Statex \textbf{Offline phase}
+    \Statex \textbf{Offline phase - train the classifier}
     \Statex \text{Given:}
-    \Statex \hspace{1cm}$O=\{t_1, t_2, \dots,t_n\}:$ the collection of $n$ observed time series.
+    \Statex \hspace{1cm}$O=\{x_1, x_2, \dots,x_n\}:$ the collection of $n$ observed time series.
       \Statex \hspace{1cm}$L:$ the set of class labels (e.g.\ ARIMA, ETS, SNAIVE).
          \Statex \hspace{1cm}$F:$ the set of functions to calculate time series features.
          \Statex \hspace{1cm}$nsim:$ number of series to be simulated.
          \Statex \hspace{1cm}$B:$ number of trees in the random forest.
          \Statex \hspace{1cm}$f:$ number of features to be selected at each node.
      \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{a random forest classifier} 
+      \Statex \hspace{1cm}\text{FFORMS classifier} 
       \Statex
      \Statex \textit{Prepare the reference set}
     \Statex For $i=1$ to $n$:
-            \State Fit ARIMA and ETS models to $t_i$.
+            \State Fit ARIMA and ETS models to $x_i$.
             \State Simulate $nsim$ time series from each model in step 1.
-            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{t_1, t_2, \dots,t_n, t_{n+1},\dots,t_N\}$ where $N = n + nsim$.
+            \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{x_1, x_2, \dots,x_n, x_{n+1},\dots,x_N\}$ where $N = n + nsim$.
     \Statex 
     \Statex \textit{Prepare the meta-data}
     \Statex For $j=1$ to $N$:
-            \State Split $t_j$ into a training period and test period.
+            \State Split $x_j$ into a training period and test period.
             \State Calculate features $F$ based on the training period. 
             \State Fit $L$ models to the training period.
             \State Calculate forecasts for the test period from each model.
@@ -230,46 +225,49 @@ In order to train our classification algorithm, we need a large collection of ti
             \State Train a random forest classifier based on the meta-data.
             \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
     \Statex
-     \Statex \textbf{Online phase}
+     \Statex \textbf{Online phase - forecast a new times series}
     \Statex \text{Given:}
-    \Statex \hspace{1cm}\text{the random forest classifier from step 12} .
+    \Statex \hspace{1cm}\text{FFORMS classifier from step 12} .
      \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{class labels for newly arrived time series $t_{new}$}.
-  \State For $t_{new}$ calculate features $F$.
-  \State Let $\hat{C_b}(t_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $t_{new}$ is $\hat{C_{rf}}(t_{new})=majorityvote\{\hat{C_b}(t_{new})\}_1^B$.
+      \Statex \hspace{1cm}\text{class labels for new time series $x_{new}$}.
+  \State For $x_{new}$ calculate features $F$.
+  \State Let $\hat{C_b}(x_{new})$ be the class prediction of the $b^{th}$ random forest tree. Then class label for $x_{new}$ is $\hat{C_{rf}}(x_{new})=majorityvote\{\hat{C_b}(x_{new})\}_1^B$.
    \end{algorithmic}
 \end{algorithm}
 
+## Augmenting the observed sample with simulated time series
 
-## Augmenting the observed sample with simulated series
-
-In practice, we may wish to augment our set of training time series by simulating new time series that are similar to those from the population. This process may be useful when our observed sample of time series is too small to build a reliable classifier. Alternatively, we may wish to add more of some types of time series to the reference set in order to get a more balanced sample for the classification. In order to produce simulated series that are similar to our population, we consider two classes of data generating processes: exponential smoothing models and ARIMA models using automated algorithms such as `ets` and `auto.arima` [@forecast]. We identify models, based on model selection criteria (such as AICc) and simulate multiple time series from the selected models within each model class. Assuming the models produce data that are similar to the observed time series, this ensures that the simulated series are similar to those in the population. Note that this is done in the offline phase of the algorithm, so the computational time in producing these simulated series is of no real consequence.
+In practice, we may wish to augment the set of observed time series by simulating new time series similar to those in the assumed population. This process may be useful when the number of observed time series is too small to build a reliable classifier. Alternatively, we may wish to add more of some particular types of time series to the reference set in order to get a more balanced sample for the classification. In order to produce simulated series that are similar to those in the population, we consider two classes of data generating processes: exponential smoothing models and ARIMA models. Using the automated `ets` and `auto.arima` algorithms implemented in R [@forecast] we identify models, based on model selection criteria (such as AICc) and simulate multiple time series from the selected models within each model class. Assuming the models produce data that are similar to the observed time series ensures that the simulated series are similar to those in the population. As this is done in the offline phase of the algorithm the computational time in producing these simulated series is of no real consequence.
 
 ## Input: features
 
-Our proposed algorithm requires features that enable identification of a suitable forecast-model for a given time series. Therefore, the features used should capture the dynamic structure of the time series, such as autocorrelation, trend, seasonality, nonlinearity, heterogeneity, and so on.
+Our proposed FFORMS algorithm requires features that enable identification of a suitable forecast-model for a given time series. Therefore, the features used should capture the dynamic structure of the time series, such as trend, seasonality, autocorrelation, nonlinearity, \textcolor{red}{heterogeneity???}, and so on.  Furthermore interpretability, robustness to outliers, scale and length independence should also be considered when selecting features for this classification problem. A comprehensive description of the features used in the experiment is presented in \autoref{feature}.
 
-The purpose of this feature-based framework is to reduce the time required for model selection.  Therefore, time needed to calculate the input features should be significantly less than the time required to estimate the parameters of all candidate models in a model selection procedure. Furthermore, interpretability, robustness to outliers, scale and length independence need to be considered when selecting features for this classification problem. A comprehensive description of the features used in the experiment is specified in \autoref{feature}.
+\textcolor{red}{ I don't think we need this here --- The purpose of this feature-based framework is to reduce the time required for model selection.  Therefore, time needed to calculate the input features should be significantly less than the time required to estimate the parameters of all candidate models in a typical model selection procedure.}
 
 ## Output: labels
 
-The task of our classification framework is to identify the best forecasting method for a given time series. We define the best forecasting method as the model with the lowest forecast accuracy measure (e.g., MAPE or MASE) over the test period.
+The task of the classification algorithm is to identify the "best" forecasting method for a given time series. We define as "best" the forecasting method that returns the lowest forecast accuracy measure (e.g., MAPE, MASE, etc.) over the specified test period.
 
-It is not possible to train all possible classes of time series models. At the very least we should consider enough possibilities so that the algorithm can be used for model selection with high confidence. The models considered will depend on the specific population of time series we need to forecast. For example, if we have only non-seasonal time series, and no chaotic features, we may wish to restrict our models to random walks, white noise, ARIMA processes and ETS processes. Even in this scenario, the number of possible models can be quite large. In order to identify the best forecasting method for each series, all the models considered are run on all time series in the reference set, and forecasts are generated from each of them. Model estimation is strictly done on the training period of each series and forecasts are compared with the values in the test period. This step is computationally intensive and time-consuming, as all models have to be applied on each series in the reference set.  However, since this is done only in the offline phase, the time involved and the computational cost associated with this task is of no significant cost.
+It is not possible to train the classifier for all possible classes of models. At the very least we should consider enough possibilities so that the algorithm can be used for forecast-model selection with high confidence. The models considered will depend on the observed time series obtained. For example, if we have only non-seasonal time series, and no chaotic features, we may wish to restrict the models to train the classifier on to white noise, random walk, ARIMA and ETS processes. Even in this scenario, the number of possible models can be quite large. 
+
+In order to identify the best forecasting model for each series, all the models considered are run on all time series in the reference set, and forecasts are generated from each of them. Model estimation is strictly performed on the training period of each series and forecasts are compared with the values in the test period over which the forecast accuracy measure is calculated.
+
+This step is computationally intensive and time-consuming, as all models have to be applied on each series in the reference set.  However, since this is done only in the offline phase, the time involved and the computational cost associated with this task is of no significance.
 
 ## Random forest algorithm
 
-A random forest [@breiman2001random] is an ensemble learning method that combines a large number of decision trees using a two-step randomization process. Let $Z=\{(\bm{x}_1, y_1), (\bm{x}_2, y_2), \dots, (\bm{x}_N, y_N)\}$ be the reference set, where the input $\bm{x}_i$ is an $m$-vector of features, the output, $y_i$, corresponds to the class label of the $i$th observation, $m$ is the total number of features, and $N$ is the number of training samples in the reference set. Each tree in the forest is grown based on a bootstrap sample of size $N$ from the reference set. At each node of the tree, randomly select $f<m$ features from the full set of features. The best split is selected among those $f$ features. The split which results in the most homogeneous subnodes is considered the best split. Various measures have been introduced to evaluate the homogeneity of subnodes, such as classification error rate, the Gini index and cross entropy [@friedman2001elements]. In this study, we use the Gini index to evaluate the homogeneity of a particular split. The trees are grown to the largest extent possible without pruning. To determine the class label for a new instance, features are calculated and passed down the trees. Then each tree gives a prediction and the majority vote over all individual trees leads to the final decision. In this work, we have used the randomForest package [@liaw2002randomforest; @rfpkg] in R [@Rcore] which implements the Fortran code for Random Forest classification by @breiman2004random.
+A random forest [@breiman2001random] is an ensemble learning method that combines a large number of decision trees using a two-step randomization process. Let $(\bm{y}_1, z_1), (\bm{y}_2, z_2), \dots, (\bm{y}_N, z_N)$ represent the reference set, where input $\bm{y}_i$ is an $m$-vector of features, output $z_i$ corresponds to the class label of the $i$th time series, $m$ is the total number of features, and $N$ is the number of training samples in the reference set. Each tree in the forest is grown based on a bootstrap sample of size $N$ from the reference set. At each node of the tree, randomly select $f<m$ features from the full set of features. The best split is selected among those $f$ features. The split which results in the most homogeneous subnodes is considered the best split. Various measures have been introduced to evaluate the homogeneity of subnodes, such as classification error rate, the Gini index and cross entropy [@friedman2001elements]. In this study, we use the Gini index to evaluate the homogeneity of a particular split. The trees are grown to the largest extent possible without pruning. To determine the class label for a new instance, features are calculated and passed down the trees. Then each tree gives a prediction and the majority vote over all individual trees leads to the final decision. In this work, we have used the randomForest package [@liaw2002randomforest; @rfpkg] in R [@Rcore] which implements the Fortran code for Random Forest classification by @breiman2004random.
 
 # Application to M competition Data {#Mcomp}
 
-To test how well our proposed framework can identify suitable model for forecasting, we use the time series of the M1 [@makridakis1982accuracy] and M3 competitions [@makridakis2000m3]. The R package Mcomp [@hyndmanmcomp] provides the data for both these. The proposed algorithm is applied to yearly, quarterly and monthly series separately.  We run two experiments for each case. In the first experiment, we treat the time series of the M1 competition as the *observed sample* and the time series of the M3 competition as the collection of *new time series* to be forecast. We reverse the sets in the second experiment, using the M3 data as the *observed sample* and the M1 data as the *new time series*. These are summarised in \autoref{tbl:Mcomps}. 
+To test how well our proposed framework can identify suitable models for forecasting, we use the time series from the M1 [@makridakis1982accuracy] and M3 competitions [@makridakis2000m3]. The R package Mcomp [@hyndmanmcomp] provides the data for both these. The proposed algorithm is applied to yearly, quarterly and monthly series separately.  We run two experiments. In the first experiment, we treat the time series of the M1 competition as the *observed sample* and the time series of the M3 competition as the collection of *new time series* to be forecast. We reverse the sets in the second experiment, treating the M3 data as the *observed sample* and the M1 data as the *new time series*. The experimental set-ups are summarised in \autoref{tbl:Mcomps}. These allow us to compare our results with published forecast accuracy results for each competition. 
 
 
 \begin{table}[!htp]
 \centering\footnotesize\tabcolsep=0.16cm
 \def\yes{$\checkmark$}
-\caption{The number of series and their sources used in the two forecast experiments as observed sample and new series.}
+\caption{The number of series and their sources used in the two forecast experiments.}
 \label{tbl:Mcomps}
 \begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
 \toprule
@@ -282,12 +280,13 @@ Observed series &         M1 &        181 &        203 &        617 &           
 \end{tabular}
 \end{table}
 
+In each experiment, we fit ARIMA and ETS models to the full length of each series in the corresponding *observed samples* using the `auto.arima` and `ets` functions in the forecast package [@forecast]. From each model fitted to the annual and quarterly data, we simulate a further 1000 series for augmenting the reference set. For the monthly time series, we simulate a further 100 series (in order to save time in the offline calculation process). The lengths of the simulated series are set to be equal to the lengths of the series on which these are based on.
 
-This allow us to compare our results with published forecast accuracy results for each competition. In both experiments, we fit ARIMA and ETS models to the full length of each series in the corresponding *observed samples* using the `auto.arima` and `ets` functions in the forecast package [@forecast]. From each model fitted to annual and quarterly data, we simulate a further 1000 series. For monthly time series, we simulate a further 100 series (to speed up the offline calculation process). The lengths of the simulated time series are set to be equal to the lengths of the series on which they were based.
+As shown in \autoref{fig:framework}, the task of constructing the meta-database contains two main components: (i) identification of output-labels and (ii) computation of features. 
 
-As shown in \autoref{fig:framework}, the task of constructing the meta-database contains two main components: (i) identification of an *output-label* and (ii) computation of features. 
+## Identifying output-labels {#sec:labels}
 
-The output-labels we consider in this experiment are:
+The class-labels we consider for annual data are:
 
   \begin{compactenum}[\hspace*{1cm}(a)]
   \item White noise process (WN);
@@ -302,9 +301,9 @@ The output-labels we consider in this experiment are:
   \item ETS with damped trend component and without seasonal component;
   \end{compactenum}
 
-Most of these are self-explanatory labels based on models implemented in the forecast package [@forecast]. STL-AR refers to a model based on an STL decomposition method applied to the time series, then an AR model is used to forecast the seasonally adjusted data, while the seasonal naive method is used to forecast the seasonal component.
+Most of these are self-explanatory labels based on models implemented in the forecast package [@forecast] \textcolor{red}{using default settings? I think we need to say something more here.}. STL-AR refers to a model based on an STL decomposition method applied to the time series, then an AR model is used to forecast the seasonally adjusted data, while the seasonal naive method is used to forecast the seasonal component. \textcolor{red}{I think we need something more here.}
 
-In addition to the above ten output labels, we further include the following five class labels for seasonal data:
+In addition to the above ten labels, we further include the following five class labels for both quarterly and monthly data:
 
   \begin{compactenum}[\hspace*{1cm}(a)]\setcounter{enumi}{10}
   \item ETS with trend and seasonal components
@@ -314,9 +313,8 @@ In addition to the above ten output labels, we further include the following fiv
   \item Seasonal naive method.
   \end{compactenum}
 
-The models are estimated using the training period for each series, and forecasts are produced for the whole of the test periods. We further use the `auto.arima` and `ets` functions in the forecast package to identify suitable AR/MA/ARMA, ARIMA, SARIMA and ETS models. The model corresponding to the smallest MASE [@hyndman2006another] for the test period is selected as the *output-label*. 
+For each series in the reference set all models are estimated using the training period, and forecasts are generated for the whole of the test period. The model corresponding to the smallest MASE [@hyndman2006another] calculated over the test period is selected as the *output-label*.
  
-
 ## Feature computation process {#sec:features}
 
 We use a set of 25 features for yearly data and a set of 30 features for seasonal data. Some of these are taken from previous studies [@wang2009rule; @hyndman2015large; @kang2017visualising], and we have added some new features that we believe provide some useful information. Each feature can be computed rapidly, thus making the online phase of our algorithm very fast. The features are summarized in \autoref{feature}, and fully described in the Appendix.
@@ -368,10 +366,7 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
  \end{tabular}
 \end{table}
 
-
-The correlation matrices for all features are presented in \autoref{fig:cormatplots}. The variability in the correlations reflects the diversity of the selected features. In other words, the features we used were able to capture different characteristics of the time series. Further, the structure of the correlation matrices are similar to each other, showing the different collections have similar feature spaces.
-
-
+Correlation matrices for all the features calculated from the reference sets of each of the experiments are presented in \autoref{fig:cormatplots}. The variability in the correlations reflects the diversity of the selected features. In other words, the features we have employed seem to capture different characteristics of the time series. Furthermore, the structure of the correlation matrices for each frequency across the two experiments seem to be fairly similar. This sends a strong signal that the M1 and and M3 collections of time series may have similar feature spaces.
 
 ```{r cormatplots,  fig.width=7,fig.height=9, fig.cap=" Correlation matrix plots for the reference sets."}
 # the relevant codes are available at: https://github.com/thiyangt/WorkingPaper1/blob/master/src/main.R
@@ -398,17 +393,16 @@ grid.arrange(img1, img2, img3, img4, img5, img6, ncol = 2)
 
 ## Model calibration
 
-The random forest algorithm is highly sensitive to class imbalance [@breiman2001random], and our reference set is unbalanced: some classes contain significantly more cases than other classes. The degree of class imbalance is reduced to some extent by augmenting the observed sample with the simulated time series.  We consider three approaches to address the class imbalance in the data: incorporating class priors into the random forest classifier; using the Balanced Random Forest (BRF) algorithm introduced by @chen2004using; and re-balancing the reference set with down-sampling. In down-sampling, the size of the reference set is reduced by down-sampling the larger classes so that they match the smallest class in size; this potentially discards some useful information. We compare the results of these three approaches to the classifier built on unbalanced data. The BRF and RF with down-sampling did not yield satisfactory results. Therefore, we report only the results obtained by the RF built on unbalanced data and the RF with class priors. The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest; @rfpkg]. The class priors are introduced through the option `classwt`. We use the reciprocal of class size as the class priors. The number of trees `ntree` is set to 1000, and the number of randomly selected features `f` is set to be one third of the total number of features available. 
+The random forest (RF) algorithm is highly sensitive to class imbalance [@breiman2001random], and our reference set is unbalanced: some classes contain significantly more cases than other classes. The degree of class imbalance is reduced to some extent by augmenting the observed sample with the simulated time series.  We consider three approaches to address the class imbalance in the data: incorporating class priors into the RF classifier; using the balanced RF algorithm introduced by @chen2004using; and re-balancing the reference set with down-sampling. In down-sampling, the size of the reference set is reduced by down-sampling the larger classes so that they match the smallest class in size; this potentially discards some useful information. Comparing the results the balanced RF algorithm and RF with down-sampling did not yield satisfactory results. We therefore only report the results obtained by the RF built on unbalanced data (RF-unbalnaced) and the RF with class priors (RF-class priors). The RF algorithms are implemented by the randomForest R package [@liaw2002randomforest; @rfpkg]. The class priors are introduced through the option `classwt`. We use the reciprocal of class size as the class priors. The number of trees `ntree` is set to 1000, and the number of randomly selected features `f` is set to be one third of the total number of features available. 
 
 Our aim is different from most classification problems in that we are not interested in accurately predicting the class, but in finding a good forecast-model. It is possible that two models produce almost equally good forecasts, and then it does not matter whether the classifier picks one or the other. Consequently, we do not study the classification accuracy of our random forests, but only report the forecast accuracy obtained with using them.
 
 
 ## Summary of the main results {#sec:results}
 
-We build separate random forest classifiers for yearly data, quarterly data and monthly data. For the second experiment, in the case of yearly and quarterly data we take a subset of the simulated time series when training the RF-unbalanced and RF-class priors, to reduce the size of the reference set (these are shown in yellow in the figures that follow). The subsets are selected randomly according to the proportions of output-labels in the observed samples. This ensures that our reference set shares similar characteristics to the observed sample. 
+We build separate RF classifiers for yearly data, quarterly data and monthly data. For the second experiment (for which data from the M3 competition are the observed series) in the case of yearly and quarterly data we take a subset of the simulated time series when training the RF-unbalanced and RF-class priors, to reduce the size of the reference set (these are shown in yellow in the figures that follow). The subsets are selected randomly according to the proportions of output-labels in the observed samples. This ensures that our reference set shares similar characteristics to the observed sample. 
 
 Principal component analysis is used to visualize the feature-spaces of the different time series collections. We compute the principal components projection using the features in the observed sample, and then project the simulated time series and the new time series using the same projection. The results are shown in Figures \ref{fig:exp1pca}--\ref{fig:exp2pca}, where the first three principal components are plotted against each other. Figure \ref{fig:exp1pca} refers to Experiment 1 and Figure \ref{fig:exp2pca} to Experiment 2. The points on each plot represent individual time series. In each figure the first column of plots refers to the yearly data, the middle column to the quarterly data and the last column to the monthly data. The plots show that the first three principle components explain 62.5\%, 62.4\% and 58.93\% of the total variation in the yearly, quarterly and monthly M1 data and 62.2\% 64.75\% and 65.97\%  of the total variation in the yearly, quarterly and monthly M3 data.
-
 
 
 ```{r exp1pca,  fig.width=11, fig.asp = .9, fig.cap="Experiment 1: Distribution of time series in the PCA space. Distribution of yearly series are shown in the first column, distribution of quarterly series are shown in the second column, and the distribution of monthly series are shown in the third column. On each graph, green indicates simulated time series, black indicates observed time series, while orange denotes new time series."}
@@ -450,9 +444,7 @@ plot_grid(img1, img4, img7, img2, img5, img8, img3, img6, img9, nrow = 3, ncol=3
 ```
 
 
-
-The plots show that the distribution of the observed times series over the PCA space (represented by the black dots) is very similar to that of the new time series (represented by the orange dots). More importantly, we see that the distribution of the simulated time series (represented by the green dots and yellow dots - the yellow dots are a subset of the simulated series as mentioned above) clearly nests that and fills in the space of the new time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This strongly indicates that we have not reduced the feature diversity from the observed sample. Our approach of augmenting the observed time series with simulated data is successful. By augmenting the reference set with simulated time series, we were able to increase the diversity and evenness of the feature space of the observed time series. 
-
+The plots show that the distribution of the observed times series over the PCA space (represented by the black dots) is very similar to that of the new time series (represented by the orange dots). More importantly, we see that the distribution of the simulated time series (represented by the green dots and yellow dots - the yellow dots are a subset of the simulated series as mentioned above) clearly nests that and fills in the space of the new time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This strongly indicates that we have not reduced the feature diversity from the observed sample. Our approach of augmenting the observed time series with simulated data is successful. By augmenting the reference set with simulated time series, we are able to increase the diversity and evenness of the feature space of the observed time series.
 
 The accuracy of our method is compared against the following commonly-used forecasting methods:
 
@@ -472,12 +464,12 @@ The automated ARIMA and ETS algorithms are implemented using the `auto.arima` an
 \begin{table}[!htbp]
 \centering\footnotesize
 \centering
-\caption{MASE values calculated over the new series from experiments 1 and 2.}
+\caption{MASE values calculated over the new series for Experiments 1 and 2.}
 \label{masetab}
 \begin{tabular}{lrrrrrrrrrrr}
 \toprule
-                     &                              \multicolumn{ 5}{c}{Experiment 1} &            &                              \multicolumn{ 5}{c}{Experiment 2} \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-                     &                                    \multicolumn{ 5}{c}{Yearly - M3} &            &                                    \multicolumn{ 5}{c}{Yearly - M1} \\
+                     &                              \multicolumn{ 5}{c}{Experiment 1: new series M3} &            &                              \multicolumn{ 5}{c}{Experiment 2: new series M1} \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+                     &                                    \multicolumn{ 5}{c}{Yearly} &            &                                    \multicolumn{ 5}{c}{Yearly} \\
                      &   $h=1$    &    $1-2$   &     $1-4$  &     $1-6$  &      Rank  &            &     $h=1$  &    $1-2$   &     $1-4$  &     $1-6$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
 RF-unbalanced        &       1.06 &       1.42 &       2.20 &       2.85 &       3.83 &            & {\bf 0.97} & {\bf 1.39} &       2.42 &       3.37 &        1.83 \\
 RF-class priors      & {\bf 1.03} &       1.37 &       2.14 &       2.77 &       2.33 &            &       1.02 &       1.40 & {\bf 2.40} & {\bf 3.33} & {\bf 1.16} \\
@@ -488,7 +480,7 @@ RW                   &       1.24 &       1.68 &       2.48 &       3.17 &      
 RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.16} &            &       1.04 &       1.44 &       2.51 &       3.49 &       4.16 \\
 STL-AR               &       1.09 &       1.47 &       2.27 &       2.95 &       6.00 &            &       1.10 &       1.51 &       2.55 &       3.52 &       4.50 \\
 Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       3.50 &            &       1.15 &       1.70 &       3.00 &       4.19 &       7.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-           &                                 \multicolumn{ 5}{c}{Quarterly - M3} &            &                                 \multicolumn{ 5}{c}{Quarterly - M1} \\
+           &                                 \multicolumn{ 5}{c}{Quarterly} &            &                                 \multicolumn{ 5}{c}{Quarterly} \\
                      &    $h=1$   &    $1-4$   &     $1-6$  &     $1-8$  &      Rank  &            &     $h=1$  &    $1-4$   &     $1-6$  &     $1-8$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
 RF-unbalanced        &       0.59 & {\bf 0.81} & {\bf 0.97} &       1.12 & {\bf 2.25} &            & {\bf 0.74} & {\bf 1.08} & {\bf 1.35} & {\bf 1.57} & {\bf 1.00} \\
 RF-class priors      &       0.59 & 0.82 &       {\bf 0.97} &       1.13 &  3.13 &            &       0.76 &       1.12 &       1.40 &       1.62 &       2.63 \\
@@ -500,7 +492,7 @@ RWD                  &       1.20 &       1.17 &       1.36 &       1.47 &      
 STL-AR               &       0.70 &       1.27 &       1.60 &       1.91 &       8.34 &            &       0.96 &       1.63 &       2.05 &       2.43 &       8.63 \\
 Theta                &       0.62 &       0.83 &       {\bf 0.97} & {\bf 1.11} &  2.50 &            &       0.79 &       1.13 &       1.42 &       1.67 &       3.88 \\
 Snaive               &       1.11 &       1.09 &       1.30 &       1.43 &       6.75 &            &       1.52 &       1.56 &       1.87 &       2.08 &       7.75 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-           &                                   \multicolumn{ 5}{c}{Monthly - M3} &            &                                   \multicolumn{ 5}{c}{Monthly - M1} \\
+           &                                   \multicolumn{ 5}{c}{Monthly} &            &                                   \multicolumn{ 5}{c}{Monthly} \\
                      &    $h=1$ &    $1-6$   &     $1-12$ &    $1-18$  &   Rank     &            &   $h=1$  &    $1-6$   &    $1-12$  &    $1-18$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
 RF-unbalanced        &       0.60 &       0.68 &       0.76 &       0.87 &       3.22 &            &       0.61 &       0.76 & {\bf 0.90} & {\bf 1.03} &       {\bf 1.77} \\
 RF-class priors      &       0.60 &       0.67 & 0.75 & {\bf 0.86} &       {\bf 2.00} &            &       0.60 &       {\bf 0.75} &       0.92 &       1.06 &        2.83 \\
@@ -517,20 +509,20 @@ Snaive               &       0.95 &       0.97 &       0.99 &       1.15 &      
 \end{table}
 
 
-In general, our proposed meta-learning algorithm performs quite well in both experimental settings. It consistently ranks in the top most accurate forecasting methods for forecasting both the M1 and the M3 series and most often ranks as the most accurate method. More specifically, for yearly data the algorithm ranks best for forecasting the M1 data in experiment 2 and second (to the random walk with drift) in forecasting the M3 data. For quarterly data the meta-learning algorithm ranks as the most accurate in both experiments. For the monthly data the algorithm seems to perform best for the longer horizons in both experimental settings. It also seems to be competitive for the shorter horizons with the three methods (`auto.arima`, `ets` and theta) that perform best. In general, comparing the results between the two experimental settings it seems that the meta-learning algorithm achieves marginally better results in experiment 2. Hence, we can  conclude that the meta-learning algorithm benefits from being trained on the larger sample of time series (M3 series) while forecasting a smaller set (M1 series). 
+In general, our proposed FFORMS meta-learning algorithm performs quite well in both experimental settings. It consistently ranks in the top most accurate forecasting methods for forecasting both the M1 and the M3 series and most often ranks as the most accurate method. More specifically, for yearly data using FFORMS ranks best for forecasting the M1 data in experiment 2 and second (to the random walk with drift) in forecasting the M3 data. For quarterly data using FFORMS ranks as the most accurate in both experiments. For the monthly data FFORMS seems to perform best for the longer horizons in both experimental settings. It also seems to be competitive for the shorter horizons with the three methods (`auto.arima`, `ets` and theta) that perform best. Comparing the results across the two experimental settings it seems that the using the FFORMS algorithm achieves marginally better results in experiment 2. Hence, we can  conclude that the meta-learning algorithm benefits from being trained on the larger sample of time series (M3 series) while forecasting a smaller set (M1 series). 
 
 
 # Discussion and Conclusions {#discussion}
 
-In this paper we have proposed a novel framework for forecast-model selection using meta-learning based on time series features. Our algorithm uses the knowledge of the past performance of different forecast-models on a collection of time series in order to identify the best forecasting method for a new series.  We have shown that the method almost always performs better than common benchmark methods, and better than the best-performing methods from the M3 competition.  Although we have illustrated the method using the M1 and M3 competition data, the framework is general and can be applied to any large collection of time series. 
+In this paper we have proposed a novel framework for forecast-model selection using meta-learning based on time series features. Our proposed FFORMS algorithm uses the knowledge of the past performance of different forecast-models on a collection of time series in order to identify the best forecasting method for a new series.  We have shown that the method almost always performs better than common benchmark methods, and better than the best-performing methods from the M3 competition.  Although we have illustrated the method using the M1 and M3 competition data, the framework is general and can be applied to any large collection of time series.
 
-A major advantage of our method is that it is not necessary to estimate several different models for the data and undertake an empirical evaluation of their forecast accuracy on a given time series. Instead, we simply compute a small set of features that can be used to identify the best forecasting method.
+A major advantage of implementing our proposed framework is that it is not necessary to estimate several different models for the data and undertake an empirical evaluation of their forecast accuracy on a given time series. Instead, all is required is to simply compute a small set of features that can be used to identify the best forecasting method.
 
 It would be possible to obtain more accurate forecasts than those we report by combining the forecasts of many methods. However, this would not satisfy our aim of rapid automatic forecasting, because of the additional optimization that would be required to fit each model.
 
-In addition to our new model selection framework, we have also introduced a simple set of time series features that are useful in identifying the "best" forecast method of a given time series, and can be computed rapidly. We will leave to a later study an analysis of which of these features are the most useful, and how our feature set could reduced further without loss of forecast accuracy.
+In addition to our new FFORMS framework, we have also introduced a simple set of time series features that are useful in identifying the "best" forecast method for a given time series, and can be computed rapidly. We will leave to a later study an analysis of which of these features are the most useful, and how our feature set could be reduced further without the loss of forecast accuracy.
 
-We have not compared the computation time between our method and the benchmark methods. However, for real-time forecasting, our framework involves only the calculation of features, the selection of a forecast method based on the random forest classifier, and the calculation of the forecasts from the chosen model. None of these steps involve substantial computation and can be easily parallelised when forecasting for a large number of new time series. For future work, we will explore the use of other classification algorithms, and test our approach on several other large collections of time series.
+We have not compared the computation time between appying our proposed framework and the benchmark methods. However, for real-time forecasting, our framework involves only the calculation of features, the selection of a forecast method based on the FFORMS random forest classifier, and the calculation of the forecasts from the chosen model. None of these steps involve substantial computation and can be easily parallelised when forecasting for a large number of new time series. For future work, we will explore the use of other classification algorithms within the FFORMS algorithm, and test our approach on several other large collections of time series.
  
 \newpage
 
@@ -542,10 +534,10 @@ The appropriate forecast-method for a time series depends on how many observatio
 
 ### Features based on an STL-decomposition {-}
 
-The strength of trend, strength of seasonality, linearity, curvature, spikiness and first autocorrelation coefficient of the remainder series, are calculated based on a decomposition of the time series. Suppose we denote our time series as $y_1, y_2, \dots,y_T$. First, a Box-Cox transformation is applied to the time series in order to to stabilize the variance and to make the seasonal effect additive. The transformed series is denoted by $y_{t}^*$. For quarterly and monthly data, this is decomposed using STL [@cleveland1990stl] to give $y_t^*=T_t+S_t+E_t$, where $T_t$ denotes the trend, $S_t$ denotes the seasonal component, and $E_t$ is the remainder component. For non-seasonal data, Friedman's super smoother [@supsmu] is used to decompose $y_t^*=T_t+E_t$, and $S_t=0$ for all $t$. The detrended series is $x_t=y_t^*-T_t$, the deseasonalized series is $z_t=y_t^*-S_t$, and the remainder series is $r_t=y_t^*-T_t-S_t$.
+The strength of trend, strength of seasonality, linearity, curvature, spikiness and first autocorrelation coefficient of the remainder series, are calculated based on a decomposition of the time series. Suppose we denote our time series as $y_1, y_2, \dots,y_T$. First, a Box-Cox transformation is applied to the time series in order to to stabilize the variance and to make the seasonal effect additive. The transformed series is denoted by $y_{t}^*$. For quarterly and monthly data, this is decomposed using STL [@cleveland1990stl] to give $y_t^*=T_t+S_t+E_t$, where $T_t$ denotes the trend, $S_t$ denotes the seasonal component, and $E_t$ is the remainder component. For non-seasonal data, Friedman's super smoother [@supsmu] is used to decompose $y_t^*=T_t+E_t$, and $S_t=0$ for all $t$. The de-trended series is $x_t=y_t^*-T_t$, the deseasonalized series is $z_t=y_t^*-S_t$, and the remainder series is $r_t=y_t^*-T_t-S_t$.
 
 
-The strength of trend is measured by comparing the variance of the detrended series and the original series [@wang2009rule]:
+The strength of trend is measured by comparing the variance of the de-trended series and the original series [@wang2009rule]:
 $$
 	\text{Trend} = \text{max}\left[0, 1 - \var(r_{t})/\var(z_{t})\right].
 $$ 
@@ -584,7 +576,7 @@ The Hurst exponent measures the long-term memory of a time series. The Hurst exp
 
 ### Nonlinearity {-}
 
-To measure the degree of nonlinearity of the time series, we use statistic computed in Teräsvirta's neural network test for nonlinearity [@nonlintest], also used in @wang2009rule. This takes large values when the series is nonlinear, and values around 0 when the series is linear.
+To measure the degree of nonlinearity of the time series, we use statistic computed in Terasvirta's neural network test for nonlinearity [@nonlintest], also used in @wang2009rule. This takes large values when the series is nonlinear, and values around 0 when the series is linear.
 
 ### Parameter estimates of an ETS model {-}
 
