@@ -365,14 +365,14 @@ can be challenging. Two of the most commonly used automated algorithms
 are the exponential smoothing (\texttt{ets}) algorithm of
 \textcite{Hyndman2002} and the ARIMA (\texttt{auto.arima}) algorithm of
 \textcite{Hyndman2008}. Both algorithms are implemented in the forecast
-package in R \autocite{forecast}. In this paradigm, a class of models is
-selected in advance, and many models within that class are estimated for
-each time series. The model with the smallest AICc value is chosen and
-used for forecasting. This approach relies on the expert judgement of
-the forecaster in first selecting the most appropriate class of models
-to use, as it is not usually possible to compare AICc values between
-model classes due to differences in the way the likelihood is computed,
-and the way initial conditions are handled.
+package in R \autocites{Rcore}{forecast}. In this paradigm, a class of
+models is selected in advance, and many models within that class are
+estimated for each time series. The model with the smallest AICc value
+is chosen and used for forecasting. This approach relies on the expert
+judgement of the forecaster in first selecting the most appropriate
+class of models to use, as it is not usually possible to compare AICc
+values between model classes due to differences in the way the
+likelihood is computed, and the way initial conditions are handled.
 
 An alternative approach, which avoids selecting a class of models
 \emph{a priori}, is to use a simple ``hold-out'' test set; but then
@@ -642,11 +642,12 @@ forecast-model selection.
 \hypertarget{methodology}{%
 \section{Methodology}\label{methodology}}
 
-Our proposed FFORMS framework is presented in \autoref{fig:framework}.
-The offline and online phases are shown in blue and red respectively. A
-classification algorithm (the meta-learner) is trained during the
-offline phase and is then used to select an appropriate forecast-model
-for a new time series in the online phase.
+Our proposed FFORMS framework, presented in \autoref{fig:framework},
+builds on this preceding research. The offline and online phases are
+shown in blue and red respectively. A classification algorithm (the
+meta-learner) is trained during the offline phase and is then used to
+select an appropriate forecast model for a new time series in the online
+phase.
 
 \begin{figure}
 
@@ -671,8 +672,8 @@ avoid misapplying the classification rules. In practice, we may wish to
 augment the set of observed time series by simulating new time series
 similar to those in the assumed population (we provide details and
 discussion in Section \ref{simulatingseries} that follows). We denote
-total collection of time series used for training the classifier as the
-``reference set''. Each time series within the reference set is slit
+the total collection of time series used for training the classifier as
+the ``reference set''. Each time series within the reference set is slit
 into a training period and a test period. From each training period we
 compute a range of time series features, and fit a selection of
 candidate models. The calculated features form the input vector to the
@@ -742,39 +743,43 @@ order to get a more balanced sample for the classification. In order to
 produce simulated series that are similar to those in the population, we
 consider two classes of data generating processes: exponential smoothing
 models and ARIMA models. Using the automated \texttt{ets} and
-\texttt{auto.arima} algorithms implemented in R \autocite{forecast} we
-identify models, based on model selection criteria (such as AICc) and
-simulate multiple time series from the selected models within each model
-class. Assuming the models produce data that are similar to the observed
-time series ensures that the simulated series are similar to those in
-the population. As this is done in the offline phase of the algorithm
-the computational time in producing these simulated series is of no real
+\texttt{auto.arima} algorithms \autocite{forecast} we identify models,
+based on model selection criteria (such as AICc) and simulate multiple
+time series from the selected models within each model class. Assuming
+the models produce data that are similar to the observed time series
+ensures that the simulated series are similar to those in the
+population. As this is done in the offline phase of the algorithm the
+computational time in producing these simulated series is of no real
 consequence.
 
 \hypertarget{input-features}{%
 \subsection{Input: features}\label{input-features}}
 
 Our proposed FFORMS algorithm requires features that enable
-identification of a suitable forecast-model for a given time series.
+identification of a suitable forecast model for a given time series.
 Therefore, the features used should capture the dynamic structure of the
 time series, such as trend, seasonality, autocorrelation, nonlinearity,
-\textcolor{red}{heterogeneity???}, and so on. Furthermore,
-interpretability, robustness to outliers, scale and length independence
-should also be considered when selecting features for this
-classification problem. A comprehensive description of the features used
-in the experiment is presented in \autoref{feature}.
+heterogeneity, and so on. Furthermore, interpretability, robustness to
+outliers, scale and length independence should also be considered when
+selecting features for this classification problem. A comprehensive
+description of the features used in the experiment is presented in
+\autoref{feature}.
 
-\textcolor{red}{I have edited the following presuming what Thiyanga's was trying to say: --- A main feature of the proposed FFORMS framework is that it's online phase is "much faster" compared to the time required for implementing a typical model selection or cross-validation procedure. Therefore, one should keep this in mind when selecting the number and/or types features to be used and the time needed to calculate these during the the online phase. --- I think this is what Thiyanga was trying to say here. Thiyanga's text follows: The purpose of this feature-based framework is to reduce the time required for model selection. Therefore, time needed to calculate the input features should be significantly less than the time required to estimate the parameters of all  candidate models in a model selection procedure.}
+A feature of the proposed FFORMS framework is that its online phase is
+fast compared to the time required for implementing a typical model
+selection or cross-validation procedure. Therefore, we consider only
+features that can be computed rapidly, as this computation must be done
+during the online phase.
 
 \hypertarget{output-labels}{%
 \subsection{Output: labels}\label{output-labels}}
 
 The task of the classification algorithm is to identify the ``best''
 forecasting method for a given time series. It is not possible to train
-the classifier for all possible classes of models. However, at the very
-least we should consider enough possibilities so that the algorithm can
-be used for forecast-model selection with some confidence. The candidate
-models considered as labels will depend on the observed time series. For
+the classifier for all possible classes of models. However, we should
+consider enough possibilities so that the algorithm can be used for
+forecast-model selection with some confidence. The candidate models
+considered as labels will depend on the observed time series. For
 example, if we have only non-seasonal time series, and no chaotic
 features, we may wish to restrict the models to white noise, random
 walk, ARIMA and ETS processes. Even in this simple scenario, the number
@@ -789,11 +794,11 @@ test period is deemed ``best''.
 This step is the most computationally intensive and time-consuming, as
 each candidate model has to be applied on each series in the reference
 set. However, as this task is done during the offline phase of the
-FFORMS framework the time involved and computational cost associated are
-of no real significance and are completely controlled by the user. The
-more candidate models considered as labels the more computational time
-required, however the pay-off could be significant gains in forecast
-accuracy.
+FFORMS framework, the time involved and computational cost associated
+are of no real significance and are completely controlled by the user.
+The more candidate models that are considered as labels, the more
+computational time is required; however the pay-off could be significant
+gains in forecast accuracy.
 
 \hypertarget{random-forest-algorithm}{%
 \subsection{Random forest algorithm}\label{random-forest-algorithm}}
@@ -818,9 +823,9 @@ the largest extent possible without pruning. To determine the class
 label for a new instance, features are calculated and passed down the
 trees. Then each tree gives a prediction and the majority vote over all
 individual trees leads to the final decision. In this work, we have used
-the randomForest package \autocites{liaw2002randomforest}{rfpkg} in R
-\autocite{Rcore} which implements the Fortran code for random forest
-classification by \textcite{breiman2004random}.
+the randomForest package \autocites{liaw2002randomforest}{rfpkg} which
+implements the Fortran code for random forest classification by
+\textcite{breiman2004random}.
 
 \hypertarget{Mcomp}{%
 \section{Application to M competition Data}\label{Mcomp}}
