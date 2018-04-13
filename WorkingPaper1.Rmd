@@ -34,7 +34,7 @@ output:
     keep_tex: yes
     number_sections: yes
     citation_package: biblatex
-abstract: A crucial task in time series forecasting is the identification of the most suitable forecasting method. We present a general framework for forecast-model selection using meta-learning. A Random Forest is used to identify the best forecasting method using only time series features. The framework is evaluated using time series from the M1 and M3 competitions and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting. A key advantage of our proposed framework is that the time-consuming process of building a classifier is handled in advance of the forecasting task at hand.
+abstract: A crucial task in time series forecasting is the identification of the most suitable forecasting method. We present a general framework for forecast-model selection using meta-learning. A random forest is used to identify the best forecasting method using only time series features. The framework is evaluated using time series from the M1 and M3 competitions and is shown to yield accurate forecasts comparable to several benchmarks and other commonly used automated approaches of time series forecasting. A key advantage of our proposed framework is that the time-consuming process of building a classifier is handled in advance of the forecasting task at hand.
 keywords: FFORMS (Feature-based FORecast-model Selection), Time series features, Random forest,  Algorithm selection problem, Classsification
 ---
 
@@ -64,21 +64,15 @@ library(png)
 library(tsfeatures)
 library(tidyverse)
 library(ggpubr)
-library(cowplot)
+#library(cowplot)
 #read_chunk('src/main.R')
 ```
 
-\setlength{\abovedisplayskip}{5pt}
-\setlength{\belowdisplayskip}{5pt}
-\setlength{\abovedisplayshortskip}{0pt}
-\setlength{\belowdisplayshortskip}{0pt}
-
-
 # Introduction {#intro}
 
-Forecasting is a key activity for any business to operate efficiently. The rapid advances in computing technologies have enabled businesses to keep track of large numbers of time series. Hence, it is becoming increasingly common to have to regularly forecast many millions of time series. For example, large scale businesses may be interested in forecasting sales, cost, and demand for their thousands of products across various locations, warehouses, etc. Technology companies such as Google collect many millions of daily time series such as web-click logs, web search counts, queries, revenues, number of users for different services, etc. Such large collections of times series require fast automated procedures generating accurate forecasts. The scale of these tasks has raised some computational challenges we seek to address by proposing a new fast algorithm for model selection and time series forecasting.
+Forecasting is a key activity for any business to operate efficiently. The rapid advances in computing technologies have enabled businesses to keep track of large numbers of time series. Hence, it is becoming increasingly common to have to regularly forecast many millions of time series. For example, large scale businesses may be interested in forecasting sales, cost, and demand for their thousands of products across various locations, warehouses, etc. Technology companies such as Google collect many millions of daily time series such as web-click logs, web search counts, queries, revenues, number of users for different services, etc. Such large collections of time series require fast automated procedures generating accurate forecasts. The scale of these tasks has raised some computational challenges we seek to address by proposing a new fast algorithm for model selection and time series forecasting.
 
-Two alternative strategies for generating such a large number of forecasts are: to either use a single forecasting method across all the time series or to select an appropriate forecasting method for each time series individually. It is highly unlikely that a single method will consistently outperform judiciously chosen competitors across all time series. We therefore reject the former strategy and focus on an approach for selecting an individual forecasting method for each time series. 
+Two alternative strategies for generating such a large number of forecasts are: (1) to either use a single forecasting method across all the time series; or (2) to select an appropriate forecasting method for each time series individually. It is highly unlikely that a single method will consistently outperform judiciously chosen competitor methods across all time series. We therefore reject the former strategy and focus on an approach for selecting an individual forecasting method for each time series. 
 
 Selecting the most appropriate model for forecasting a given time series can be challenging. Two of the most commonly used automated algorithms are the exponential smoothing (`ets`) algorithm of @Hyndman2002 and the ARIMA (`auto.arima`) algorithm of @Hyndman2008. Both algorithms are implemented in the forecast package in R [@forecast]. In this paradigm, a class of models is selected in advance, and many models within that class are estimated for each time series. The model with the smallest AICc value is chosen and used for forecasting. This approach relies on the expert judgement of the forecaster in first selecting the most appropriate class of models to use, as it is not usually possible to compare AICc values between model classes due to differences in the way the likelihood is computed, and the way initial conditions are handled.
 
@@ -95,10 +89,10 @@ The rest of this paper is organized as follows. We review the related work in \a
 
 ## Time series features
 
-Rather than work with the time series directly at the level of individual observations, we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the time-domain representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of the same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower right quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and nonlinearity. @fulcher2014highly introduced 9000 operations to extract features from time series.  
+Rather than work with the time series directly at the level of individual observations, we propose analysing time series via an associated "feature space". A time series feature is any measurable characteristic of a time series. For example, \autoref{fig:fig1} shows the time-domain representation of six time series taken from the M3 competition [@makridakis2000m3] while \autoref{fig:fig2} shows a feature-based representation of the same time series. Here only two features are considered: the strength of seasonality and the strength of trend, calculated based on the measures introduced by @wang2009rule. Time series in the lower right quadrant of \autoref{fig:fig2} are non-seasonal but trended, while there is only one series with both high trend and high seasonality. We also see how the degree of seasonality and trend varies between series. Other examples of time series features include autocorrelation, spectral entropy and measures of self-similarity and nonlinearity. @fulcher2014highly identified 9000 operations to extract features from time series.  
 
 
-```{r fig1, fig.cap="Time-domain representation of time series"}
+```{r fig1, fig.cap="Time-domain representation of time series", fig.width=10, fig.height=6}
 # Extract required series
 series_id <- c("N0001", "N0633", "N0625", "N0645","N1912", "N2012")
 six_series <- lapply(M3[series_id], function(u){u$x})
@@ -130,7 +124,7 @@ ggplot(df, aes(x = trend, y = seasonality)) +
 ```
 
 
-The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study the time series from the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select features for the purpose of forecast-model selection. \textcolor{red}{Does this flow? Note that the M1 and M3 competitions involve time series of differing length, scale and other properties. We restrict our features to be ergodic, stationary and independent of scale.} As our main focus is forecasting, we select features which have discriminatory power in selecting a good model for forecasting.
+The choice of the most appropriate set of features depends on both the nature of the time series being analysed, and the purpose of the analysis. In \autoref{Mcomp}, we study the time series from the M1 and M3 competitions [@makridakis1982accuracy;@makridakis2000m3], and we select features for the purpose of forecast-model selection. The M1 and M3 competitions involve time series of differing length, scale and other properties. We include length as one of our features, but the remaining features are independent of scale and asymptotically independent of the length of the time series (i.e., they are ergodic). As our main focus is forecasting, we select features which have discriminatory power in selecting a good model for forecasting.
 
 ## What makes features useful for forecast-model selection?
 
@@ -138,7 +132,7 @@ The choice of the most appropriate set of features depends on both the nature of
 
 Many time series forecasting techniques have been developed to capture specific characteristics of time series that are common in a particular discipline. For example, GARCH models were introduced to account for time-varying volatility in financial time series, and ETS models were introduced to handle the trend and seasonal patterns which are typical in quarterly and monthly sales data. An appropriate set of features should reveal the characteristics of the time series that are useful in determining the best forecasting method.
 
-Several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. Most recently @kang2017visualising applied principal component analysis to project a large collection of time series into a two dimensional feature space in order to visualize what makes a particular forecasting method perform well or not. The features they considered were spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and optimal Box-Cox transformation parameter. They also proposed a method for generating new time series based on specified features. 
+Several researchers have introduced rules for forecasting based on features [@collopy1992rule;@adya2001automatic;@wang2009rule]. Most recently @kang2017visualising applied principal component analysis to project a large collection of time series into a two dimensional feature space in order to visualize what makes a particular forecasting method perform well or not. The features they considered were spectral entropy, first-order auto-correlation coefficient, strength of trend, strength of seasonality, seasonal period and the optimal Box-Cox transformation parameter. They also proposed a method for generating new time series based on specified features. 
 
 ## Meta-learning for algorithm selection
 
@@ -225,7 +219,7 @@ Each time series within the reference set is slit into a training period and a t
             \State Train a random forest classifier based on the meta-data.
             \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
     \Statex
-     \Statex \textbf{Online phase - forecast a new times series}
+     \Statex \textbf{Online phase - forecast a new time series}
     \Statex \text{Given:}
     \Statex \hspace{1cm}\text{FFORMS classifier from step 12} .
      \Statex \text{Output:}
@@ -260,9 +254,9 @@ A random forest [@breiman2001random] is an ensemble learning method that combine
 # Application to M competition Data {#Mcomp}
 
 To test how well our proposed framework can identify suitable models for forecasting, we use the yearly, quarterly and monthly series from the M1 [@makridakis1982accuracy] and M3 competitions [@makridakis2000m3]. The R package Mcomp [@hyndmanmcomp] provides the data for both these. We run two experiments. In the first experiment, we treat the time series from the M1 competition as the *observed sample* and the time series from the M3 competition as the *new time series* to be forecast. We reverse the sets in the second experiment, treating the M3 data as the *observed sample* and the M1 data as the *new time series*. The experimental set-ups are summarised in \autoref{tbl:Mcomps}. These allow us to compare our results with published forecast accuracy results for each of these competitions. 
+
 \begin{table}[!htp]
 \centering\footnotesize\tabcolsep=0.16cm
-\def\yes{$\checkmark$}
 \caption{The number of series and their sources used in the two forecast experiments.}
 \label{tbl:Mcomps}
 \begin{tabular}{lccccr@{\hspace*{0.5cm}}cccc}
@@ -318,7 +312,6 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
 
 \begin{table}[!htp]
 \centering\footnotesize\tabcolsep=0.12cm
-\def\yes{$\checkmark$}
 \caption{Features used for selecting a forecast-model.}
 \label{feature}
 \begin{tabular}{llp{8,8cm}cc}
@@ -413,7 +406,7 @@ img8 <- rasterGrob(as.raster(readPNG("figures/pca2M1M.png")), interpolate = FALS
 img9 <- rasterGrob(as.raster(readPNG("figures/pca3M1M.png")), interpolate = FALSE)
 #grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
 #library(cowplot)
-plot_grid(img1, img4, img7, img2, img5, img8, img3, img6, img9, nrow = 3, ncol=3)
+gridExtra::grid.arrange(img1, img4, img7, img2, img5, img8, img3, img6, img9, nrow = 3, ncol=3)
 ```
 
 ```{r exp2pca,  fig.width=11, fig.asp = .9, fig.cap="Experiment 2: Distribution of time series in the PCA space. Distribution of yearly series are shown in the first column, distribution of quarterly series are shown in the second column, and the distribution of monthly series are shown in the third column. On each graph, green indicates simulated time series, yellow shows a subset of simulated time series, black indicates observed time series, while orange denotes new time series."}
@@ -429,11 +422,10 @@ img7 <- rasterGrob(as.raster(readPNG("figures/pca1M3M.png")), interpolate = FALS
 img8 <- rasterGrob(as.raster(readPNG("figures/pca2M3M.png")), interpolate = FALSE)
 img9 <- rasterGrob(as.raster(readPNG("figures/pca3M3M.png")), interpolate = FALSE)
 
-#grid.arrange(img1, img2, img3, img4, img5, img6, img7, img8, img9, ncol = 3)
-plot_grid(img1, img4, img7, img2, img5, img8, img3, img6, img9, nrow = 3, ncol=3)
+gridExtra::grid.arrange(img1, img4, img7, img2, img5, img8, img3, img6, img9, nrow = 3, ncol=3)
 ```
 
-The plots show that the distribution of the observed times series over the PCA space (represented by the black dots) is very similar to that of the new time series (represented by the orange dots). More importantly, we see that the distribution of the simulated time series (represented by the green dots and yellow dots - the yellow dots are a subset of the simulated series as mentioned above) clearly nests and fills in the space of the new time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This strongly indicates that we have not reduced the feature diversity from the observed sample. Our approach of augmenting the observed time series with simulated data is successful. By augmenting the observed series with simulated time series, we are able to increase the diversity and evenness of the feature space in the reference sets.
+The plots show that the distribution of the observed time series over the PCA space (represented by the black dots) is very similar to that of the new time series (represented by the orange dots). More importantly, we see that the distribution of the simulated time series (represented by the green dots and yellow dots - the yellow dots are a subset of the simulated series as mentioned above) clearly nests and fills in the space of the new time series. Further, in both experiments, all the *observed time series* fall within the space of all simulated data. This strongly indicates that we have not reduced the feature diversity from the observed sample. Our approach of augmenting the observed time series with simulated data is successful. By augmenting the observed series with simulated time series, we are able to increase the diversity and evenness of the feature space in the reference sets.
 
 We compare the accuracy of the forecasts generated from the FFORMS framework to the following commonly-used forecasting methods:
 
@@ -509,7 +501,7 @@ In addition to our new FFORMS framework, we have also introduced a simple set of
 \textcolor{red}{Not sure about this one ---We have not compared the computation time between applying our proposed framework and the benchmark methods. However, for real-time forecasting, our framework involves only the calculation of features, the selection of a forecast method based on the FFORMS random forest classifier, and the calculation of the forecasts from the chosen model. None of these steps involve substantial computation and can be easily parallelised when forecasting for a large number of new time series. For future work, we will explore the use of other classification algorithms within the FFORMS algorithm, and test our approach on several other large collections of time series.}
  
 
-#Appendix: Definition of features {-}
+# Appendix: Definition of features {-}
 
 ### Length of time series {-}
 
@@ -604,5 +596,3 @@ We calculate the first-order autocorrelation coefficient and the sum of squares 
 A linear trend model is fitted to the time series, and the first-order autocorrelation coefficient of the residual series is calculated. 
 
 We calculate the sum of squares of first five partial autocorrelation coefficients of the original series, the first-differenced series and the second-differenced series.
-
-#References
