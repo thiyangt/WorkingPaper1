@@ -521,7 +521,7 @@ The linearity and curvature features are based on the coefficients of an orthogo
 \]
 where $t=1, 2, \dots,T$, and $\phi_1$ and $\phi_2$ are orthogonal polynomials of orders 1 and 2. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. These features were used by @hyndman2015large.
 
-\todo[inline]{The linearity and curvature will depend on the scale of the time series. It didn't matter for the Yahoo data because they were all the same scale. We will need to adjust the features to make them scale-free. One possibility is to scale $T_t$ to [0,1].}
+\todo[inline]{The linearity and curvature will depend on the scale of the time series. It didn't matter for the Yahoo data because they were all the same scale. We will need to adjust the features to make them scale-free. One possibility is to scale $T_t$ and $t$ to [0,1] before computing them.}
 
 The spikiness feature is useful when a time series is affected by occasional outliers. @hyndman2015large introduced an index to measure spikiness, computed as the variance of the leave-one-out variances of $r_t$.
 
