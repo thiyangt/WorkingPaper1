@@ -303,10 +303,10 @@ Random forest, Algorithm selection problem, Classsification},
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}{Lemma}[section]
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
 \newtheorem{corollary}{Corollary}[section]
 \newtheorem{proposition}{Proposition}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 \theoremstyle{definition}
 \newtheorem{example}{Example}[section]
 \theoremstyle{definition}
@@ -698,18 +698,18 @@ aspects of the offline phase.
          \Statex \hspace{1cm}$B:$ number of trees in the random forest.
          \Statex \hspace{1cm}$f:$ number of features to be selected at each node.
      \Statex \text{Output:}
-      \Statex \hspace{1cm}\text{FFORMS classifier} 
+      \Statex \hspace{1cm}\text{FFORMS classifier}
       \Statex
      \Statex \textit{Prepare the reference set}
     \Statex For $i=1$ to $n$:
             \State Fit ARIMA and ETS models to $x_i$.
             \State Simulate $nsim$ time series from each model in step 1.
             \State The time series in $O$ and simulated time series in step 2 form the reference set $R=\{x_1, x_2, \dots,x_n, x_{n+1},\dots,x_N\}$ where $N = n + nsim$.
-    \Statex 
+    \Statex
     \Statex \textit{Prepare the meta-data}
     \Statex For $j=1$ to $N$:
             \State Split $x_j$ into a training period and test period.
-            \State Calculate features $F$ based on the training period. 
+            \State Calculate features $F$ based on the training period.
             \State Fit $L$ models to the training period.
             \State Calculate forecasts for the test period from each model.
             \State Calculate forecast error measure over the test period for all models in $L$.
@@ -718,7 +718,7 @@ aspects of the offline phase.
      \Statex
     \Statex \textit{Train a random forest classifier}
             \State Train a random forest classifier based on the meta-data.
-            \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}. 
+            \State {Random forest: the ensemble of trees $\{T_b\}_1^B$}.
     \Statex
      \Statex \textbf{Online phase - forecast a new time series}
     \Statex \text{Given:}
@@ -959,7 +959,7 @@ summarized in \autoref{feature}, and fully described in the Appendix.
 \label{feature}
 \begin{tabular}{llp{8,8cm}cc}
 \toprule
-\multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\ 
+\multicolumn{2}{c}{Feature} & Description & Non-seasonal & Seasonal\\
 \midrule
 1  & T              & length of time series                                                                   & \yes  & \yes \\
 2  & trend          & strength of trend                                                                       & \yes  & \yes\\
@@ -1228,11 +1228,11 @@ series.
 
 A major advantage of the FFORMS framework is that the classifier is
 trained offline and selecting a forecasting model for a new time series
-is as instantaneous as calculating a set of features and passing these
-to the pretrained classifier. Therefore, unlike traditional model
-selection strategies or cross-validation processes, our proposed
-framework can be used to accurately forecast very large collections of
-time series requiring almost instant forecasts.
+is as fast as calculating a set of features and passing these to the
+pretrained classifier. Therefore, unlike traditional model selection
+strategies or cross-validation processes, our proposed framework can be
+used to accurately forecast very large collections of time series
+requiring almost instant forecasts.
 
 In addition to our new FFORMS framework, we have also introduced a
 simple set of time series features that are useful in identifying the
@@ -1244,9 +1244,9 @@ further without the loss of forecast accuracy.
 For real-time forecasting, our framework involves only the calculation
 of features, the selection of a forecast method based on the FFORMS
 random forest classifier, and the calculation of the forecasts from the
-chosen model. None of these steps involve substantial computation and
-can be easily parallelised when forecasting for a large number of new
-time series. For future work, we will explore the use of other
+chosen model. None of these steps involve substantial computation, and
+they can be easily parallelised when forecasting for a large number of
+new time series. For future work, we will explore the use of other
 classification algorithms within the FFORMS algorithm, and test our
 approach on several other large collections of time series.
 
@@ -1259,13 +1259,13 @@ features}\label{appendix-definition-of-features}}
 \subsubsection*{Length of time series}\label{length-of-time-series}}
 \addcontentsline{toc}{subsubsection}{Length of time series}
 
-The appropriate forecast-method for a time series depends on how many
+The appropriate forecast method for a time series depends on how many
 observations are available. For example, shorter series tend to need
-simple models such as random walk, naive method. On the other hand, for
-longer time series, we have enough information to be able to estimate a
-number of parameters. For even longer series (over 200 observations),
-models with time-varying parameters give good forecasts as they help to
-capture the inner structural changes of the model.
+simple models such as a random walk. On the other hand, for longer time
+series, we have enough information to be able to estimate a number of
+parameters. For even longer series (over 200 observations), models with
+time-varying parameters give good forecasts as they help to capture the
+changes of the model over time.
 
 \hypertarget{features-based-on-an-stl-decomposition}{%
 \subsubsection*{Features based on an
@@ -1276,40 +1276,44 @@ STL-decomposition}
 The strength of trend, strength of seasonality, linearity, curvature,
 spikiness and first autocorrelation coefficient of the remainder series,
 are calculated based on a decomposition of the time series. Suppose we
-denote our time series as \(y_1, y_2, \dots,y_T\). First, a Box-Cox
-transformation is applied to the time series in order to to stabilize
-the variance and to make the seasonal effect additive. The transformed
-series is denoted by \(y_{t}^*\). For quarterly and monthly data, this
-is decomposed using STL \autocite{cleveland1990stl} to give
-\(y_t^*=T_t+S_t+E_t\), where \(T_t\) denotes the trend, \(S_t\) denotes
-the seasonal component, and \(E_t\) is the remainder component. For
-non-seasonal data, Friedman's super smoother \autocite{supsmu} is used
-to decompose \(y_t^*=T_t+E_t\), and \(S_t=0\) for all \(t\). The
-de-trended series is \(x_t=y_t^*-T_t\), the deseasonalized series is
-\(z_t=y_t^*-S_t\), and the remainder series is \(r_t=y_t^*-T_t-S_t\).
+denote our time series as \(y_1, y_2, \dots,y_T\). First, an automated
+Box-Cox transformation \autocite{Guerrero1993} is applied to the time
+series in order to stabilize the variance and to make the seasonal
+effect additive. The transformed series is denoted by \(y_{t}^*\). For
+quarterly and monthly data, this is decomposed using STL
+\autocite{cleveland1990stl} to give \(y_t^*=T_t+S_t+R_t\), where \(T_t\)
+denotes the trend, \(S_t\) denotes the seasonal component, and \(R_t\)
+is the remainder component. For non-seasonal data, Friedman's super
+smoother \autocite{supsmu} is used to decompose \(y_t^*=T_t+R_t\), and
+\(S_t=0\) for all \(t\). The de-trended series is \(y_t^*-T_t=S_t+R_t\),
+the deseasonalized series is \(y_t^*-S_t = T_t+R_t\)..
 
 The strength of trend is measured by comparing the variance of the
-de-trended series and the original series \autocite{wang2009rule}: \[
-    \text{Trend} = \text{max}\left[0, 1 - \var(r_{t})/\var(z_{t})\right].
+deseasonalized series and the remainder series \autocite{wang2009rule}:
+\[
+    \text{Trend} = \text{max}\left[0, 1 - \var(R_{t})/\var(T_t+R_t)\right].
 \] Similarly, the strength of seasonality is computed as \[
-    \text{Seasonality} = \text{max}\left[0, 1- \var(r_{t})/ \var(x_{t})\right].
+    \text{Seasonality} = \text{max}\left[0, 1- \var(R_{t})/ \var(S_t+R_t)\right].
 \]
 
-The linearity and curvature features are based on the coefficients of a
-quadratic regression \[
-  T_t=\beta_0+\beta_1 t + \beta_2t^2+\epsilon_t,
-\] where \(t=1, 2, \dots,T\). The estimated value of \(\beta_1\) is used
-as a measure of linearity while the estimated value of \(\beta_2\) is
-considered as a measure of curvature. These features were used by
-\textcite{hyndman2015large}.
+The linearity and curvature features are based on the coefficients of an
+orthogonal quadratic regression \[
+  T_t=\beta_0+\beta_1 \phi_1(t) + \beta_2\phi_2(t) + \varepsilon_t,
+\] where \(t=1, 2, \dots,T\), and \(\phi_1\) and \(\phi_2\) are
+orthogonal polynomials of orders 1 and 2. The estimated value of
+\(\beta_1\) is used as a measure of linearity while the estimated value
+of \(\beta_2\) is considered as a measure of curvature. These features
+were used by \textcite{hyndman2015large}.
+
+\todo[inline]{The linearity and curvature will depend on the scale of the time series. It didn't matter for the Yahoo data because they were all the same scale. We will need to adjust the features to make them scale-free. One possibility is to scale $T_t$ to [0,1].}
 
 The spikiness feature is useful when a time series is affected by
 occasional outliers. \textcite{hyndman2015large} introduced an index to
 measure spikiness, computed as the variance of the leave-one-out
-variances of \(E_t\).
+variances of \(r_t\).
 
 We compute the first autocorrelation coefficient of the remainder
-series, \(E_t\).
+series, \(r_t\).
 
 \hypertarget{stability-and-lumpiness}{%
 \subsubsection*{Stability and lumpiness}\label{stability-and-lumpiness}}
@@ -1332,7 +1336,7 @@ forecast should have a small spectral entropy value, while very noisy
 series will have a large spectral entropy. We use the measure introduced
 by \textcite{goerg2013forecastable} to estimate the spectral entropy. It
 estimates the Shannon entropy of the spectral density of the normalized
-spectral density, given by \[ 
+spectral density, given by \[
   H_{s}(y_t):=-\int_{-\pi}^{\pi}\hat f_y(\lambda)\log \hat f_y({\lambda})d\lambda,
 \] where \(\hat{f}_y\) denotes the estimate of the spectral density
 introduced by \textcite{nuttall1982spectral}. The R package ForeCA
@@ -1367,26 +1371,29 @@ model}
 
 The ETS(A,A,N) model \autocite{expsmooth08} produces equivalent
 forecasts to Holt's linear trend method, and can be expressed as
-follows:\vspace*{-.9cm} \begin{align*}
+follows: \begin{align*}
   y_t    & = \ell_{t-1}+b_{t-1}+\varepsilon_t\\
   \ell_t & = \ell_{t-1}+b_{t-1}+\alpha \varepsilon_t\\
-  b_t    & = b_{t-1}+\beta \varepsilon_t,\vspace*{-0.99cm}
+  b_t    & = b_{t-1}+\beta \varepsilon_t,
 \end{align*} where \(\alpha\) is the smoothing parameter for the level,
 and \(\beta\) is the smoothing parameter for the trend. We include the
 parameter estimates of both \(\alpha\) and \(\beta\) in our feature set
-for yearly time series.
+for yearly time series. These indicate the variability in the level and
+slope of the time series.
 
 The ETS(A,A,A) model \autocite{expsmooth08} produces equivalent
 forecasts to Holt-Winters' additive method, and can be expressed as
-follows:\vspace*{-.9cm} \begin{align*}
+follows: \begin{align*}
   y_t    & = \ell_{t-1}+b_{t-1}+s_{t-m}+\varepsilon_t\\
   \ell_t & = \ell_{t-1}+b_{t-1}+s_{t-m}+\alpha \varepsilon_t\\
   b_t    & = b_{t-1}+\beta \varepsilon_t,\\
-  s_t &= s_{t-m} + \gamma\varepsilon_t,\vspace*{-0.99cm}
+  s_t &= s_{t-m} + \gamma\varepsilon_t,
 \end{align*} where \(\gamma\) is the smoothing parameter for the
 seasonal component, and the other parameters are as above. We include
 the parameter estimates of \(\alpha\), \(\beta\) and \(\gamma\) in our
-feature set for monthly and quarterly time series.
+feature set for monthly and quarterly time series. The value of
+\(\gamma\) provides a measure for the variability of the seasonality of
+a time series.
 
 \hypertarget{unit-root-test-statistics}{%
 \subsubsection*{Unit root test
@@ -1394,22 +1401,20 @@ statistics}\label{unit-root-test-statistics}}
 \addcontentsline{toc}{subsubsection}{Unit root test statistics}
 
 The Phillips-Perron test is based on the regression
-\(y_t=\alpha+(\phi)y_{t-1}+ \epsilon_t\). The test statistic we use as a
-feature is \[
-  Z = T(\hat{\phi}-1)- T^2\text{se}(\hat{\phi})(\hat{\lambda}^2-\hat{\sigma^2})/2\hat\sigma^2,
-\] where \(\hat\sigma^2= T^{-1}\sum_{t=1}^{T} \hat\epsilon_t^2\),
-\(\hat\lambda^2=T^{-1} \sum_{t=1}^{T} S_T^2\), and
-\(S_T = \sum_{t=1}^{T}\hat\epsilon_t\).
+\(y_t= c + \alpha y_{t-1}+ \varepsilon_t\). The test statistic we use as
+a feature is the usual ``Z-alpha'' statistic with the Bartlett window
+parameter set to the integer value of \(4(T/100)^{0.25}\)
+\autocite{Pfaff2008}. This is the default value returned from the
+\texttt{ur.pp()} function in the \texttt{urca} package
+\autocite{pfaff2016package}.
 
 The KPSS test is based on the regression
-\(y_t=c+\delta t+\phi y_{t-1}+\epsilon_t\). The test statistic we use as
-a feature is \[
-  Z= \hat{\sigma}^{-2} T^{-2}\sum_{t=1}^{T}S_t^2,
-\] where \(S_t=\sum_{j=1}^T\hat{\epsilon}_j\), and
-\(\hat{\sigma}^2 = T^{-1}\sum_{t=1}^{T} \hat\epsilon_t^2\).
-
-Features based on unit root tests are calculated using the \texttt{urca}
-package \autocite{pfaff2016package}.
+\(y_t=c+\delta t+\alpha y_{t-1}+\varepsilon_t\). The test statistic we
+use as a feature is the usual KPSS statistic with the Bartlett window
+parameter set to the integer value of \(4(T/100)^{0.25}\)
+\autocite{Pfaff2008}. This is the default value returned from the
+\texttt{ur.kpss()} function in the \texttt{urca} package
+\autocite{pfaff2016package}.
 
 \hypertarget{autocorrelation-coefficient-based-features}{%
 \subsubsection*{Autocorrelation coefficient based
@@ -1425,9 +1430,9 @@ the seasonally differenced series (for seasonal data).
 A linear trend model is fitted to the time series, and the first-order
 autocorrelation coefficient of the residual series is calculated.
 
-We calculate the sum of squares of first five partial autocorrelation
-coefficients of the original series, the first-differenced series and
-the second-differenced series.
+We calculate the sum of squares of the first five partial
+autocorrelation coefficients of the original series, the
+first-differenced series and the second-differenced series.
 
 \printbibliography
 
