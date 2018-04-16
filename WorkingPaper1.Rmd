@@ -430,7 +430,7 @@ We compare the accuracy of the forecasts generated from the FFORMS framework to 
   4. Random walk model (RW);
   5. White noise process (WN);
   6. Theta method;
-  7. STL-AR method;
+  7. STL-AR method (for seasonal data);
   8. seasonal naive (for seasonal data).
 
 The automated ARIMA and ETS algorithms are implemented using the `auto.arima` and `ets` functions available in the forecast package in R. Each method is implemented on the training period of the new series and forecasts are computed for the full length of the test period. This follows closely the forecast evaluation process implemented in the M1 and M3 forecasting competitions. The MASE is computed for each forecast horizon, by averaging the absolute scaled forecast errors across all series. The rank is calculated by averaging the ranks of each competing method across all forecast horizons and series. The results are presented in Table \ref{masetab}. The lowest MASE and average rank values corresponding to the best performing method are presented in bold font.
