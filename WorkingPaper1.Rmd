@@ -285,7 +285,7 @@ The candidate models we consider as class labels for the annual series are:
   (a) ETS with trend component and without seasonal component;
   (a) ETS with damped trend component and without seasonal component;
 
-In addition to the above ten labels, we further include the following five class labels for both quarterly and monthly data:
+In addition to the above nine labels, we further include the following six class labels for both quarterly and monthly data:
 
   (j) STL-AR;
   (j) ETS with trend and seasonal components
