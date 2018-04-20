@@ -303,10 +303,10 @@ Random forest, Algorithm selection problem, Classsification},
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}{Lemma}[section]
-\newtheorem{corollary}{Corollary}[section]
-\newtheorem{proposition}{Proposition}[section]
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
 \theoremstyle{definition}
 \newtheorem{example}{Example}[section]
 \theoremstyle{definition}
@@ -333,8 +333,7 @@ FFORMS (Feature-based FORecast-model Selection), Time series features,
 Random forest, Algorithm selection problem, Classsification
 \end{keywords}
 
-\hypertarget{intro}{%
-\section{Introduction}\label{intro}}
+\section{Introduction}\label{intro}
 
 Forecasting is a key activity for any business to operate efficiently.
 The rapid advances in computing technologies have enabled businesses to
@@ -410,11 +409,9 @@ detailed components and procedures of our proposed framework for
 forecast-model selection. In \autoref{Mcomp} we present the results,
 followed by the conclusions and future work in \autoref{discussion}.
 
-\hypertarget{litreview}{%
-\section{Literature review}\label{litreview}}
+\section{Literature review}\label{litreview}
 
-\hypertarget{time-series-features}{%
-\subsection{Time series features}\label{time-series-features}}
+\subsection{Time series features}\label{time-series-features}
 
 Rather than work with the time series directly at the level of
 individual observations, we propose analysing time series via an
@@ -464,9 +461,8 @@ independent of the length of the time series (i.e., they are ergodic).
 As our main focus is forecasting, we select features which have
 discriminatory power in selecting a good model for forecasting.
 
-\hypertarget{what-makes-features-useful-for-forecast-model-selection}{%
 \subsection{What makes features useful for forecast-model
-selection?}\label{what-makes-features-useful-for-forecast-model-selection}}
+selection?}\label{what-makes-features-useful-for-forecast-model-selection}
 
 \textcite{reid1972comparison} points out that the performance of
 forecasting methods changes according to the nature of the data.
@@ -498,9 +494,8 @@ strength of trend, strength of seasonality, seasonal period and the
 optimal Box-Cox transformation parameter. They also proposed a method
 for generating new time series based on specified features.
 
-\hypertarget{meta-learning-for-algorithm-selection}{%
 \subsection{Meta-learning for algorithm
-selection}\label{meta-learning-for-algorithm-selection}}
+selection}\label{meta-learning-for-algorithm-selection}
 
 John Rice was an early and strong proponent of the idea of
 meta-learning, which he called the algorithm selection problem (ASP)
@@ -538,9 +533,8 @@ from the feature space to the algorithm space. Even though Rice's
 framework articulates a conceptually rich framework, it does not specify
 how to obtain \(S\). This gives rise to the meta-learning approach.
 
-\hypertarget{forecast-model-selection-using-meta-learning}{%
 \subsection{Forecast-model selection using
-meta-learning}\label{forecast-model-selection-using-meta-learning}}
+meta-learning}\label{forecast-model-selection-using-meta-learning}
 
 Selecting models for forecasting can be framed according to Rice's ASP
 framework.
@@ -639,8 +633,7 @@ seasonal, seasonal-trend and trend exponential smoothing. The mapping
 evaluated the performance of different sets of features for
 forecast-model selection.
 
-\hypertarget{methodology}{%
-\section{Methodology}\label{methodology}}
+\section{Methodology}\label{methodology}
 
 Our proposed FFORMS framework, presented in \autoref{fig:framework},
 builds on this preceding research. The offline and online phases are
@@ -730,9 +723,8 @@ aspects of the offline phase.
    \end{algorithmic}
 \end{algorithm}
 
-\hypertarget{simulatingseries}{%
 \subsection{Augmenting the observed sample with simulated time
-series}\label{simulatingseries}}
+series}\label{simulatingseries}
 
 In practice, we may wish to augment the set of observed time series by
 simulating new time series similar to those in the assumed population.
@@ -752,8 +744,7 @@ population. As this is done in the offline phase of the algorithm the
 computational time in producing these simulated series is of no real
 consequence.
 
-\hypertarget{input-features}{%
-\subsection{Input: features}\label{input-features}}
+\subsection{Input: features}\label{input-features}
 
 Our proposed FFORMS algorithm requires features that enable
 identification of a suitable forecast model for a given time series.
@@ -771,8 +762,7 @@ selection or cross-validation procedure. Therefore, we consider only
 features that can be computed rapidly, as this computation must be done
 during the online phase.
 
-\hypertarget{output-labels}{%
-\subsection{Output: labels}\label{output-labels}}
+\subsection{Output: labels}\label{output-labels}
 
 The task of the classification algorithm is to identify the ``best''
 forecasting method for a given time series. It is not possible to train
@@ -800,8 +790,7 @@ The more candidate models that are considered as labels, the more
 computational time is required; however the pay-off could be significant
 gains in forecast accuracy.
 
-\hypertarget{random-forest-algorithm}{%
-\subsection{Random forest algorithm}\label{random-forest-algorithm}}
+\subsection{Random forest algorithm}\label{random-forest-algorithm}
 
 A random forest \autocite{breiman2001random} is an ensemble learning
 method that combines a large number of decision trees using a two-step
@@ -827,8 +816,7 @@ the randomForest package \autocites{liaw2002randomforest}{rfpkg} which
 implements the Fortran code for random forest classification by
 \textcite{breiman2004random}.
 
-\hypertarget{Mcomp}{%
-\section{Application to the M competition data}\label{Mcomp}}
+\section{Application to the M competition data}\label{Mcomp}
 
 To test how well our proposed framework can identify suitable models for
 forecasting, we use the yearly, quarterly and monthly series from the M1
@@ -874,8 +862,7 @@ meta-database contains two main components: (i) identification of the
 candidate forecast models as output labels and (ii) computation of
 features.
 
-\hypertarget{sec:labels}{%
-\subsection{Identifying output labels}\label{sec:labels}}
+\subsection{Identifying output labels}\label{sec:labels}
 
 The candidate models we consider as class labels for the annual series
 are:
@@ -904,8 +891,8 @@ are:
   ETS with damped trend component and without seasonal component;
 \end{enumerate}
 
-In addition to the above ten labels, we further include the following
-five class labels for both quarterly and monthly data:
+In addition to the above nine labels, we further include the following
+six class labels for both quarterly and monthly data:
 
 \begin{enumerate}
 \def\labelenumi{(\alph{enumi})}
@@ -942,8 +929,7 @@ the smallest MASE \autocite{hyndman2006another} calculated over the test
 period is selected as the ``best model'' and forms the \emph{output
 label} for that series.
 
-\hypertarget{sec:features}{%
-\subsection{Feature computation process}\label{sec:features}}
+\subsection{Feature computation process}\label{sec:features}
 
 We use a set of 25 features for yearly data and a set of 30 features for
 seasonal data. Some of these are taken from previous studies
@@ -1017,8 +1003,7 @@ may have similar feature spaces.
 \caption{ Correlation matrix plots for the reference sets.}\label{fig:cormatplots}
 \end{figure}
 
-\hypertarget{model-calibration}{%
-\subsection{Model calibration}\label{model-calibration}}
+\subsection{Model calibration}\label{model-calibration}
 
 The random forest (RF) algorithm is highly sensitive to class imbalance
 \autocite{breiman2001random}, and our reference set is unbalanced: some
@@ -1050,8 +1035,7 @@ whether the classifier picks one model over the other. Therefore we
 report the forecast accuracy obtained from the FFORMS framework, rather
 than the classification accuracy.
 
-\hypertarget{sec:results}{%
-\subsection{Summary of the main results}\label{sec:results}}
+\subsection{Summary of the main results}\label{sec:results}
 
 We build separate RF classifiers for yearly data, quarterly data and
 monthly data. For the second experiment (for which data from the M3
@@ -1129,7 +1113,7 @@ framework to the following commonly-used forecasting methods:
 \item
   Theta method;
 \item
-  STL-AR method;
+  STL-AR method (for seasonal data);
 \item
   seasonal naive (for seasonal data).
 \end{enumerate}
@@ -1157,15 +1141,14 @@ font.
                      &                              \multicolumn{ 5}{c}{Experiment 1: new series M3} &            &                              \multicolumn{ 5}{c}{Experiment 2: new series M1} \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
                      &                                    \multicolumn{ 5}{c}{Yearly} &            &                                    \multicolumn{ 5}{c}{Yearly} \\
                      &   $h=1$    &    $1-2$   &     $1-4$  &     $1-6$  &      Rank  &            &     $h=1$  &    $1-2$   &     $1-4$  &     $1-6$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-RF-unbalanced        &       1.06 &       1.42 &       2.20 &       2.85 &       3.83 &            & {\bf 0.97} & {\bf 1.39} &       2.42 &       3.37 &        1.83 \\
-RF-class priors      & {\bf 1.03} &       1.37 &       2.14 &       2.77 &       2.33 &            &       1.02 &       1.40 & {\bf 2.40} & {\bf 3.33} & {\bf 1.16} \\
-auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &       6.66 &            &       1.06 &       1.47 &       2.51 &       3.47 &       3.33 \\
-ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.50 &            &       1.12 &       1.59 &       2.72 &       3.77 &       6.00 \\
-WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       9.00 \\
-RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       8.00 \\
-RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.16} &            &       1.04 &       1.44 &       2.51 &       3.49 &       4.16 \\
-STL-AR               &       1.09 &       1.47 &       2.27 &       2.95 &       6.00 &            &       1.10 &       1.51 &       2.55 &       3.52 &       4.50 \\
-Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       3.50 &            &       1.15 &       1.70 &       3.00 &       4.19 &       7.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       1.06 &       1.40 &       2.17 &       2.82 &       3.50 &            & {\bf 0.98} & {\bf 1.40} &       {\bf 2.43} &       3.39 &        {\bf 1.50} \\
+RF-class priors      & 1.04 &       1.38 &       2.15 &       2.79 &       2.50 &            &       1.01 &       {\bf 1.40} & {\bf 2.43} & {\bf 3.38} & {\bf 1.50} \\
+auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &       5.83 &            &       1.06 &       1.47 &       2.51 &       3.47 &       3.33 \\
+ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.67 &            &       1.12 &       1.59 &       2.72 &       3.77 &       5.00 \\
+WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       8.00 \\
+RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       7.00 \\
+RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.00} &            &       1.04 &       1.44 &       2.51 &       3.49 &       3.67 \\
+Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       3.50 &            &       1.15 &       1.70 &       3.00 &       4.19 &       6.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
            &                                 \multicolumn{ 5}{c}{Quarterly} &            &                                 \multicolumn{ 5}{c}{Quarterly} \\
                      &    $h=1$   &    $1-4$   &     $1-6$  &     $1-8$  &      Rank  &            &     $h=1$  &    $1-4$   &     $1-6$  &     $1-8$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
 RF-unbalanced        &       0.59 & {\bf 0.81} & {\bf 0.97} &       1.12 & {\bf 2.25} &            & {\bf 0.74} & {\bf 1.08} & {\bf 1.35} & {\bf 1.57} & {\bf 1.00} \\
@@ -1211,8 +1194,7 @@ indicates that the meta-learning algorithm benefits from being trained
 on the larger observed sample of time series (M3 series) while
 forecasting a smaller new set (M1 series).
 
-\hypertarget{discussion}{%
-\section{Discussion and conclusions}\label{discussion}}
+\section{Discussion and conclusions}\label{discussion}
 
 In this paper we have proposed a novel framework for forecast-model
 selection using meta-learning based on time series features. Our
@@ -1250,13 +1232,11 @@ new time series. For future work, we will explore the use of other
 classification algorithms within the FFORMS algorithm, and test our
 approach on several other large collections of time series.
 
-\hypertarget{appendix-definition-of-features}{%
 \section*{Appendix: Definition of
-features}\label{appendix-definition-of-features}}
+features}\label{appendix-definition-of-features}
 \addcontentsline{toc}{section}{Appendix: Definition of features}
 
-\hypertarget{length-of-time-series}{%
-\subsubsection*{Length of time series}\label{length-of-time-series}}
+\subsubsection*{Length of time series}\label{length-of-time-series}
 \addcontentsline{toc}{subsubsection}{Length of time series}
 
 The appropriate forecast method for a time series depends on how many
@@ -1267,9 +1247,8 @@ parameters. For even longer series (over 200 observations), models with
 time-varying parameters give good forecasts as they help to capture the
 changes of the model over time.
 
-\hypertarget{features-based-on-an-stl-decomposition}{%
 \subsubsection*{Features based on an
-STL-decomposition}\label{features-based-on-an-stl-decomposition}}
+STL-decomposition}\label{features-based-on-an-stl-decomposition}
 \addcontentsline{toc}{subsubsection}{Features based on an
 STL-decomposition}
 
@@ -1304,8 +1283,7 @@ orthogonal polynomials of orders 1 and 2. The estimated value of
 \(\beta_1\) is used as a measure of linearity while the estimated value
 of \(\beta_2\) is considered as a measure of curvature. These features
 were used by \textcite{hyndman2015large}.
-
-\todo[inline]{The linearity and curvature will depend on the scale of the time series. It didn't matter for the Yahoo data because they were all the same scale. We will need to adjust the features to make them scale-free. One possibility is to scale $T_t$ and $t$ to [0,1] before computing them.}
+\textcolor{red}{The linearity and curvature depend on the the scale of the time series. Therefore, the time series are scaled to mean zero and variance one before these two features are computed.}
 
 The spikiness feature is useful when a time series is affected by
 occasional outliers. \textcite{hyndman2015large} introduced an index to
@@ -1315,8 +1293,7 @@ variances of \(r_t\).
 We compute the first autocorrelation coefficient of the remainder
 series, \(r_t\).
 
-\hypertarget{stability-and-lumpiness}{%
-\subsubsection*{Stability and lumpiness}\label{stability-and-lumpiness}}
+\subsubsection*{Stability and lumpiness}\label{stability-and-lumpiness}
 \addcontentsline{toc}{subsubsection}{Stability and lumpiness}
 
 The features ``stability'' and ``lumpiness'' are calculated based on
@@ -1325,9 +1302,8 @@ mean and variance are calculated. The stability feature is calculated as
 the variance of the means, while lumpiness is the variance of the
 variances. These were first used by \textcite{hyndman2015large}.
 
-\hypertarget{spectral-entropy-of-a-time-series}{%
 \subsubsection*{Spectral entropy of a time
-series}\label{spectral-entropy-of-a-time-series}}
+series}\label{spectral-entropy-of-a-time-series}
 \addcontentsline{toc}{subsubsection}{Spectral entropy of a time series}
 
 Spectral entropy is based on information theory, and can be used as a
@@ -1342,8 +1318,7 @@ spectral density, given by \[
 introduced by \textcite{nuttall1982spectral}. The R package ForeCA
 \autocite{Foreca} was used to compute this measure.
 
-\hypertarget{hurst-exponent}{%
-\subsubsection*{Hurst exponent}\label{hurst-exponent}}
+\subsubsection*{Hurst exponent}\label{hurst-exponent}
 \addcontentsline{toc}{subsubsection}{Hurst exponent}
 
 The Hurst exponent measures the long-term memory of a time series. The
@@ -1353,8 +1328,7 @@ this using the maximum likelihood method \autocite{haslett1989space} as
 implemented in the fracdiff package \autocite{fracdiff}. This measure
 was also used in \textcite{wang2009rule}.
 
-\hypertarget{nonlinearity}{%
-\subsubsection*{Nonlinearity}\label{nonlinearity}}
+\subsubsection*{Nonlinearity}\label{nonlinearity}
 \addcontentsline{toc}{subsubsection}{Nonlinearity}
 
 To measure the degree of nonlinearity of the time series, we use
@@ -1363,41 +1337,46 @@ statistic computed in Terasvirta's neural network test for nonlinearity
 large values when the series is nonlinear, and values around 0 when the
 series is linear.
 
-\hypertarget{parameter-estimates-of-an-ets-model}{%
 \subsubsection*{Parameter estimates of an ETS
-model}\label{parameter-estimates-of-an-ets-model}}
+model}\label{parameter-estimates-of-an-ets-model}
 \addcontentsline{toc}{subsubsection}{Parameter estimates of an ETS
 model}
 
 The ETS(A,A,N) model \autocite{expsmooth08} produces equivalent
 forecasts to Holt's linear trend method, and can be expressed as
-follows: \begin{align*}
+follows:
+
+\begin{align*}
   y_t    & = \ell_{t-1}+b_{t-1}+\varepsilon_t\\
   \ell_t & = \ell_{t-1}+b_{t-1}+\alpha \varepsilon_t\\
   b_t    & = b_{t-1}+\beta \varepsilon_t,
-\end{align*} where \(\alpha\) is the smoothing parameter for the level,
-and \(\beta\) is the smoothing parameter for the trend. We include the
-parameter estimates of both \(\alpha\) and \(\beta\) in our feature set
-for yearly time series. These indicate the variability in the level and
-slope of the time series.
+\end{align*}
+
+where \(\alpha\) is the smoothing parameter for the level, and \(\beta\)
+is the smoothing parameter for the trend. We include the parameter
+estimates of both \(\alpha\) and \(\beta\) in our feature set for yearly
+time series. These indicate the variability in the level and slope of
+the time series.
 
 The ETS(A,A,A) model \autocite{expsmooth08} produces equivalent
 forecasts to Holt-Winters' additive method, and can be expressed as
-follows: \begin{align*}
+follows:
+
+\begin{align*}
   y_t    & = \ell_{t-1}+b_{t-1}+s_{t-m}+\varepsilon_t\\
   \ell_t & = \ell_{t-1}+b_{t-1}+s_{t-m}+\alpha \varepsilon_t\\
   b_t    & = b_{t-1}+\beta \varepsilon_t,\\
   s_t &= s_{t-m} + \gamma\varepsilon_t,
-\end{align*} where \(\gamma\) is the smoothing parameter for the
-seasonal component, and the other parameters are as above. We include
-the parameter estimates of \(\alpha\), \(\beta\) and \(\gamma\) in our
-feature set for monthly and quarterly time series. The value of
-\(\gamma\) provides a measure for the variability of the seasonality of
-a time series.
+\end{align*}
 
-\hypertarget{unit-root-test-statistics}{%
+where \(\gamma\) is the smoothing parameter for the seasonal component,
+and the other parameters are as above. We include the parameter
+estimates of \(\alpha\), \(\beta\) and \(\gamma\) in our feature set for
+monthly and quarterly time series. The value of \(\gamma\) provides a
+measure for the variability of the seasonality of a time series.
+
 \subsubsection*{Unit root test
-statistics}\label{unit-root-test-statistics}}
+statistics}\label{unit-root-test-statistics}
 \addcontentsline{toc}{subsubsection}{Unit root test statistics}
 
 The Phillips-Perron test is based on the regression
@@ -1416,9 +1395,8 @@ parameter set to the integer value of \(4(T/100)^{0.25}\)
 \texttt{ur.kpss()} function in the \texttt{urca} package
 \autocite{pfaff2016package}.
 
-\hypertarget{autocorrelation-coefficient-based-features}{%
 \subsubsection*{Autocorrelation coefficient based
-features}\label{autocorrelation-coefficient-based-features}}
+features}\label{autocorrelation-coefficient-based-features}
 \addcontentsline{toc}{subsubsection}{Autocorrelation coefficient based
 features}
 
