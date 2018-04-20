@@ -30,9 +30,9 @@ rank_yearly_rf <- function(predictions, tsList, h){ # h=6
     } else if (predictions[i] == "Random Walk with Drift") { 
       fit_rwd <- rwf(training, drift = TRUE)
       fcast <- forecast(fit_rwd,h)$mean[1:h]
-    } else if (predictions[i] == "STL-AR") { 
-      STLAR <- stlar(training,h=h)
-      fcast <- forecast(STLAR,h)$mean
+ #   } else if (predictions[i] == "STL-AR") { 
+ #      STLAR <- stlar(training,h=h)
+ #      fcast <- forecast(STLAR,h)$mean
     } else if (predictions[i] == "Theta") {
       if (m > 1){
         # using stheta method with seasonal adjustment
@@ -155,7 +155,7 @@ rank_benchmark <- function(tsList, h, m){ # for quarterly=4, monthly=12
   mase_stlar <- matrix(NA, total_ts, h)
   mase_theta <- matrix(NA, total_ts, h)
 
-  if (m==1){Nrow=7
+  if (m==1){Nrow=6
   } else{
     Nrow=8
     mase_snaive <- matrix(NA, total_ts, h)}
@@ -187,11 +187,7 @@ rank_benchmark <- function(tsList, h, m){ # for quarterly=4, monthly=12
     fcast_rwd <- forecast(fit_rwd,h)$mean[1:h]
     mase_rwd[i,1:h] <- abs(fcast_rwd-test)/mean(abs(diff(training, lag=m)))
     
-    STLAR <- stlar(training,h=h)
-    fcast_stlar <- forecast(STLAR,h)$mean
-    mase_stlar[i,1:h] <- abs(fcast_stlar-test)/mean(abs(diff(training, lag=m)))
-    
-
+   
     if (m > 1){
       # using stheta method with seasonal adjustment
       # require(forecTheta)
@@ -209,6 +205,10 @@ rank_benchmark <- function(tsList, h, m){ # for quarterly=4, monthly=12
     fitSnaive <-snaive(training,h=h)
     fcast_snaive <- forecast(fitSnaive, h)$mean
     mase_snaive[i,1:h] <- abs(fcast_snaive-test)/mean(abs(diff(training, lag=m)))
+    
+    STLAR <- stlar(training,h=h)
+    fcast_stlar <- forecast(STLAR,h)$mean
+    mase_stlar[i,1:h] <- abs(fcast_stlar-test)/mean(abs(diff(training, lag=m)))
     }
     
   }
@@ -218,14 +218,14 @@ rank_benchmark <- function(tsList, h, m){ # for quarterly=4, monthly=12
   mase[3,] <- colMeans(mase_wn)
   mase[4,] <- colMeans(mase_rw)
   mase[5,] <- colMeans(mase_rwd)
-  mase[6,] <- colMeans(mase_stlar)
-  mase[7,] <- colMeans(mase_theta)
-  if (m>1){ mase[8,] <- colMeans(mase_snaive) }
+  mase[6,] <- colMeans(mase_theta)
+  if (m>1){ mase[7,] <- colMeans(mase_stlar)
+            mase[8,] <- colMeans(mase_snaive) }
   
   if (m==1){
-    row.names(mase) <- c("auto.arima", "ets", "WN", "RW", "RWD", "STL_AR", "Theta")
+    row.names(mase) <- c("auto.arima", "ets", "WN", "RW", "RWD", "Theta")
   } else {
-    row.names(mase) <- c("auto.arima", "ets", "WN", "RW", "RWD", "STL_AR", "Theta", "snaive")      
+    row.names(mase) <- c("auto.arima", "ets", "WN", "RW", "RWD", "Theta",  "STL_AR","snaive")      
   }
 
   return(mase)

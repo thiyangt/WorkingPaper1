@@ -25,8 +25,8 @@ mase_mdata <- function(temp,h){
   RWD <- accuracy(forecastRWD,testing)[2,6]
   
   #STL-AR
-  STLAR <- stlar(training,h=h)
-  STLAR <- accuracy(STLAR,testing)["Test set","MASE"]
+ # STLAR <- stlar(training,h=h)
+  # STLAR <- accuracy(STLAR,testing)["Test set","MASE"]
   
   # Theta
   if (m > 1){
@@ -41,8 +41,8 @@ mase_mdata <- function(temp,h){
     Theta <- accuracy(fitTheta, testing)["Test set","MASE"]
   }
   
-  MaseM3 <- data.frame(ARIMA, ETS, WN, RW, RWD, STLAR, Theta)
-  names(MaseM3) <- c("auto.arima", "ets", "WN", "RW", "RWD", "STLAR", "Theta")
+  MaseM3 <- data.frame(ARIMA, ETS, WN, RW, RWD, Theta)
+  names(MaseM3) <- c("auto.arima", "ets", "WN", "RW", "RWD", "Theta")
   
   
   

@@ -43,9 +43,9 @@ calMASEh <- function(predictions, tsList,h){
       fit_rwd <- rwf(training, drift = TRUE)
       forecast_rwd <- forecast(fit_rwd,h)
       outMASE[i] <- accuracy(forecast_rwd,testing)[2,"MASE"]
-    } else if (predictions[i] == "STL-AR") { 
-      STLAR <- stlar(training,h=h)
-      outMASE[i] <- accuracy(STLAR,testing)["Test set","MASE"]
+ #   } else if (predictions[i] == "STL-AR") { 
+ #     STLAR <- stlar(training,h=h)
+ #     outMASE[i] <- accuracy(STLAR,testing)["Test set","MASE"]
     } else if (predictions[i] == "Theta") {
       if (m > 1){
         # using stheta method with seasonal adjustment
