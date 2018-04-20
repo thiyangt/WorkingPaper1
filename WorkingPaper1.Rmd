@@ -445,15 +445,14 @@ The automated ARIMA and ETS algorithms are implemented using the `auto.arima` an
                      &                              \multicolumn{ 5}{c}{Experiment 1: new series M3} &            &                              \multicolumn{ 5}{c}{Experiment 2: new series M1} \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
                      &                                    \multicolumn{ 5}{c}{Yearly} &            &                                    \multicolumn{ 5}{c}{Yearly} \\
                      &   $h=1$    &    $1-2$   &     $1-4$  &     $1-6$  &      Rank  &            &     $h=1$  &    $1-2$   &     $1-4$  &     $1-6$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
-RF-unbalanced        &       1.06 &       1.42 &       2.20 &       2.85 &       3.83 &            & {\bf 0.97} & {\bf 1.39} &       2.42 &       3.37 &        1.83 \\
-RF-class priors      & {\bf 1.03} &       1.37 &       2.14 &       2.77 &       2.33 &            &       1.02 &       1.40 & {\bf 2.40} & {\bf 3.33} & {\bf 1.16} \\
-auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &       6.66 &            &       1.06 &       1.47 &       2.51 &       3.47 &       3.33 \\
-ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.50 &            &       1.12 &       1.59 &       2.72 &       3.77 &       6.00 \\
-WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       9.00 \\
-RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       8.00 \\
-RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.16} &            &       1.04 &       1.44 &       2.51 &       3.49 &       4.16 \\
-STL-AR               &       1.09 &       1.47 &       2.27 &       2.95 &       6.00 &            &       1.10 &       1.51 &       2.55 &       3.52 &       4.50 \\
-Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       3.50 &            &       1.15 &       1.70 &       3.00 &       4.19 &       7.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
+RF-unbalanced        &       1.06 &       1.40 &       2.17 &       2.82 &       3.50 &            & {\bf 0.98} & {\bf 1.40} &       {\bf 2.43} &       3.39 &        {\bf 1.50} \\
+RF-class priors      & 1.04 &       1.38 &       2.15 &       2.79 &       2.50 &            &       1.01 &       {\bf 1.40} & {\bf 2.43} & {\bf 3.38} & {\bf 1.50} \\
+auto.arima           &       1.11 &       1.48 &       2.28 &       2.96 &       5.83 &            &       1.06 &       1.47 &       2.51 &       3.47 &       3.33 \\
+ets                  &       1.09 &       1.44 &       2.20 &       2.86 &       4.67 &            &       1.12 &       1.59 &       2.72 &       3.77 &       5.00 \\
+WN                   &       6.54 &       6.91 &       7.48 &       8.07 &       9.00 &            &       6.38 &       7.08 &       8.59 &      10.01 &       8.00 \\
+RW                   &       1.24 &       1.68 &       2.48 &       3.17 &       8.00 &            &       1.35 &       2.00 &       3.50 &       4.89 &       7.00 \\
+RWD                  & {\bf 1.03} & {\bf 1.36} & {\bf 2.05} & {\bf 2.63} & {\bf 1.00} &            &       1.04 &       1.44 &       2.51 &       3.49 &       3.67 \\
+Theta                &       1.12 &       1.47 &       2.18 &       2.77 &       3.50 &            &       1.15 &       1.70 &       3.00 &       4.19 &       6.00 \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
            &                                 \multicolumn{ 5}{c}{Quarterly} &            &                                 \multicolumn{ 5}{c}{Quarterly} \\
                      &    $h=1$   &    $1-4$   &     $1-6$  &     $1-8$  &      Rank  &            &     $h=1$  &    $1-4$   &     $1-6$  &     $1-8$  &   Rank \\\cmidrule(lr){2-6} \cmidrule(lr){8-12}
 RF-unbalanced        &       0.59 & {\bf 0.81} & {\bf 0.97} &       1.12 & {\bf 2.25} &            & {\bf 0.74} & {\bf 1.08} & {\bf 1.35} & {\bf 1.57} & {\bf 1.00} \\
@@ -515,13 +514,12 @@ Similarly, the strength of seasonality is computed as
 	\text{Seasonality} = \text{max}\left[0, 1- \var(R_{t})/ \var(S_t+R_t)\right].
 \]
 
+
 The linearity and curvature features are based on the coefficients of an orthogonal quadratic regression
 \[
   T_t=\beta_0+\beta_1 \phi_1(t) + \beta_2\phi_2(t) + \varepsilon_t,
 \]
-where $t=1, 2, \dots,T$, and $\phi_1$ and $\phi_2$ are orthogonal polynomials of orders 1 and 2. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. These features were used by @hyndman2015large.
-
-\todo[inline]{The linearity and curvature will depend on the scale of the time series. It didn't matter for the Yahoo data because they were all the same scale. We will need to adjust the features to make them scale-free. One possibility is to scale $T_t$ and $t$ to [0,1] before computing them.}
+where $t=1, 2, \dots,T$, and $\phi_1$ and $\phi_2$ are orthogonal polynomials of orders 1 and 2. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. These features were used by @hyndman2015large. \textcolor{red}{The linearity and curvature depend on the the scale of the time series. Therefore, the time series are scaled to mean zero and variance one before these two features are computed.}
 
 The spikiness feature is useful when a time series is affected by occasional outliers. @hyndman2015large introduced an index to measure spikiness, computed as the variance of the leave-one-out variances of $r_t$.
 
