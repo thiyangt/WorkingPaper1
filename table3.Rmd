@@ -32,7 +32,7 @@ monthly_m1 <- subset(M1, "monthly")
 
 # Yearly - M3
 
-```{r yearly-m3}
+```{r yearly_m3}
 
 M3Yunb_pred <- load("data/M1YPunb.rda")
 M3Yrfu_h1_meanMASE <- calMASEh(M1YPunb, yearly_m3, 1)
@@ -75,7 +75,7 @@ print(benchmark_h6y)
 
 # Yearly - M1
 
-```{r yearly-m1}
+```{r yearly_m1}
 
 ### M1-yearly: RF-unbalanced results
 M1Yunb_pred <- load("data/M3YPunb.rda")
@@ -239,7 +239,7 @@ colMeans(MASE_Other_m1monthly_h)
 
 # Ranking of Methods
 
-```{r rank}
+```{r rankmethods}
 
 ## Rank methods across all individual forecast horizons
 source("src/rank.r")
