@@ -519,7 +519,7 @@ The linearity and curvature features are based on the coefficients of an orthogo
 \[
   T_t=\beta_0+\beta_1 \phi_1(t) + \beta_2\phi_2(t) + \varepsilon_t,
 \]
-where $t=1, 2, \dots,T$, and $\phi_1$ and $\phi_2$ are orthogonal polynomials of orders 1 and 2. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. These features were used by @hyndman2015large. \textcolor{red}{The linearity and curvature depend on the the scale of the time series. Therefore, the time series are scaled to mean zero and variance one before these two features are computed.}
+where $t=1, 2, \dots,T$, and $\phi_1$ and $\phi_2$ are orthogonal polynomials of orders 1 and 2. The estimated value of $\beta_1$ is used as a measure of linearity while the estimated value of $\beta_2$ is considered as a measure of curvature. These features were used by @hyndman2015large. The linearity and curvature depend on the the scale of the time series. Therefore, the time series are scaled to mean zero and variance one before these two features are computed.
 
 The spikiness feature is useful when a time series is affected by occasional outliers. @hyndman2015large introduced an index to measure spikiness, computed as the variance of the leave-one-out variances of $r_t$.
 
