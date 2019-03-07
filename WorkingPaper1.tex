@@ -28,7 +28,7 @@ Random forest, Algorithm selection problem, Classsification},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{geometry}
-\geometry{a4paper, text={16cm,24cm}}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
 \usepackage[style=authoryear-comp,]{biblatex}
 \addbibresource{FBF.bib}
 \usepackage{longtable,booktabs}
@@ -111,7 +111,7 @@ Random forest, Algorithm selection problem, Classsification},
   {\thesubsection}
   {0.4em}{}
 \titlespacing{\section}{0pt}{*5}{*1}
-\titlespacing{\section}{0pt}{*2}{*0.2}
+\titlespacing{\subsection}{0pt}{*2}{*0.2}
 
 
 %% TITLE PAGE
@@ -146,10 +146,9 @@ Random forest, Algorithm selection problem, Classsification},
                 \Month~\Year\\[1cm]
                 Working Paper \@wp
         \end{center}}}
-\def\pageone{{\sffamily
-        \newpage%\blankpage
-        \thispagestyle{empty}
-        \vbox to 23cm{
+\def\pageone{{\sffamily\setstretch{1}%
+        \thispagestyle{empty}%
+        \vbox to \textheight{%
         \raggedright\baselineskip=1.2cm
      {\fontsize{24.88}{30}\sffamily\textbf{\expandafter{\@title}}}
         \vspace{2cm}\par
@@ -160,11 +159,11 @@ Random forest, Algorithm selection problem, Classsification},
      \thispagestyle{plain}\raggedright\baselineskip=1.2cm
      {\fontsize{24.88}{30}\sffamily\textbf{\expandafter{\@title}}}\vspace{1cm}\par
         }}
-\def\titlepage{{\cover\newpage\setstretch{1}\pageone\newpage\blindtitle}}
+\def\titlepage{{\cover\newpage\pageone\newpage\blindtitle}}
 
 \def\blind{\def\titlepage{{\blindtitle}}\let\maketitle\blindtitle}
 \def\titlepageonly{\def\titlepage{{\pageone\end{document}}}}
-\def\nocover{\def\titlepage{{\newpage\setstretch{1}\pageone\newpage\blindtitle}}\let\maketitle\titlepage}
+\def\nocover{\def\titlepage{{\pageone\newpage\blindtitle}}\let\maketitle\titlepage}
 \let\maketitle\titlepage
 \makeatother
 
@@ -230,14 +229,8 @@ Random forest, Algorithm selection problem, Classsification},
 \DeclareFieldFormat[article]{volume}{\mkbibbold{#1}}
 \DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
 \DeclareFieldFormat[article]{title}{\MakeCapital{#1}}
-\DeclareFieldFormat[article]{url}{}
-%\DeclareFieldFormat[book]{url}{}
-%\DeclareFieldFormat[inbook]{url}{}
-%\DeclareFieldFormat[incollection]{url}{}
-%\DeclareFieldFormat[inproceedings]{url}{}
 \DeclareFieldFormat[inproceedings]{title}{#1}
 \DeclareFieldFormat{shorthandwidth}{#1}
-%\DeclareFieldFormat{extrayear}{}
 % No dot before number of articles
 \usepackage{xpatch}
 \xpatchbibmacro{volume+number+eid}{\setunit*{\adddot}}{}{}{}
@@ -246,16 +239,13 @@ Random forest, Algorithm selection problem, Classsification},
   \ifentrytype{article}{}{%
   \printtext{\bibstring{in}\intitlepunct}}}
 
-\AtEveryBibitem{\clearfield{month}}
-\AtEveryCitekey{\clearfield{month}}
-
 \makeatletter
 \DeclareDelimFormat[cbx@textcite]{nameyeardelim}{\addspace}
 \makeatother
 \renewcommand*{\finalnamedelim}{%
   %\ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}% there really should be no funny Oxford comma business here
   \addspace\&\space}
-  
+
 
 \wp{??/18}
 \jel{C10,C14,C22}
@@ -300,20 +290,6 @@ Random forest, Algorithm selection problem, Classsification},
 \setlength{\belowdisplayshortskip}{0pt}
 
 
-\usepackage{amsthm}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}{Lemma}[section]
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
-\newtheorem{corollary}{Corollary}[section]
-\newtheorem{proposition}{Proposition}[section]
-\theoremstyle{definition}
-\newtheorem{example}{Example}[section]
-\theoremstyle{definition}
-\newtheorem{exercise}{Exercise}[section]
-\theoremstyle{remark}
-\newtheorem*{remark}{Remark}
-\newtheorem*{solution}{Solution}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -666,17 +642,17 @@ augment the set of observed time series by simulating new time series
 similar to those in the assumed population (we provide details and
 discussion in Section \ref{simulatingseries} that follows). We denote
 the total collection of time series used for training the classifier as
-the ``reference set''. Each time series within the reference set is slit
-into a training period and a test period. From each training period we
-compute a range of time series features, and fit a selection of
-candidate models. The calculated features form the input vector to the
-classification algorithm. Using the fitted models, we generate forecasts
-and identify the ``best'' model for each time series based on a forecast
-error measure (e.g., MASE) calculated over the test period. The models
-deemed ``best'' form the output labels for the classification algorithm.
-The pseudo code for our proposed framework is presented in Algorithm
-\ref{alg:algo-lab} below. In the following sections, we briefly discuss
-aspects of the offline phase.
+the ``reference set''. Each time series within the reference set is
+split into a training period and a test period. From each training
+period we compute a range of time series features, and fit a selection
+of candidate models. The calculated features form the input vector to
+the classification algorithm. Using the fitted models, we generate
+forecasts and identify the ``best'' model for each time series based on
+a forecast error measure (e.g., MASE) calculated over the test period.
+The models deemed ``best'' form the output labels for the classification
+algorithm. The pseudo code for our proposed framework is presented in
+Algorithm \ref{alg:algo-lab} below. In the following sections, we
+briefly discuss aspects of the offline phase.
 
 \begin{algorithm}[!ht]
   \caption{The FFORMS framework - Forecasting based on meta-learning. }
