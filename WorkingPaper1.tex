@@ -128,12 +128,19 @@ Random forest, Algorithm selection problem, Classsification},
 \def\nojel{\def\showjel{}}
 \def\addresses#1{\gdef\@addresses{#1}}\def\@addresses{??}
 \def\cover{{\sffamily\setcounter{page}{0}
-        \thispagestyle{empty}%
-        \vspace*{-2cm}
-        \centerline{\raisebox{-1.8cm}{\includegraphics[width=5cm]{MBSportrait}}\hspace*{9cm} ISSN 1440-771X}\vspace{0.99cm}
+        \thispagestyle{empty}
+        \placefig{2}{1.5}{width=5cm}{monash2}
+        \placefig{16.9}{1.5}{width=2.1cm}{MBusSchool}
+        \begin{textblock}{4}(16.9,4)ISSN 1440-771X\end{textblock}
+        \begin{textblock}{7}(12.7,27.9)\hfill
+        \includegraphics[height=0.7cm]{AACSB}~~~
+        \includegraphics[height=0.7cm]{EQUIS}~~~
+        \includegraphics[height=0.7cm]{AMBA}
+        \end{textblock}
+        \vspace*{2cm}
         \begin{center}\Large
         Department of Econometrics and Business Statistics\\[.5cm]
-        \scriptsize http://business.monash.edu/econometrics-and-business-statistics/research/publications
+        \footnotesize http://monash.edu/business/ebs/research/publications
         \end{center}\vspace{2cm}
         \begin{center}
         \fbox{\parbox{14cm}{\begin{onehalfspace}\centering\Huge\vspace*{0.3cm}
@@ -145,7 +152,7 @@ Random forest, Algorithm selection problem, Classsification},
                 \begin{center}\Large
                 \Month~\Year\\[1cm]
                 Working Paper \@wp
-        \end{center}}}
+        \end{center}\vspace*{2cm}}}
 \def\pageone{{\sffamily\setstretch{1}%
         \thispagestyle{empty}%
         \vbox to \textheight{%
@@ -249,6 +256,12 @@ Random forest, Algorithm selection problem, Classsification},
 
 \wp{??/18}
 \jel{C10,C14,C22}
+
+\RequirePackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1cm}
+\setlength{\TPVertModule}{1cm}
+\def\placefig#1#2#3#4{\begin{textblock}{.1}(#1,#2)\rlap{\includegraphics[#3]{#4}}\end{textblock}}
+
 
 
 \blind
@@ -1034,7 +1047,7 @@ refers to Experiment 1 and Figure \ref{fig:exp2pca} to Experiment 2. The
 points on each plot represent individual time series. In each figure the
 first column of plots refers to the yearly data, the middle column to
 the quarterly data and the last column to the monthly data. The plots
-show that the first three principle components explain 62.5\%, 62.4\%
+show that the first three principal components explain 62.5\%, 62.4\%
 and 58.9\% of the total variation in the yearly, quarterly and monthly
 M1 data and 62.2\% 64.7\% and 66.0\% of the total variation in the
 yearly, quarterly and monthly M3 data.
