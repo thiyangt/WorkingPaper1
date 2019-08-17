@@ -14,9 +14,9 @@ author:
     othernames: George
     address: Department of Econometrics and Business Statistics, \newline Monash University, VIC 3145, Australia.
     email : george.athanasopoulos@monash.edu
-blind: true
-cover: true
-wpnumber: ??/18
+blind: false
+cover: false
+wpnumber: 6/18
 jelcodes: C10,C14,C22
 bibliography: FBF.bib
 biblio-style: authoryear-comp
