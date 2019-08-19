@@ -340,12 +340,14 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
 25 & diff2y\_acf5   & sum of squares of first 5 ACF values of twice-differenced series                        & \yes  & \yes \\
 26 & seas\_acf1     & autocorrelation coefficient at first seasonal lag                                       & -     & \yes \\
 27 & sediff\_acf1   & first ACF value of seasonally-differenced series                                        & -     & \yes\\
-28 & sediff\_seacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
+28 & sediff\_seasacf1 & ACF value at the first seasonal lag of seasonally-differenced series                    & -     & \yes \\
 29 & sediff\_acf5   & sum of squares of first 5 autocorrelation coefficients of seasonally-differenced series & -     & \yes \\
-30 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
-31 & y\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
-32 & diff1y\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
-33 & diff2y\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
+30 & seas\_pacf  & partial autocorrelation coefficient at first seasonal lag                      & -  & \yes \\
+31 & lmres\_acf1    & first ACF value of residual series of linear trend model                                & \yes  & - \\
+32 & y\_pacf5       & sum of squares of first 5 PACF values of original series                                & \yes  & \yes \\
+33 & diff1y\_pacf5  & sum of squares of first 5 PACF values of differenced series                             & \yes  & \yes \\
+34 & diff2y\_pacf5  & sum of squares of first 5 PACF values of twice-differenced series                       & \yes  & \yes \\
+
 \bottomrule
  \end{tabular}
 \end{table}
