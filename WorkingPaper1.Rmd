@@ -174,7 +174,7 @@ More recently, @kuck2016meta proposed a meta-learning framework based on neural 
 
 Our proposed FFORMS framework, presented in \autoref{fig:framework}, builds on this preceding research. The offline and online phases are shown in blue and red respectively. A classification algorithm (the meta-learner) is trained during the offline phase and is then used to select an appropriate forecast model for a new time series in the online phase.
 
-```{r framework, fig.cap="FFORMS (Feature-based FORecast-Model Selection) framework. The offline phase is shown in blue and the online phase by red."}
+```{r framework, fig.cap="FFORMS (Feature-based FORecast-Model Selection) framework. The offline phase is shown in blue and the online phase in red."}
 knitr::include_graphics("figures/framework.png")
 ```
 

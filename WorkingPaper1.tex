@@ -430,7 +430,7 @@ Our proposed FFORMS framework, presented in \autoref{fig:framework}, builds on t
 
 }
 
-\caption{FFORMS (Feature-based FORecast-Model Selection) framework. The offline phase is shown in blue and the online phase by red.}\label{fig:framework}
+\caption{FFORMS (Feature-based FORecast-Model Selection) framework. The offline phase is shown in blue and the online phase in red.}\label{fig:framework}
 \end{figure}
 
 In order to train our classification algorithm, we need a large collection of time series which are similar to those we will be forecasting. We assume that we have an essentially infinite population of time series, and we take a sample of them in order to train the classification algorithm denoted as the ``observed sample''. The new time series we wish to forecast can be thought of as additional draws from the same population. Hence, any conclusions made from the classification framework refer only to the population from which the sample has been selected. We may call this the ``target population'' of time series. It is important to have a well-defined target population to avoid misapplying the classification rules. In practice, we may wish to augment the set of observed time series by simulating new time series similar to those in the assumed population (we provide details and discussion in Section \ref{simulatingseries} that follows). We denote the total collection of time series used for training the classifier as the ``reference set''.
