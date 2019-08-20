@@ -590,6 +590,8 @@ For each series in the reference set, all candidate models are estimated using t
 
 We use a set of 25 features for yearly data and a set of 30 features for seasonal data. Some of these are taken from previous studies \autocites{wang2009rule}{hyndman2015large}{kang2017visualising}, and we have also added new features that we believe provide some useful information. Each feature can be computed rapidly, thus making the online phase of our algorithm extremely fast. The features are summarized in \autoref{feature}, and fully described in the Appendix.
 
+Correlation matrices for all the features calculated from the reference sets of each of the experiments are presented in \autoref{fig:cormatplots}. The variability in the correlations reflects the diversity of the selected features. In other words, the features we have employed seem to capture different characteristics of the time series. Furthermore, the structure of the correlation matrices across the same frequencies of the two experiments seem to be fairly similar. This sends a strong signal that the M1 and M3 collections of time series may have similar feature spaces.
+
 \begin{table}[!htp]
 \centering\footnotesize\tabcolsep=0.12cm
 \caption{Features used for selecting a forecast-model.}
@@ -636,8 +638,6 @@ We use a set of 25 features for yearly data and a set of 30 features for seasona
 \bottomrule
  \end{tabular}
 \end{table}
-
-Correlation matrices for all the features calculated from the reference sets of each of the experiments are presented in \autoref{fig:cormatplots}. The variability in the correlations reflects the diversity of the selected features. In other words, the features we have employed seem to capture different characteristics of the time series. Furthermore, the structure of the correlation matrices across the same frequencies of the two experiments seem to be fairly similar. This sends a strong signal that the M1 and M3 collections of time series may have similar feature spaces.
 
 \begin{figure}
 
