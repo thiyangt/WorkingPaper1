@@ -197,7 +197,23 @@ monthly_box <- readRDS("data/monthly_boxplot.rds")
 ## yearly series
 library(tidyverse)
 yearly <- yearly_box %>% gather(h, MASE, "h1":"h6")
-yearly$h <- recode(yearly$h , h1 = "h=1", h2 = "h=1-2", h3= "h=1-4", h4="h=1-6")
-yearly_bp <- ggplot(yearly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method)) + 
-  facet_grid(series ~ h)
+yearly$h <- recode(yearly$h , h1 = "h=1", h2 = "h=1-2", h4= "h=1-4", h6="h=1-6")
+yearly_bp <- ggplot(yearly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+  facet_grid(series ~ h) +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
+## Example code to test the values in the table
+#yea_sub <- yearly %>% filter(h=="h6", method=="WN", series=="M1")
+# ssummary(yea_sub)
 
+quarterly <- quarterly_box %>% gather(h, MASE, "h1":"h8")
+quarterly$h <- recode(quarterly$h , h1 = "h=1", h4 = "h=1-4", h6= "h=1-6", h8="h=1-8")
+quarterly_bp <- ggplot(quarterly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+  facet_grid(series ~ h) +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
+
+
+
+monthly <- monthly_box %>% gather(h, MASE, "h=1":"h=18")
+monthly$h <- recode(monthly$h , "h=1" = "h=1", "h=6" = "h=1-6", "h=12"= "h=1-12", "h=18"="h=1-18")
+monthly$method <- factor(monthly$method, levels=c("RF-unbalanced", "RF-class priors",
+                                                  "auto.arima", "ets", "WN", "RW", "RWD", "STL_AR", "Theta", "Snaive"))
+monthly_bp <- ggplot(monthly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+  facet_grid(series ~ h) +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")

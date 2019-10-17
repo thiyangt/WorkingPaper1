@@ -289,6 +289,7 @@ Department of Econometrics and Business Statistics, \newline Monash University, 
 \usepackage{paralist}
 \usepackage{todonotes}
 \usepackage{ctable}
+\usepackage{float}
 
 \def\sectionautorefname{Section}
 \captionsetup[figure]{font=small}
@@ -766,9 +767,9 @@ In addition to our new FFORMS framework, we have also introduced a simple set of
 
 For real-time forecasting, our framework involves only the calculation of features, the selection of a forecast method based on the FFORMS random forest classifier, and the calculation of the forecasts from the chosen model. None of these steps involve substantial computation, and they can be easily parallelised when forecasting for a large number of new time series. For future work, we will explore the use of other classification algorithms within the FFORMS algorithm, and test our approach on several other large collections of time series.
 
-\hypertarget{appendix-definition-of-features}{%
-\section*{Appendix: Definition of features}\label{appendix-definition-of-features}}
-\addcontentsline{toc}{section}{Appendix: Definition of features}
+\hypertarget{appendix-a-definition-of-features}{%
+\section*{Appendix A: Definition of features}\label{appendix-a-definition-of-features}}
+\addcontentsline{toc}{section}{Appendix A: Definition of features}
 
 \hypertarget{length-of-time-series}{%
 \subsubsection*{Length of time series}\label{length-of-time-series}}
@@ -867,6 +868,37 @@ We calculate the first-order autocorrelation coefficient and the sum of squares 
 A linear trend model is fitted to the time series, and the first-order autocorrelation coefficient of the residual series is calculated.
 
 We calculate the sum of squares of the first five partial autocorrelation coefficients of the original series, the first-differenced series and the second-differenced series.
+
+\hypertarget{appendix-b-distribution-of-mase-values-shown-in-table-3}{%
+\section*{Appendix B: Distribution of MASE values shown in Table 3}\label{appendix-b-distribution-of-mase-values-shown-in-table-3}}
+\addcontentsline{toc}{section}{Appendix B: Distribution of MASE values shown in Table 3}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=\textwidth]{figure/yearlybox-1} 
+
+}
+
+\caption{Distribution of MASE values calculated over the new series for yearly data}\label{fig:yearlybox}
+\end{figure}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=\textwidth]{figure/quarterlybox-1} 
+
+}
+
+\caption{Distribution of MASE values calculated over the new series for quarterly data}\label{fig:quarterlybox}
+\end{figure}
+
+\begin{figure}[H]
+
+{\centering \includegraphics[width=\textwidth]{figure/monthlybox-1} 
+
+}
+
+\caption{Distribution of MASE values calculated over the new series for monthly data}\label{fig:monthlybox}
+\end{figure}
 
 \printbibliography
 

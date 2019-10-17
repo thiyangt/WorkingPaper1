@@ -496,8 +496,7 @@ In addition to our new FFORMS framework, we have also introduced a simple set of
 
 For real-time forecasting, our framework involves only the calculation of features, the selection of a forecast method based on the FFORMS random forest classifier, and the calculation of the forecasts from the chosen model. None of these steps involve substantial computation, and they can be easily parallelised when forecasting for a large number of new time series. For future work, we will explore the use of other classification algorithms within the FFORMS algorithm, and test our approach on several other large collections of time series.
 
-
-# Appendix: Definition of features {-}
+# Appendix A: Definition of features {-}
 
 ### Length of time series {-}
 
@@ -580,3 +579,40 @@ We calculate the first-order autocorrelation coefficient and the sum of squares 
 A linear trend model is fitted to the time series, and the first-order autocorrelation coefficient of the residual series is calculated.
 
 We calculate the sum of squares of the first five partial autocorrelation coefficients of the original series, the first-differenced series and the second-differenced series.
+
+# Appendix B: Distribution of MASE values shown in Table 3{-}
+
+```{r yearlybox, warning=FALSE, message=FALSE, fig.cap="Distribution of MASE values calculated over the new series for yearly data", fig.pos="H", fig.height=5}
+library(tidyverse)
+yearly_box <- readRDS("data/yearly_boxplot.rds")
+yearly <- yearly_box %>% gather(h, MASE, "h1":"h6")
+yearly$h <- recode(yearly$h , h1 = "h=1", h2 = "h=1-2", h4= "h=1-4", h6="h=1-6")
+yearly_bp <- ggplot(yearly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+  facet_grid(series ~ h, scales = "free") +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
+yearly_bp
+```
+
+```{r quarterlybox, warning=FALSE, message=FALSE, fig.cap="Distribution of MASE values calculated over the new series for quarterly data", fig.pos="H", fig.height=5}
+library(tidyverse)
+quarterly_box <- readRDS("data/quarterly_boxplot.rds")
+quarterly <- quarterly_box %>% gather(h, MASE, "h1":"h8")
+quarterly$h <- recode(quarterly$h , h1 = "h=1", h4 = "h=1-4", h6= "h=1-6", h8="h=1-8")
+quarterly_bp <- ggplot(quarterly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+  facet_grid(series ~ h, scales = "free") +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
+quarterly_bp
+```
+
+```{r monthlybox, warning=FALSE, message=FALSE, fig.cap="Distribution of MASE values calculated over the new series for monthly data", fig.pos="H", fig.height=5}
+library(tidyverse)
+monthly_box <- readRDS("data/monthly_boxplot.rds")
+monthly <- monthly_box %>% gather(h, MASE, "h=1":"h=18")
+monthly$h <- recode(monthly$h , "h=1" = "h=1", "h=6" = "h=1-6", "h=12"= "h=1-12", "h=18"="h=1-18")
+monthly$method <- factor(monthly$method, levels=c("RF-unbalanced", "RF-class priors",
+                                                  "auto.arima", "ets", "WN", "RW", "RWD", "STL_AR", "Theta", "Snaive"))
+monthly_bp <- ggplot(monthly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+  facet_grid(series ~ h) +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
+monthly_bp
+```
+
+
+
