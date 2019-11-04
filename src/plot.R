@@ -198,7 +198,9 @@ monthly_box <- readRDS("data/monthly_boxplot.rds")
 library(tidyverse)
 yearly <- yearly_box %>% gather(h, MASE, "h1":"h6")
 yearly$h <- recode(yearly$h , h1 = "h=1", h2 = "h=1-2", h4= "h=1-4", h6="h=1-6")
-yearly_bp <- ggplot(yearly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+yearly_without_wn <- filter(yearly, method != "WN")
+yearly_without_wn <- yearly_without_wn %>% drop_na()
+yearly_bp <- ggplot(yearly_without_wn, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
   facet_grid(series ~ h) +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
 ## Example code to test the values in the table
 #yea_sub <- yearly %>% filter(h=="h6", method=="WN", series=="M1")
@@ -206,7 +208,9 @@ yearly_bp <- ggplot(yearly, aes(x=method, y=MASE, group=method)) + geom_boxplot(
 
 quarterly <- quarterly_box %>% gather(h, MASE, "h1":"h8")
 quarterly$h <- recode(quarterly$h , h1 = "h=1", h4 = "h=1-4", h6= "h=1-6", h8="h=1-8")
-quarterly_bp <- ggplot(quarterly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
+quarterly_without_wn <- filter(quarterly, method != "WN")
+quarterly_without_wn <- quarterly_without_wn %>% drop_na()
+quarterly_bp <- ggplot(quarterly_without_wn, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
   facet_grid(series ~ h) +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
 
 
@@ -215,5 +219,7 @@ monthly <- monthly_box %>% gather(h, MASE, "h=1":"h=18")
 monthly$h <- recode(monthly$h , "h=1" = "h=1", "h=6" = "h=1-6", "h=12"= "h=1-12", "h=18"="h=1-18")
 monthly$method <- factor(monthly$method, levels=c("RF-unbalanced", "RF-class priors",
                                                   "auto.arima", "ets", "WN", "RW", "RWD", "STL_AR", "Theta", "Snaive"))
+monthly_without_wn <- filter(monthly, method != "WN")
+monthly_without_wn <- monthly_without_wn %>% drop_na()
 monthly_bp <- ggplot(monthly, aes(x=method, y=MASE, group=method)) + geom_boxplot(aes(fill=method), outlier.size = 0.1) + 
   facet_grid(series ~ h) +theme(axis.text.x = element_text(angle=60, hjust=1))+xlab("")
