@@ -299,7 +299,7 @@ Most of these are self-explanatory labels based on models implemented in the for
 
 STL-AR refers to forecasts based on an STL decomposition applied to the time series, then an AR model is used to forecast the seasonally adjusted data, while the seasonal naive method is used to forecast the seasonal component.  The two sets of forecasts are then combined to provide forecasts on the original time scale [@hyndman2014forecasting].
 
-For each series in the reference set, all candidate models are estimated using the training period, and forecasts are generated for the whole of the test period \textcolor{blue}{(based on "fixed origin" evaluation)} as set by the competitions. The model corresponding to the smallest MASE [@hyndman2006another] calculated over the test period is selected as the "best model" and forms the *output label* for that series.
+For each series in the reference set, all candidate models are estimated using the training period, and forecasts are generated for the whole of the test period \textcolor{blue}{(based on "a fixed origin" evaluation)} as set by the competitions. The model corresponding to the smallest MASE [@hyndman2006another] calculated over the test period is selected as the "best model" and forms the *output label* for that series.
 
 ## Feature computation process {#sec:features}
 
