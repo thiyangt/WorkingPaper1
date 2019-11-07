@@ -395,6 +395,8 @@ John Rice was an early and strong proponent of the idea of meta-learning, which 
 
 The main challenge in ASP is to identify the selection mapping \(S\) from the feature space to the algorithm space. Even though Rice's framework articulates a conceptually rich framework, it does not specify how to obtain \(S\). This gives rise to the meta-learning approach.
 
+\newpage
+
 \hypertarget{forecast-model-selection-using-meta-learning}{%
 \subsection{Forecast-model selection using meta-learning}\label{forecast-model-selection-using-meta-learning}}
 
@@ -501,7 +503,7 @@ The task of the classification algorithm is to identify the ``best'' forecasting
 
 Each candidate model considered is estimated strictly on the training period of each series in the reference set. Forecasts are then generated for the test period over which the chosen forecast accuracy measure is calculated. The model with the lowest forecast error measure over the test period is deemed ``best''.
 
-This step is the most computationally intensive and time-consuming, as each candidate model has to be applied on each series in the reference set. However, as this task is done during the offline phase of the FFORMS framework, the time involved and computational cost associated are of no real significance and are completely controlled by the user. The more candidate models that are considered as labels, the more computational time is required; however the pay-off could be significant gains in forecast accuracy. \textcolor{black}{This is similar to other computationally intensive supervised learning method such as deep learning. The training process could take couple of days, but application could be done within few second even with your phone.}
+This step is the most computationally intensive and time-consuming, as each candidate model has to be applied on each series in the reference set. However, as this task is done during the offline phase of the FFORMS framework, the time involved and computational cost associated are of no real significance and are completely controlled by the user. The more candidate models that are considered as labels, the more computational time is required; however the pay-off could be significant gains in forecast accuracy. \textcolor{black}{This is similar to other computationally intensive supervised learning methods such as deep learning. The training process could take couple of days, but the application could be done within few seconds even with your phone.}
 
 \hypertarget{random-forest-algorithm}{%
 \subsection{Random forest algorithm}\label{random-forest-algorithm}}
@@ -584,7 +586,7 @@ Most of these are self-explanatory labels based on models implemented in the for
 
 STL-AR refers to forecasts based on an STL decomposition applied to the time series, then an AR model is used to forecast the seasonally adjusted data, while the seasonal naive method is used to forecast the seasonal component. The two sets of forecasts are then combined to provide forecasts on the original time scale \autocite{hyndman2014forecasting}.
 
-For each series in the reference set, all candidate models are estimated using the training period, and forecasts are generated for the whole of the test period \textcolor{black}{(based on "fixed origin" evaluation)} as set by the competitions. The model corresponding to the smallest MASE \autocite{hyndman2006another} calculated over the test period is selected as the ``best model'' and forms the \emph{output label} for that series.
+For each series in the reference set, all candidate models are estimated using the training period, and forecasts are generated for the whole of the test period \textcolor{black}{(based on "a fixed origin" evaluation)} as set by the competitions. The model corresponding to the smallest MASE \autocite{hyndman2006another} calculated over the test period is selected as the ``best model'' and forms the \emph{output label} for that series.
 
 \hypertarget{sec:features}{%
 \subsection{Feature computation process}\label{sec:features}}
@@ -652,7 +654,7 @@ Correlation matrices for all the features calculated from the reference sets of 
 \hypertarget{model-calibration}{%
 \subsection{Model calibration}\label{model-calibration}}
 
-\textcolor{black}{This is a multi-class classification task, with predictors = features, and outcome = categorical variable with all possible forecast models as its class label. In particular, an instance is a tuple $(f_{i1}, f_{i2}, \dots, f_{im}, z_i)$, where predictors = $(f_{i1}, f_{i2}, \dots, f_{im})$ is a vector of $m$ number of features which becomes input to our algorithm and outcome is $z_i$, the "best" forecast model. An example of instance is $(0.51, 0.12, \dots, 3.1, SARIMA)$.}
+\textcolor{black}{This is a multi-class classification task, with predictors = features, and outcome = categorical variable with all possible forecast models as its class label. In particular, an instance is a tuple $(f_{i1}, f_{i2}, \dots, f_{im}, z_i)$, where predictors = $(f_{i1}, f_{i2}, \dots, f_{im})$ is a vector of $m$ features which is the input to our algorithm, and outcome is $z_i$ the "best" forecast model. An example of instance is $(0.51, 0.12, \dots, 3.1, SARIMA)$.}
 The random forest (RF) algorithm is highly sensitive to class imbalance \autocite{breiman2001random}, and our reference set is unbalanced: some classes contain significantly more cases than other classes. The degree of class imbalance is reduced to some extent by augmenting the observed sample with the simulated time series. We consider three approaches to address the class imbalance in the data: (1) incorporating class priors into the RF classifier; (2) using the balanced RF algorithm introduced by \textcite{chen2004using}; and (3) re-balancing the reference set with down-sampling. In down-sampling, the size of the reference set is reduced by down-sampling the larger classes so that they match the smallest class in size; this potentially discards some useful information. Comparing the results, the balanced RF algorithm and RF with down-sampling did not yield satisfactory results. We therefore only report the results obtained by the RF built on unbalanced data (RF-unbalanced) and the RF with class priors (RF-class priors). The RF algorithms are implemented by the randomForest R package \autocites{liaw2002randomforest}{rfpkg}. The class priors are introduced through the option \texttt{classwt}. We use the reciprocal of class size as the class priors. The number of trees \texttt{ntree} is set to 1000, and the number of randomly selected features \texttt{k} is set to be one third of the total number of features available.
 
 Our aim is different from most classification problems in that we are not interested in accurately predicting the class, but in finding the best possible forecast model. It is possible that two models produce almost equally accurate forecasts, and therefore it is not important whether the classifier picks one model over the other. Therefore we report the forecast accuracy obtained from the FFORMS framework, rather than the classification accuracy.
